@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+      package="com.noxlogic.joindin"
+      android:versionCode="1"
+      android:versionName="1.0">
+    <!-- Application uses a light theme. I think it's much nicer than the standard
+         dark android layout. -->
+    <application
+      android:icon="@drawable/icon"
+      android:label="@string/app_name"
+      android:theme="@android:style/Theme.Light">
+
+    <!--  The splash screen is our main intent. It will activate the next activity -->
+    <activity android:name=".Splash"
+              android:label="@string/app_name">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+    </activity>
+
+    <!-- Just a bunch of activities here. Needed otherwise android cannot launch them. -->
+    <activity android:name=".main"
+        android:label="@string/app_name">
+    </activity>
+    <activity
+        android:name=".EventDetail"
+        android:label="@string/app_name">
+    </activity>
+    <activity
+        android:name=".EventTalks"
+        android:label="@string/app_name">
+    </activity>
+    <activity
+        android:name=".EventComments"
+        android:label="@string/app_name">
+    </activity>
+    <activity
+        android:name=".TalkDetail"
+        android:label="@string/app_name">
+    </activity>
+        <activity
+        android:name=".TalkComments"
+        android:label="@string/app_name">
+    </activity>
+    <activity
+        android:name=".AddComment"
+        android:label="@string/app_name">
+    </activity>
+    <activity
+        android:name=".Preferences"
+        android:label="@string/app_name">
+    </activity>
+    </application>
+    <uses-sdk android:minSdkVersion="2" />
+
+    <!-- Since we make requests over the internet, we need the users permission for it. -->
+    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+</manifest>

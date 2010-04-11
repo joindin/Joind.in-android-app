@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The preference activity is very simple. We just need a user's username and
+     password for the joind.in site in order to send registered comments. The only
+     setting currently in use is wether or not we should display past events or not. -->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="Joind.in Settings">
+        <EditTextPreference
+            android:singleLine="true"
+            android:key="username"
+            android:title="Username"
+            android:summary="Your joind.in username"></EditTextPreference>
+        <EditTextPreference
+            android:singleLine="true"
+            android:key="password"
+            android:title="Password"
+            android:summary="Your joind.in password"
+            android:password="True"></EditTextPreference>
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:title="Attended only"
+            android:key="attendonly"
+            android:summary="Only display past attended events"/>
+    </PreferenceCategory>
+</PreferenceScreen>

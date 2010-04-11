@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Detailed information about a specific talk -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    <LinearLayout
+        android:id="@+id/LinearLayout01"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_weight="1"
+        android:layout_width="fill_parent">
+        <TextView
+            android:layout_width="fill_parent"
+            android:textSize="20px"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:id="@+id/TalkDetailCaption"></TextView>
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:text="Speaker: "
+            android:gravity="center"
+            android:id="@+id/TalkDetailSpeaker"></TextView>
+        <TextView
+            android:layout_width="fill_parent"
+            android:padding="3px"
+            android:scrollbars="vertical"
+            android:id="@+id/TalkDetailDescription"
+            android:layout_height="fill_parent"
+            android:textSize="6pt"></TextView>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/LinearLayout02"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_gravity="center"
+        android:gravity="center">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:id="@+id/ButtonViewComment"
+            android:text="View 0 comments "></Button>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add new comment"
+            android:layout_gravity="center"
+            android:id="@+id/ButtonNewComment"></Button>
+    </LinearLayout>
+</LinearLayout>

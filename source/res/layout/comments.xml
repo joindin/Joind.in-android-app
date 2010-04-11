@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Layout with all comments for specified event -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    <LinearLayout
+        android:id="@+id/LinearLayout01"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_weight="1">
+        <TextView
+            android:layout_width="fill_parent"
+            android:textSize="20px"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:id="@+id/EventDetailCaption"
+            android:textStyle="bold"></TextView>
+        <ListView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:scrollbarAlwaysDrawVerticalTrack="true"
+            android:scrollbars="vertical"
+            android:id="@+id/EventDetailComments"
+            android:clickable="false"></ListView>
+    </LinearLayout>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add new comment"
+        android:layout_gravity="center"
+        android:id="@+id/ButtonNewComment"></Button>
+</LinearLayout>

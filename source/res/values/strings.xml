@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- @TODO We should move all static strings into here. Most of them are still 
+     hardcoded, which makes it very hard to translate to other languages. -->
+<resources>
+    <string name="app_name">Joind.in</string>
+</resources>
