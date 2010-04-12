@@ -7,18 +7,18 @@
         <EditTextPreference
             android:singleLine="true"
             android:key="username"
-            android:title="Username"
-            android:summary="Your joind.in username"></EditTextPreference>
+            android:title="@string/prefUserNameTitle"
+            android:summary="@string/prefUserNameSummary"></EditTextPreference>
         <EditTextPreference
             android:singleLine="true"
             android:key="password"
-            android:title="Password"
-            android:summary="Your joind.in password"
+            android:title="@string/prefPasswordTitle"
+            android:summary="@string/prefPasswordSummary"
             android:password="True"></EditTextPreference>
         <CheckBoxPreference
             android:defaultValue="false"
-            android:title="Attended only"
             android:key="attendonly"
-            android:summary="Only display past attended events"/>
+            android:title="@string/prefAttendOnlyTitle"
+            android:summary="@string/prefAttendOnlySummary"/>
     </PreferenceCategory>
 </PreferenceScreen>

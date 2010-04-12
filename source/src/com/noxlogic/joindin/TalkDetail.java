@@ -39,14 +39,20 @@ public class TalkDetail extends JIActivity implements OnClickListener {
         t.setText ("Speaker: "+this.talkJSON.optString("speaker"));
         t = (TextView) this.findViewById(R.id.TalkDetailDescription);
         String s = this.talkJSON.optString("talk_desc");
+        // Strip away newlines and additonial spaces. Somehow these get added when
+        // adding talks. It doesn't really look nice when viewing.
         s = s.replace("\n ", "");
         s = s.replace("   ", "");
         t.setText (s);
 
         // Update view X coments button
         Button b = (Button) this.findViewById(R.id.ButtonViewComment);
-        int tc = this.talkJSON.optInt("comment_count");
-        b.setText("View "+tc+" comment"+(tc==1?"":"s"));
+        int commentCount = this.talkJSON.optInt("comment_count");
+        if (commentCount == 1){
+            b.setText(String.format(getString(R.string.generalViewCommentSingular), commentCount));
+        } else {
+            b.setText(String.format(getString(R.string.generalViewCommentPlural), commentCount));
+        }
 
         // Add handlers to button
         Button button = (Button)findViewById(R.id.ButtonNewComment);

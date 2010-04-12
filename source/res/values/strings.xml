@@ -1,6 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- @TODO We should move all static strings into here. Most of them are still 
+<!-- @TODO We should move all static strings into here. Most of them are still
      hardcoded, which makes it very hard to translate to other languages. -->
 <resources>
     <string name="app_name">Joind.in</string>
+
+    <!-- Option menu strings -->
+    <string name="OptionMenuSettings">Settings</string>
+    <string name="OptionMenuClearCache">Clear cache</string>
+    <string name="OptionMenuAbout">About</string>
+
+    <!-- Preference activity strings -->
+    <string name="prefUserNameTitle">Username</string>
+    <string name="prefUserNameSummary">Your joind.in username</string>
+    <string name="prefPasswordTitle">Password</string>
+    <string name="prefPasswordSummary">Your joind.in password</string>
+    <string name="prefAttendOnlyTitle">Attended only</string>
+    <string name="prefAttendOnlySummary">Only display past attended events</string>
+
+    <string name="activityAddCommentTitle">Add comment to %s</string>
+    <string name="activityAddCommentSpinnerOneStar">One star</string>
+    <string name="activityAddCommentSpinnerTwoStars">Two stars</string>
+    <string name="activityAddCommentSpinnerThreeStars">Three stars</string>
+    <string name="activityAddCommentSpinnerFourStars">Four stars</string>
+    <string name="activityAddCommentSpinnerFiveStars">Five stars</string>
+    <string name="activityAddCommentSendingComment">Sending comment...</string>
+
+    <string name="activityEventDetailTitle">Event details</string>
+
+    <string name="activityMainAttending">%d attending</string>
+    <string name="activityMainEventsHot">Hot events</string>
+    <string name="activityMainEventsPending">Pending events</string>
+    <string name="activityMainEventsPast">Past events</string>
+    <string name="activityMainEventsUpcoming">Upcoming events</string>
+
+    <string name="JIActivityCorrectCredentials">Correct credentials supplied</string>
+    <string name="JIActivityIncorrectCredentials">Incorrect login credentials. Change credentials in the Settings menu.</string>
+
+    <string name="JIRestProtocolError">There was a protocol based error: %s</string>
+    <string name="JIRestSocketTimeout">Timeout while connecting to joind.in website.</string>
+    <string name="JIRestIOError">There was an IO stream related error: %s</string>
+    <string name="JIRestUnknownError">Unknown error: %s</string>
+
+    <!-- Global strings, can occur everywhere -->
+    <string name="generalPleaseWait">Please wait...</string>
+    <string name="generalViewCommentSingular">View %d comment</string>
+    <string name="generalViewCommentPlural">View %d comments</string>
+
+    <string name="generalEventTalksSingular">%d event talk</string>
+    <string name="generalEventTalksPlural">%d event talks</string>
+
+    <string name="generalCommentSingular">%d comment</string>
+    <string name="generalCommentPlural">%d comments</string>
+    <string name="generalAnonymous">Anonymous</string>
+
+    <string name="generalSuccessFullyAttended">Successfully attended</string>
+    <string name="generalSuccessFullyUnAttended">Successfully unattended</string>
+    <string name="generatelAttendingError">Attending error: %s</string>
+
+    <string name="generalAboutTitle">About,..</string>
+    <string name="generalAboutButtonCaption">Close</string>
+    <string name="generalAboutMessage">Joind.In Android application created by Joshua Thijssen. Please send bugreports, feature requests etc to jthijssen@noxlogic.nl \n\nLogos and images are copyright Joind.in</string>
+
+    <string name="generalCacheCleared">Cache is cleared</string>
+
 </resources>

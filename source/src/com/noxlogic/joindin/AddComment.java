@@ -34,7 +34,7 @@ public class AddComment extends JIActivity implements OnClickListener {
 
         // Get comment type from the intent scratch board
         this.commentType = getIntent().getStringExtra("commentType");
-        setTitle ("Add comment to "+this.commentType);
+        setTitle (String.format(getString(R.string.activityAddCommentTitle), this.commentType));
 
         // Are we commenting on an event?
         if (this.commentType.compareTo("event") == 0) {
@@ -62,7 +62,11 @@ public class AddComment extends JIActivity implements OnClickListener {
         button.setOnClickListener(this);
 
         // Add spinner items (the star ratings)
-        String[] items = new String[] {"One star", "Two stars", "Three stars", "Four stars", "Five stars"};
+        String[] items = new String[] {getString(R.string.activityAddCommentSpinnerOneStar),
+                                       getString(R.string.activityAddCommentSpinnerTwoStars),
+                                       getString(R.string.activityAddCommentSpinnerThreeStars),
+                                       getString(R.string.activityAddCommentSpinnerFourStars),
+                                       getString(R.string.activityAddCommentSpinnerFiveStars)};
         Spinner spinner = (Spinner) findViewById(R.id.Spinner01);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, items);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -99,7 +103,7 @@ public class AddComment extends JIActivity implements OnClickListener {
         // Did we click send button?
         if (v == findViewById(R.id.ButtonAddCommentSend)) {
             // Show progress dialog
-            saveDialog = ProgressDialog.show(this, "Please wait...", "Sending comment...", true);
+            saveDialog = ProgressDialog.show(this, getString(R.string.generalPleaseWait), getString(R.string.activityAddCommentSendingComment), true);
 
             // Create new thread, otherwise the progress dialog does not show
             new Thread() {
@@ -156,7 +160,7 @@ public class AddComment extends JIActivity implements OnClickListener {
         }
 
         // Send data to joind.in API
-        JIRest rest = new JIRest ();
+        JIRest rest = new JIRest (AddComment.this);
         int error = rest.postXML (url, xml);
         if (error == JIRest.OK) {
             try {

@@ -42,7 +42,7 @@ public class JIActivity extends Activity {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
         // Check credentials in the joind.in API
-        JIRest rest = new JIRest ();
+        JIRest rest = new JIRest (context);
         int error = rest.postXML ("http://joind.in/api/user", "<request><action type=\"validate\" output=\"json\"><uid>"+prefs.getString("username", "")+"</uid><pass>"+JIRest.md5(prefs.getString("password", ""))+"</pass></action></request>");
         if (error == JIRest.OK) {
             try {
@@ -59,10 +59,10 @@ public class JIActivity extends Activity {
 
         // Result ok?
         if (result.compareTo ("success") == 0) {
-            return "T|Correct credentials supplied";
+            return "T|"+context.getString(R.string.JIActivityCorrectCredentials);
         }
         // Something went wrong
-        if (result.compareTo ("Invalid user") == 0) result = "Incorrect login credentials. Change credentials in the Settings menu.";
+        if (result.compareTo ("Invalid user") == 0) result = context.getString(R.string.JIActivityIncorrectCredentials);
         return "F|"+result;
     }
 
@@ -95,10 +95,10 @@ public class JIActivity extends Activity {
             case R.id.about_menu_item :
                         // Display about box
                         Dialog about = new AlertDialog.Builder(this)
-                            .setIcon(R.drawable.rating_5)
-                            .setTitle("About,..")
-                            .setPositiveButton("Close", null)
-                            .setMessage("Joind.In Android application created by Joshua Thijssen. Please send bugreports, feature requests etc to jthijssen@noxlogic.nl \n\nLogos and images are copyright Joind.in")
+                            .setIcon(R.drawable.icon)
+                            .setTitle(R.string.generalAboutTitle)
+                            .setPositiveButton(R.string.generalAboutButtonCaption, null)
+                            .setMessage(R.string.generalAboutMessage)
                             .create();
                         about.show();
                         break;
@@ -107,7 +107,7 @@ public class JIActivity extends Activity {
                         // Removes all items from the database
                         DataHelper dh = new DataHelper(this);
                         dh.deleteAll ();
-                        Toast toast = Toast.makeText (getBaseContext(), "Cache is cleared", Toast.LENGTH_LONG);
+                        Toast toast = Toast.makeText (getBaseContext(), R.string.generalCacheCleared, Toast.LENGTH_LONG);
                         toast.show ();
                         break;
 

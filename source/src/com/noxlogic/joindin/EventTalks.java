@@ -90,12 +90,16 @@ public class EventTalks extends JIActivity implements OnClickListener {
     // Display all talks in the talk list (adapter)
     public int displayTalks (int event_id) {
         m_talkAdapter.clear();
-        int count = this.dh.populateTalks(event_id, m_talkAdapter);
+        int talkCount = this.dh.populateTalks(event_id, m_talkAdapter);
         m_talkAdapter.notifyDataSetChanged();
 
         // Set titlebar with number of talks found
-        setTitle (count+" event talk"+(count==1?"":"s"));
-        return count;
+        if (talkCount == 1) {
+            setTitle (String.format(getString(R.string.generalEventTalksSingular), talkCount));
+        } else {
+            setTitle (String.format(getString(R.string.generalEventTalksPlural), talkCount));
+        }
+        return talkCount;
     }
 
 
@@ -107,7 +111,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
         new Thread () {
             public void run () {
                 // Fetch talk data from joind.in API
-                JIRest rest = new JIRest ();
+                JIRest rest = new JIRest (EventTalks.this);
                 int error = rest.postXML("http://joind.in/api/event", "<request>"+JIRest.getAuthXML(EventTalks.this)+"<action type=\"gettalks\" output=\"json\"><event_id>"+event_id+"</event_id></action></request>");
 
                 // @TODO: we do not handle errors?
@@ -161,14 +165,22 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> {
           JSONObject o = items.get(position);
           if (o == null) return v;
 
+          String t2Text;
+          int commentCount = o.optInt("comment_count");
+          if (commentCount == 1) {
+              t2Text = String.format(this.context.getString(R.string.generalCommentSingular), commentCount);
+          } else {
+              t2Text = String.format(this.context.getString(R.string.generalCommentPlural), commentCount);
+          }
 
           TextView t1 = (TextView) v.findViewById(R.id.TalkRowCaption);
           TextView t2 = (TextView) v.findViewById(R.id.TalkRowComments);
           TextView t3 = (TextView) v.findViewById(R.id.TalkRowSpeaker);
           if (t1 != null) t1.setText(o.optString("talk_title"));
-          if (t2 != null) t2.setText(o.optInt("comment_count")+" comment"+(o.optInt("comment_count")==1?"":"s"));
+          if (t2 != null) t2.setText(t2Text);
           if (t3 != null) t3.setText(o.optString("speaker"));
 
+          // Set specified talk category image
           ImageView r = (ImageView) v.findViewById(R.id.TalkRowImageType);
           if (o.optString("tcid").compareTo("Talk")==0) r.setBackgroundResource(R.drawable.talk);
           if (o.optString("tcid").compareTo("Social Event")==0) r.setBackgroundResource(R.drawable.socialevent);

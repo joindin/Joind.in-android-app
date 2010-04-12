@@ -50,8 +50,12 @@ public class EventComments extends JIActivity implements OnClickListener {
         t.setText (this.eventJSON.optString("event_name"));
 
         // Update caption bar
-        int cc = this.eventJSON.optInt("num_comments");
-        setTitle(cc+" comment"+(cc==1?"":"s"));
+        int commentCount = this.eventJSON.optInt("num_comments");
+        if (commentCount == 1){
+            setTitle (String.format(getString(R.string.generalCommentSingular), commentCount));
+        } else {
+            setTitle (String.format(getString(R.string.generalCommentPlural), commentCount));
+        }
 
         // Init comment list
         ArrayList<JSONObject> m_eventcomments = new ArrayList<JSONObject>();
@@ -105,7 +109,7 @@ public class EventComments extends JIActivity implements OnClickListener {
         new Thread () {
             public void run() {
                 // Load event comments from joind.in API
-                JIRest rest = new JIRest();
+                JIRest rest = new JIRest(EventComments.this);
                 int error = rest.postXML("http://joind.in/api/event", "<request>"+JIRest.getAuthXML(EventComments.this)+"<action type=\"getcomments\" output=\"json\"><event_id>"+event_id+"</event_id></action></request>");
                 // @TODO: Still no error handling
 
@@ -167,7 +171,7 @@ class JIEventCommentAdapter extends ArrayAdapter<JSONObject> {
           TextView t2 = (TextView) v.findViewById(R.id.CommentRowUName);
           TextView t3 = (TextView) v.findViewById(R.id.CommentRowDate);
           if (t1 != null) t1.setText(o.optString("comment"));
-          if (t2 != null) t2.setText(o.isNull("cname") ? "(Anonymous) " : o.optString("cname")+" ");
+          if (t2 != null) t2.setText(o.isNull("cname") ? "("+this.context.getString(R.string.generalAnonymous)+") " : o.optString("cname")+" ");
           if (t3 != null) t3.setText(DateFormat.getDateInstance().format(o.optLong("date_made")*1000));
 
           ImageView r = (ImageView) v.findViewById(R.id.CommentRowRate);

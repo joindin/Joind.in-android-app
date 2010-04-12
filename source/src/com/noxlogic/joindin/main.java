@@ -36,8 +36,8 @@ import android.widget.AdapterView.OnItemClickListener;
 public class main extends JIActivity implements OnClickListener {
     private JIEventAdapter m_eventAdapter;       // Adapter for displaying all the events
     private DataHelper dh;                       // Datahelper helps managing our data
-    private String currentTab = "hot";           // Default selected tab
-    private String currentTitle = "Hot events";  // Default name
+    private String currentTab;                   // Current selected tab
+    private String currentTitle;                 // Current name
 
     JIRest rest;    // Our rest object to communicate with joind.in API
 
@@ -61,6 +61,10 @@ public class main extends JIActivity implements OnClickListener {
         button.setOnClickListener(this);
         button = (Button)findViewById(R.id.ButtonMainEventUpcoming);
         button.setOnClickListener(this);
+
+        // Set default tab
+        currentTab = "hot";
+        currentTitle = getString(R.string.activityMainEventsHot);
 
         // Create array with all found events and add it to the eventlist
         ArrayList<JSONObject> m_events = new ArrayList<JSONObject>();
@@ -138,7 +142,7 @@ public class main extends JIActivity implements OnClickListener {
         new Thread () {
             public void run() {
                 // Get some event data from the joind.in API
-                rest = new JIRest ();
+                rest = new JIRest (main.this);
                 int error = rest.postXML ("http://joind.in/api/event", "<request>"+JIRest.getAuthXML(main.this)+"<action type=\"getlist\" output=\"json\"><event_type>"+event_type+"</event_type></action></request>");
 
                 // Something bad happened :(
@@ -202,7 +206,7 @@ public class main extends JIActivity implements OnClickListener {
 
             // Set correct tab and title
             this.currentTab = "hot";
-            this.currentTitle = "Hot events";
+            this.currentTitle = getString(R.string.activityMainEventsHot);
 
             // Display events that are currently in the database
             displayEvents(this.currentTab, this.currentTitle);
@@ -217,7 +221,7 @@ public class main extends JIActivity implements OnClickListener {
         if (v == findViewById(R.id.ButtonMainEventPending)) {
             // Load pending events
             this.currentTab = "pending";
-            this.currentTitle = "Pending events";
+            this.currentTitle = getString(R.string.activityMainEventsPending);
             displayEvents(this.currentTab, this.currentTitle);
             loadEvents(this.currentTab, this.currentTitle);
         }
@@ -226,7 +230,7 @@ public class main extends JIActivity implements OnClickListener {
         if (v == findViewById(R.id.ButtonMainEventPast)) {
             // Load past events
             this.currentTab = "past";
-            this.currentTitle = "Past events";
+            this.currentTitle = getString(R.string.activityMainEventsPast);
             displayEvents(this.currentTab, this.currentTitle);
             loadEvents(this.currentTab, this.currentTitle);
         }
@@ -235,7 +239,7 @@ public class main extends JIActivity implements OnClickListener {
         if (v == findViewById(R.id.ButtonMainEventUpcoming)) {
             // Load upcoming events
             this.currentTab = "upcoming";
-            this.currentTitle = "Upcoming events";
+            this.currentTitle = getString(R.string.activityMainEventsUpcoming);
             displayEvents(this.currentTab, this.currentTitle);
             loadEvents(this.currentTab, this.currentTitle);
         }
@@ -287,7 +291,7 @@ class JIEventAdapter extends ArrayAdapter<JSONObject> {
           }
 
           // Set our texts
-          if (at != null) at.setText(o.optString("num_attend")+" attending");
+          if (at != null) at.setText(String.format(this.context.getString(R.string.activityMainAttending), o.optInt("num_attend")));
           if (tt != null) tt.setText(o.optString("event_name"));
           if (bt != null) {
               // Display start date. Only display end date when it differs (ie: it's multiple day event)

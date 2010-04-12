@@ -22,7 +22,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 
-import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
@@ -33,6 +33,12 @@ class JIRest {
 
     private String error = "";
     private String result = "";
+
+    private Context context;
+
+    public JIRest (Context context) {
+        this.context = context;
+    }
 
     // Return the last communciation result
     public String getResult () {
@@ -46,6 +52,7 @@ class JIRest {
 
     // Post XML.. funny.. we post XML and we receive JSON.
     public int postXML (String url, String xml) {
+
         try {
             // Create http client with timeouts so we dont have to wait
             // indefiniatly when internet is kaput
@@ -82,17 +89,17 @@ class JIRest {
                     return OK;
                 }
             } catch (ClientProtocolException e) {
-                this.error = "There was a protocol based error: "+e.getMessage();
+                this.error = String.format (this.context.getString(R.string.JIRestProtocolError), e.getMessage());
                 return ERROR;
             } catch (SocketTimeoutException e) {
-                this.error = "Timeout while connecting to joind.in website.";
+                this.error = this.context.getString(R.string.JIRestSocketTimeout);
                 return TIMEOUT;
             } catch (IOException e) {
-                this.error = "There was an IO stream related error: "+e.getMessage();
+                this.error = String.format (this.context.getString(R.string.JIRestIOError), e.getMessage());
                 return ERROR;
             }
         } catch (Exception e) {
-            this.error  = "Unknown error: "+e.getMessage();
+            this.error  = String.format (this.context.getString(R.string.JIRestUnknownError), e.getMessage());
             return ERROR;
         }
         return OK;
@@ -101,9 +108,9 @@ class JIRest {
     // This will return either a empty string, or a xml auth string <auth><user><pass></auth> that can be used in messages.
     // We need an activity because we need to fetch the preference manager which is only gettable from a context.
     // ( @TODO: find another way to fetch basecontext)
-    public static String getAuthXML (Activity activity) {
+    public static String getAuthXML (Context context) {
         // Make authentication string from the preferences
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity.getBaseContext());
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         if (prefs.getString("username", "").compareTo("") == 0 &&
             prefs.getString("password", "").compareTo("") == 0) return "";
         return "<auth><user>"+prefs.getString("username", "")+"</user><pass>"+JIRest.md5(prefs.getString("password", ""))+"</pass></auth>";

@@ -39,7 +39,7 @@ public class EventDetail extends JIActivity implements OnClickListener {
         }
 
         // Set title
-        setTitle ("Event details");
+        setTitle (R.string.activityEventDetailTitle);
 
         // Set all the event information
         TextView t;
@@ -58,7 +58,11 @@ public class EventDetail extends JIActivity implements OnClickListener {
 
         Button b = (Button) this.findViewById(R.id.ButtonEventDetailsViewComments);
         int i = this.eventJSON.optInt("num_comments");
-        b.setText ("View "+i+" comment"+(i==1?"":"s"));
+        if (i == 1) {
+            b.setText(String.format(getString(R.string.generalViewCommentSingular), i));
+        } else {
+            b.setText(String.format(getString(R.string.generalViewCommentSingular), i));
+        }
 
         CheckBox c = (CheckBox)findViewById(R.id.CheckBoxEventDetailsAttending);
         c.setChecked(this.eventJSON.optBoolean("user_attending"));
@@ -126,7 +130,7 @@ public class EventDetail extends JIActivity implements OnClickListener {
         int eventID = this.eventJSON.optInt("ID");
 
         // Send data to the joind.in API
-        JIRest rest = new JIRest ();
+        JIRest rest = new JIRest (EventDetail.this);
         int error = rest.postXML ("http://joind.in/api/event", "<request>"+JIRest.getAuthXML(this)+"<action type=\"attend\" output=\"json\"><eid>"+eventID+"</eid></action></request>");
 
         if (error == JIRest.OK) {
@@ -141,13 +145,17 @@ public class EventDetail extends JIActivity implements OnClickListener {
             }
         } else {
             // Incorrect result, return error
-            result = "Attending error: "+rest.getError();
+            result = String.format(getString(R.string.generatelAttendingError), rest.getError());
         }
 
         // Check what the result was..
         if (result.compareTo("Success") == 0) {
             // Everything went as expected
-            result = "Succesfully "+(initialState?"attended":"unattended");
+            if (initialState) {
+                result = getString(R.string.generalSuccessFullyAttended);
+            } else {
+                result = getString(R.string.generalSuccessFullyUnAttended);
+            }
 
             // We update the event, since the even has been changed (1 more attendee)
             error = rest.postXML("http://joind.in/api/event", "<request>"+JIRest.getAuthXML(this)+"<action type=\"getdetail\" output=\"json\"><event_id>"+eventID+"</event_id></action></request>");
@@ -161,7 +169,7 @@ public class EventDetail extends JIActivity implements OnClickListener {
             }
         } else {
             // No correct output from the API. Something went wrong
-            result = "Attending error: "+result;
+            result = String.format(getString(R.string.generatelAttendingError), result);
         }
         return result;
      }

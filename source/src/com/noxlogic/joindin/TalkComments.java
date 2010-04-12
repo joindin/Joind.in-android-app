@@ -50,8 +50,12 @@ public class TalkComments extends JIActivity implements OnClickListener  {
         t.setText (this.talkJSON.optString("talk_title"));
 
         // Update caption bar
-        int cc = this.talkJSON.optInt("comment_count");
-        setTitle(cc+" comment"+(cc==1?"":"s"));
+        int commentCount = this.talkJSON.optInt("comment_count");
+        if (commentCount == 1){
+            setTitle (String.format(getString(R.string.generalCommentSingular), commentCount));
+        } else {
+            setTitle (String.format(getString(R.string.generalCommentPlural), commentCount));
+        }
 
         // Add handler to button
         Button button = (Button)findViewById(R.id.ButtonNewComment);
@@ -104,7 +108,7 @@ public class TalkComments extends JIActivity implements OnClickListener  {
         new Thread () {
             public void run() {
                 // Connect to joind.in API and fetch all comments for this talk
-                JIRest rest = new JIRest ();
+                JIRest rest = new JIRest (TalkComments.this);
                 int error = rest.postXML("http://joind.in/api/talk", "<request>"+JIRest.getAuthXML(TalkComments.this)+"<action type=\"getcomments\" output=\"json\"><talk_id>"+talk_id+"</talk_id></action></request>");
 
                 // @TODO I see we do not catch errors?
@@ -163,7 +167,7 @@ class JITalkCommentAdapter extends ArrayAdapter<JSONObject> {
           TextView t2 = (TextView) v.findViewById(R.id.CommentRowUName);
           TextView t3 = (TextView) v.findViewById(R.id.CommentRowDate);
           if (t1 != null) t1.setText(o.optString("comment"));
-          if (t2 != null) t2.setText(o.isNull("uname") ? "(Anonymous) " : o.optString("uname")+" ");
+          if (t2 != null) t2.setText(o.isNull("uname") ? "("+this.context.getString(R.string.generalAnonymous)+") " : o.optString("uname")+" ");
           if (t3 != null) t3.setText(DateFormat.getDateInstance().format(o.optLong("date_made")*1000));
 
           // TODO: Do dynamically.. but troubles finding getBaseContext()
