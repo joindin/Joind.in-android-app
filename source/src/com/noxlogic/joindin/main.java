@@ -257,7 +257,6 @@ class JIEventAdapter extends ArrayAdapter<JSONObject> {
       private ArrayList<JSONObject> items;      // The current items in the listview
       private Context context;
       LayoutInflater vi;
-      View vi2;
 
       public JIEventAdapter(Context context, int textViewResourceId, ArrayList<JSONObject> items) {
           super(context, textViewResourceId, items);
