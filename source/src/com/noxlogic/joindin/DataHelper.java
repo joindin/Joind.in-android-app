@@ -147,7 +147,9 @@ public class DataHelper {
                 try {
                     // Add JSON data to the adapter
                     adapter.add(new JSONObject(c.getString(0)));
-                } catch (JSONException e) { e.printStackTrace(); }
+                } catch (JSONException e) { 
+                    android.util.Log.e("JoindInApp", "Could not add item to list", e); 
+                }
             } while (c.moveToNext());
         }
         // Close cursor

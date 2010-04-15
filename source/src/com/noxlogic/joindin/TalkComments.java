@@ -41,7 +41,7 @@ public class TalkComments extends JIActivity implements OnClickListener  {
         try {
             this.talkJSON = new JSONObject(getIntent().getStringExtra("talkJSON"));
         } catch (JSONException e) {
-            e.printStackTrace();
+            android.util.Log.e("JoindInApp", "No talk passed to activity", e);
         }
 
         // Set correct text in the layout
@@ -109,7 +109,7 @@ public class TalkComments extends JIActivity implements OnClickListener  {
             public void run() {
                 // Connect to joind.in API and fetch all comments for this talk
                 JIRest rest = new JIRest (TalkComments.this);
-                int error = rest.postXML("http://joind.in/api/talk", "<request>"+JIRest.getAuthXML(TalkComments.this)+"<action type=\"getcomments\" output=\"json\"><talk_id>"+talk_id+"</talk_id></action></request>");
+                int error = rest.postXML("talk", "<request>"+JIRest.getAuthXML(TalkComments.this)+"<action type=\"getcomments\" output=\"json\"><talk_id>"+talk_id+"</talk_id></action></request>");
 
                 // @TODO I see we do not catch errors?
 

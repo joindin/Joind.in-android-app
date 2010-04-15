@@ -24,11 +24,12 @@ public class TalkDetail extends JIActivity implements OnClickListener {
         // Set talk detail layout
         setContentView(R.layout.talkdetails);
 
+
         // Get info from the intent scratch board
         try {
             this.talkJSON = new JSONObject(getIntent().getStringExtra("talkJSON"));
         } catch (JSONException e) {
-            e.printStackTrace();
+            android.util.Log.e("JoindInApp", "No talk passed to activity", e);
         }
 
         // Set correct text in layout

@@ -41,7 +41,7 @@ public class EventComments extends JIActivity implements OnClickListener {
         try {
             this.eventJSON = new JSONObject(getIntent().getStringExtra("eventJSON"));
         } catch (JSONException e) {
-            e.printStackTrace();
+            android.util.Log.e("JoindInApp", "No event passed to activity", e);
         }
 
         // Set correct text in layout
@@ -110,7 +110,7 @@ public class EventComments extends JIActivity implements OnClickListener {
             public void run() {
                 // Load event comments from joind.in API
                 JIRest rest = new JIRest(EventComments.this);
-                int error = rest.postXML("http://joind.in/api/event", "<request>"+JIRest.getAuthXML(EventComments.this)+"<action type=\"getcomments\" output=\"json\"><event_id>"+event_id+"</event_id></action></request>");
+                int error = rest.postXML("event", "<request>"+JIRest.getAuthXML(EventComments.this)+"<action type=\"getcomments\" output=\"json\"><event_id>"+event_id+"</event_id></action></request>");
                 // @TODO: Still no error handling
 
                 if (error == JIRest.OK) {

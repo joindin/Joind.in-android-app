@@ -43,7 +43,7 @@ public class JIActivity extends Activity {
 
         // Check credentials in the joind.in API
         JIRest rest = new JIRest (context);
-        int error = rest.postXML ("http://joind.in/api/user", "<request><action type=\"validate\" output=\"json\"><uid>"+prefs.getString("username", "")+"</uid><pass>"+JIRest.md5(prefs.getString("password", ""))+"</pass></action></request>");
+        int error = rest.postXML ("user", "<request><action type=\"validate\" output=\"json\"><uid>"+prefs.getString("username", "")+"</uid><pass>"+JIRest.md5(prefs.getString("password", ""))+"</pass></action></request>");
         if (error == JIRest.OK) {
             try {
                 JSONObject json = new JSONObject(rest.getResult());
@@ -95,7 +95,6 @@ public class JIActivity extends Activity {
             case R.id.about_menu_item :
                         // Display about box
                         Dialog about = new AlertDialog.Builder(this)
-                            .setIcon(R.drawable.icon)
                             .setTitle(R.string.generalAboutTitle)
                             .setPositiveButton(R.string.generalAboutButtonCaption, null)
                             .setMessage(R.string.generalAboutMessage)

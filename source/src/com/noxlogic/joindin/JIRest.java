@@ -25,11 +25,14 @@ import org.apache.http.params.HttpParams;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 class JIRest {
     public static final int OK = 0;
     public static final int TIMEOUT = 1;
     public static final int ERROR = 2;
+
+    public static final String JOINDIN_URL = "http://joind.in/api/";
 
     private String error = "";
     private String result = "";
@@ -51,7 +54,7 @@ class JIRest {
     }
 
     // Post XML.. funny.. we post XML and we receive JSON.
-    public int postXML (String url, String xml) {
+    public int postXML (String urlPostfix, String xml) {
 
         try {
             // Create http client with timeouts so we dont have to wait
@@ -62,14 +65,17 @@ class JIRest {
             HttpConnectionParams.setSoTimeout(params, 15000);
 
             // We POST our data.
-            HttpPost httppost = new HttpPost(url);
+            Log.i ("http", "Posting to"+JOINDIN_URL+urlPostfix);
+            HttpPost httppost = new HttpPost(JOINDIN_URL+urlPostfix);
 
             // Attention: MUST be text/xml. Took a while to figure this one out!
             StringEntity xmlentity = null;
             try {
                 xmlentity = new StringEntity(xml);
                 xmlentity.setContentType("text/xml");
-            } catch (UnsupportedEncodingException e) { }
+            } catch (UnsupportedEncodingException e) { 
+                // Ignore exception
+            }
 
             httppost.setEntity(xmlentity);
             httppost.addHeader("Content-type", "text/xml");
@@ -89,16 +95,20 @@ class JIRest {
                     return OK;
                 }
             } catch (ClientProtocolException e) {
+                // Eror during communcation
                 this.error = String.format (this.context.getString(R.string.JIRestProtocolError), e.getMessage());
                 return ERROR;
             } catch (SocketTimeoutException e) {
+                // Socket has timed out
                 this.error = this.context.getString(R.string.JIRestSocketTimeout);
                 return TIMEOUT;
             } catch (IOException e) {
+                // IO expection ocurred
                 this.error = String.format (this.context.getString(R.string.JIRestIOError), e.getMessage());
                 return ERROR;
             }
         } catch (Exception e) {
+            // Something else happened
             this.error  = String.format (this.context.getString(R.string.JIRestUnknownError), e.getMessage());
             return ERROR;
         }
@@ -126,6 +136,7 @@ class JIRest {
             while (md5.length() < 32) md5 = "0" + md5;
             return md5;
         } catch(NoSuchAlgorithmException e) {
+            // MD5 not found, return NULL
             return null;
         }
     }

@@ -35,7 +35,7 @@ public class EventDetail extends JIActivity implements OnClickListener {
         try {
             this.eventJSON = new JSONObject(getIntent().getStringExtra("eventJSON"));
         } catch (JSONException e) {
-            e.printStackTrace();
+            android.util.Log.e("JoindInApp", "No event passed to activity", e);
         }
 
         // Set title
@@ -131,7 +131,7 @@ public class EventDetail extends JIActivity implements OnClickListener {
 
         // Send data to the joind.in API
         JIRest rest = new JIRest (EventDetail.this);
-        int error = rest.postXML ("http://joind.in/api/event", "<request>"+JIRest.getAuthXML(this)+"<action type=\"attend\" output=\"json\"><eid>"+eventID+"</eid></action></request>");
+        int error = rest.postXML ("event", "<request>"+JIRest.getAuthXML(this)+"<action type=\"attend\" output=\"json\"><eid>"+eventID+"</eid></action></request>");
 
         if (error == JIRest.OK) {
             try {
@@ -158,14 +158,16 @@ public class EventDetail extends JIActivity implements OnClickListener {
             }
 
             // We update the event, since the even has been changed (1 more attendee)
-            error = rest.postXML("http://joind.in/api/event", "<request>"+JIRest.getAuthXML(this)+"<action type=\"getdetail\" output=\"json\"><event_id>"+eventID+"</event_id></action></request>");
+            error = rest.postXML("event", "<request>"+JIRest.getAuthXML(this)+"<action type=\"getdetail\" output=\"json\"><event_id>"+eventID+"</event_id></action></request>");
             if (error == JIRest.OK) {
                 try {
                     JSONArray json = new JSONArray(rest.getResult());
                     JSONObject json_event = json.getJSONObject(0);
                     // Update the event in the database
                     this.dh.updateEvent (eventID, json_event);
-                } catch (JSONException e) { }
+                } catch (JSONException e) { 
+                    // Ignored
+                }
             }
         } else {
             // No correct output from the API. Something went wrong

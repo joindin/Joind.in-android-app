@@ -95,7 +95,7 @@ public class main extends JIActivity implements OnClickListener {
 
     // Converts input stream to a string.
     public static String convertStreamToString(InputStream is) {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is), 8192);
         StringBuilder sb = new StringBuilder();
 
         String line = null;
@@ -104,12 +104,12 @@ public class main extends JIActivity implements OnClickListener {
                 sb.append(line + "\n");
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            // ignored
         } finally {
             try {
                 is.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                // Ignored
             }
         }
         return sb.toString();
@@ -143,7 +143,7 @@ public class main extends JIActivity implements OnClickListener {
             public void run() {
                 // Get some event data from the joind.in API
                 rest = new JIRest (main.this);
-                int error = rest.postXML ("http://joind.in/api/event", "<request>"+JIRest.getAuthXML(main.this)+"<action type=\"getlist\" output=\"json\"><event_type>"+event_type+"</event_type></action></request>");
+                int error = rest.postXML ("event", "<request>"+JIRest.getAuthXML(main.this)+"<action type=\"getlist\" output=\"json\"><event_type>"+event_type+"</event_type></action></request>");
 
                 // Something bad happened :(
                 if (error != JIRest.OK) {

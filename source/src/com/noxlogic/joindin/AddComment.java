@@ -41,7 +41,9 @@ public class AddComment extends JIActivity implements OnClickListener {
             // Get event information
             try {
                 this.eventJSON = new JSONObject(getIntent().getStringExtra("eventJSON"));
-            } catch (JSONException e) { e.printStackTrace(); }
+            } catch (JSONException e) { 
+                android.util.Log.e("JoindInApp", "No event passed to activity", e); 
+            }
 
             // Set spinner and checkbox to invisible since they are not used while
             // commenting on events
@@ -150,12 +152,12 @@ public class AddComment extends JIActivity implements OnClickListener {
         // Are we sending a talk comment?
         if (this.commentType.compareTo("talk") == 0) {
             int talk_id = this.talkJSON.optInt("ID");
-            url = "http://joind.in/api/talk";
+            url = "talk";
             xml = "<request>"+JIRest.getAuthXML(this)+"<action type=\"addcomment\" output=\"json\"><talk_id>"+talk_id+"</talk_id><rating>"+rating+"</rating><comment>"+comment+"</comment><private>"+priv+"</private></action></request>";
         } else {
             // We are sending an event comment
             int event_id = this.eventJSON.optInt("ID");
-            url = "http://joind.in/api/event";
+            url = "event";
             xml = "<request>"+JIRest.getAuthXML(this)+"<action type=\"addcomment\" output=\"json\"><event_id>"+event_id+"</event_id><comment>"+comment+"</comment></action></request>";
         }
 

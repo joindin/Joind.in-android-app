@@ -41,7 +41,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
         try {
             this.eventJSON = new JSONObject(getIntent().getStringExtra("eventJSON"));
         } catch (JSONException e) {
-            e.printStackTrace();
+            android.util.Log.e("JoindInApp", "No event passed to activity", e);
         }
 
         // Set all the event information
@@ -112,7 +112,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
             public void run () {
                 // Fetch talk data from joind.in API
                 JIRest rest = new JIRest (EventTalks.this);
-                int error = rest.postXML("http://joind.in/api/event", "<request>"+JIRest.getAuthXML(EventTalks.this)+"<action type=\"gettalks\" output=\"json\"><event_id>"+event_id+"</event_id></action></request>");
+                int error = rest.postXML("event", "<request>"+JIRest.getAuthXML(EventTalks.this)+"<action type=\"gettalks\" output=\"json\"><event_id>"+event_id+"</event_id></action></request>");
 
                 // @TODO: we do not handle errors?
 
