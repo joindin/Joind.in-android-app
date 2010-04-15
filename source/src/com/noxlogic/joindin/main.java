@@ -254,33 +254,32 @@ public class main extends JIActivity implements OnClickListener {
 class JIEventAdapter extends ArrayAdapter<JSONObject> {
       private ArrayList<JSONObject> items;      // The current items in the listview
       private Context context;
-      LayoutInflater vi;
+      LayoutInflater inflator;
 
       public JIEventAdapter(Context context, int textViewResourceId, ArrayList<JSONObject> items) {
           super(context, textViewResourceId, items);
           this.context = context;       // Saving context, sincve we need it on other places where the context is not known.
           this.items = items;
-          this.vi = (LayoutInflater)this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+          this.inflator = (LayoutInflater)this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
       }
 
       // This function will create a custom row with our event data.
-      public View getView(int position, View convertview, ViewGroup parent) {
-          // It might be quicker to inflate it to a global var instead of a local var, but
-          // test has proved otherwise. I could be mistaken though
-          View v = convertview;
-          if (v == null) v = this.vi.inflate(R.layout.eventrow, null);
+      public View getView(int position, View convertView, ViewGroup parent) {
+          if (convertView == null) {
+              convertView = this.inflator.inflate(R.layout.eventrow, null);
+          }
 
           // Get the (JSON) data we need
           JSONObject o = items.get(position);
-          if (o == null) return v;
+          if (o == null) return convertView;
 
           // Find our textviews we need to fill
-          TextView tt = (TextView) v.findViewById(R.id.EventDetailCaption);
-          TextView bt = (TextView) v.findViewById(R.id.EventDetailDate);
-          TextView at = (TextView) v.findViewById(R.id.EventDetailAttending);
+          TextView tt = (TextView) convertView.findViewById(R.id.EventDetailCaption);
+          TextView bt = (TextView) convertView.findViewById(R.id.EventDetailDate);
+          TextView at = (TextView) convertView.findViewById(R.id.EventDetailAttending);
 
           // When the user is attending this event, we display our "attending" image.
-          ImageView im = (ImageView)v.findViewById(R.id.EventDetailAttendingImg);
+          ImageView im = (ImageView)convertView.findViewById(R.id.EventDetailAttendingImg);
           if (o.optBoolean("user_attending") == false) {
               im.setVisibility(View.INVISIBLE);
           } else {
@@ -296,6 +295,7 @@ class JIEventAdapter extends ArrayAdapter<JSONObject> {
               String d2 = DateFormat.getDateInstance().format(o.optLong("event_end")*1000);
               bt.setText(d1.equals(d2) ? d1 : d1 + " - " + d2);
           }
-          return v;
+          
+          return convertView;
       }
 }
