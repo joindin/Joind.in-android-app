@@ -3,6 +3,8 @@
       package="com.noxlogic.joindin"
       android:versionCode="1"
       android:versionName="1.0">
+      
+    <uses-sdk android:minSdkVersion="2" />
     <!-- Application uses a light theme. I think it's much nicer than the standard
          dark android layout. -->
     <application
@@ -52,7 +54,6 @@
         android:label="@string/app_name">
     </activity>
     </application>
-    <uses-sdk android:minSdkVersion="2" />
 
     <!-- Since we make requests over the internet, we need the users permission for it. -->
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
