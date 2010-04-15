@@ -29,11 +29,18 @@ public class DataHelper {
 
     private Context context;
     private SQLiteDatabase db;
+    private OpenHelper openHelper;
 
     public DataHelper(Context context) {
         this.context = context;
-        OpenHelper openHelper = new OpenHelper(this.context);
-        this.db = openHelper.getWritableDatabase();
+        this.openHelper = new OpenHelper(this.context);
+        this.db = this.openHelper.getWritableDatabase();
+    }
+    
+    // Closes the openhelper
+    public void close () {
+        // Close DB helper on closing, otherwise we might end up with memory leaks
+        this.openHelper.close();
     }
 
     // Updates a event
