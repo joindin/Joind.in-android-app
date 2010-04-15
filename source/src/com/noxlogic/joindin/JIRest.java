@@ -25,7 +25,6 @@ import org.apache.http.params.HttpParams;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 class JIRest {
     public static final int OK = 0;
@@ -65,7 +64,6 @@ class JIRest {
             HttpConnectionParams.setSoTimeout(params, 15000);
 
             // We POST our data.
-            Log.i ("http", "Posting to"+JOINDIN_URL+urlPostfix);
             HttpPost httppost = new HttpPost(JOINDIN_URL+urlPostfix);
 
             // Attention: MUST be text/xml. Took a while to figure this one out!

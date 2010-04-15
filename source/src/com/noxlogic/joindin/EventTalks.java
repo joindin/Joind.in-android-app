@@ -27,15 +27,12 @@ import android.widget.AdapterView.OnItemClickListener;
 public class EventTalks extends JIActivity implements OnClickListener {
     private JITalkAdapter m_talkAdapter;    // adapter for listview
     private JSONObject eventJSON;
-    private DataHelper dh;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // Set layout
         setContentView(R.layout.eventalks);
-
-        this.dh = new DataHelper(this);
 
         // Get event ID from the intent scratch board
         try {

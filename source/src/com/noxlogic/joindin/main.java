@@ -35,7 +35,7 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class main extends JIActivity implements OnClickListener {
     private JIEventAdapter m_eventAdapter;       // Adapter for displaying all the events
-    private DataHelper dh;                       // Datahelper helps managing our data
+
     private String currentTab;                   // Current selected tab
     private String currentTitle;                 // Current name
 
@@ -48,8 +48,6 @@ public class main extends JIActivity implements OnClickListener {
 
         // Set 'main' layout
         setContentView(R.layout.main);
-
-        this.dh = new DataHelper(this);
 
         // Add listeners to the button. All buttons use the same listener
         Button button;

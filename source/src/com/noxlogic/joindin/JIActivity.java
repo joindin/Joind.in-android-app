@@ -24,7 +24,8 @@ import android.view.Window;
 import android.widget.Toast;
 
 public class JIActivity extends Activity {
-
+    protected DataHelper dh;                       // Datahelper helps managing our data
+    
     // Returns boolean if the user has entered valid credentials in the preferences
     // screen to login into the joind.in API. Needed to send registered comments and
     // to attend events.
@@ -71,6 +72,24 @@ public class JIActivity extends Activity {
         super.onCreate(savedInstanceState);
         // Needed to show the circular progress animation in the top right corner.
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+        
+        this.dh = new DataHelper(this); 
+    }
+
+    // Called when activity gets resumed (or started)
+    public void onResume () {
+        super.onResume();
+
+        // Open SQLite connection
+        this.dh.open ();
+    }
+    
+    // Called when activity gets paused (or closed)
+    public void onPause () {
+        super.onPause ();
+
+        // Close SQLite connection
+        this.dh.close();
     }
 
     // Displays (or hides) the ciruclar progress animation in the top left corner
@@ -104,8 +123,7 @@ public class JIActivity extends Activity {
 
             case R.id.clear_menu_item :
                         // Removes all items from the database
-                        DataHelper dh = new DataHelper(this);
-                        dh.deleteAll ();
+                        this.dh.deleteAll ();
                         Toast toast = Toast.makeText (getBaseContext(), R.string.generalCacheCleared, Toast.LENGTH_LONG);
                         toast.show ();
                         break;

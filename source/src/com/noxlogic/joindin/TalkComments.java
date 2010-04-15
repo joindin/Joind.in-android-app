@@ -27,15 +27,12 @@ import android.widget.TextView;
 public class TalkComments extends JIActivity implements OnClickListener  {
     private JITalkCommentAdapter m_talkCommentAdapter;  // adapter for listview
     private JSONObject talkJSON;
-    private DataHelper dh;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // Set comment layout
         setContentView(R.layout.comments);
-
-        this.dh = new DataHelper(this);
 
         // Get info from the intent scratch board
         try {

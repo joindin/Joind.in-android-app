@@ -21,15 +21,12 @@ import android.widget.Toast;
 
 public class EventDetail extends JIActivity implements OnClickListener {
     private JSONObject eventJSON;
-    private DataHelper dh;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // Set layout
         setContentView(R.layout.eventdetail);
-
-        this.dh = new DataHelper(this);
 
         // Get event ID from the intent scratch board
         try {

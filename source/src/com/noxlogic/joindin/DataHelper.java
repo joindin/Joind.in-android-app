@@ -34,6 +34,9 @@ public class DataHelper {
     public DataHelper(Context context) {
         this.context = context;
         this.openHelper = new OpenHelper(this.context);
+    }
+    
+    public void open () {
         this.db = this.openHelper.getWritableDatabase();
     }
     
