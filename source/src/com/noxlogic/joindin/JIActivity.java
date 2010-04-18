@@ -73,23 +73,7 @@ public class JIActivity extends Activity {
         // Needed to show the circular progress animation in the top right corner.
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         
-        this.dh = new DataHelper(this); 
-    }
-
-    // Called when activity gets resumed (or started)
-    public void onResume () {
-        super.onResume();
-
-        // Open SQLite connection
-        this.dh.open ();
-    }
-    
-    // Called when activity gets paused (or closed)
-    public void onPause () {
-        super.onPause ();
-
-        // Close SQLite connection
-        this.dh.close();
+        this.dh = new DataHelper(this);
     }
 
     // Displays (or hides) the ciruclar progress animation in the top left corner
@@ -100,6 +84,17 @@ public class JIActivity extends Activity {
             }
         });
     }
+    
+    public void onPause () {
+        super.onPause();
+        this.dh.close();
+    }
+
+    public void onResume () {
+        super.onResume();
+        this.dh.open();
+    }
+    
 
     // Automatically called. Creates option menu. All activities share the same menu.
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -27,87 +27,104 @@ public class DataHelper {
     private static final String DATABASE_NAME = "joindin.db";
     private static final int DATABASE_VERSION = 4;  // Increasing this version number will result in automatic call to onUpgrade()
 
-    private Context context;
-    private SQLiteDatabase db;
+    private SQLiteDatabase db = null;
     private OpenHelper openHelper;
 
     public DataHelper(Context context) {
-        this.context = context;
-        this.openHelper = new OpenHelper(this.context);
+        openHelper = new OpenHelper(context);
     }
     
     public void open () {
-        this.db = this.openHelper.getWritableDatabase();
+        this.db = openHelper.getWritableDatabase();
     }
     
-    // Closes the openhelper
     public void close () {
-        // Close DB helper on closing, otherwise we might end up with memory leaks
-        this.openHelper.close();
+        if (this.db != null) this.db.close();
+        this.db = null;
     }
 
     // Updates a event
     public long updateEvent(int event_id, JSONObject event) {
+        if (this.db == null) open ();
+
         ContentValues values = new ContentValues();
         values.put("json", event.toString());
-        return this.db.update("events", values, "event_id=?", new String[] {Integer.toString(event_id)});
+        return db.update("events", values, "event_id=?", new String[] {Integer.toString(event_id)});
     }
 
     // insert a new event to specified event_type (hot, pending, past etc)
     public long insertEvent(String event_type, JSONObject event) {
+        if (this.db == null) open ();
+
         ContentValues values = new ContentValues();
         values.put("event_id", event.optInt("ID"));
         values.put("event_type", event_type);
         values.put("json", event.toString());
-        return this.db.insert("events", "", values);
+        return db.insert("events", "", values);
     }
 
     // Insert a new talk
     public long insertTalk (JSONObject talk) {
+        if (this.db == null) open ();
+
         ContentValues values = new ContentValues();
         values.put("event_id", talk.optInt("event_id"));
         values.put("json", talk.toString());
-        return this.db.insert("talks", "", values);
+        return db.insert("talks", "", values);
     }
 
     // Insert a new talk comment
     public long insertTalkComment (JSONObject talkComment) {
+        if (this.db == null) open ();
+
         ContentValues values = new ContentValues();
         values.put("talk_id", talkComment.optInt("talk_id"));
         values.put("json", talkComment.toString());
-        return this.db.insert("tcomments", "", values);
+        return db.insert("tcomments", "", values);
     }
 
     // Insert a new event comment
     public long insertEventComment (JSONObject eventComment) {
+        if (this.db == null) open ();
+
         ContentValues values = new ContentValues();
         values.put("event_id", eventComment.optInt("event_id"));
         values.put("json", eventComment.toString());
-        return this.db.insert("ecomments", "", values);
+        return db.insert("ecomments", "", values);
     }
 
     // Removes all events for specified event type (hot, pending, past etc)
     public void deleteAllEventsFromType(String event_type) {
+        if (this.db == null) open ();
+
         db.delete ("events", "event_type=?", new String[] {event_type});
     }
 
     // Removes all talks from specified event
     public void deleteTalksFromEvent(int event_id) {
+        if (this.db == null) open ();
+
         db.delete("talks", "event_id=?", new String[] {Integer.toString(event_id)});
     }
 
     // Removes all comments from specified event
     public void deleteCommentsFromEvent(int event_id) {
+        if (this.db == null) open ();
+
         db.delete("ecomments", "event_id=?", new String[] {Integer.toString(event_id)});
     }
 
     // Removes all comments from specified talk
     public void deleteCommentsFromTalk(int talk_id) {
+        if (this.db == null) open ();
+
         db.delete("tcomments", "talk_id=?", new String[] {Integer.toString(talk_id)});
     }
 
     // Removes EVERYTHING
     public void deleteAll () {
+        if (this.db == null) open ();
+
         db.delete("events", null, null);
         db.delete("talks", null, null);
         db.delete("ecomments", null, null);
@@ -116,6 +133,8 @@ public class DataHelper {
 
     // Populates an event adapter and return the number of items populated
     public int populateEvents(String event_type, JIEventAdapter m_eventAdapter) {
+        if (this.db == null) open ();
+
         Cursor c = this.db.rawQuery("SELECT json FROM events WHERE event_type = '"+event_type+"'", null);
         int count = c.getCount();
         populate (c, m_eventAdapter);
@@ -124,6 +143,8 @@ public class DataHelper {
 
     // Populates a talk adapter and returns the number of items populated
     public int populateTalks(int event_id, JITalkAdapter m_talkAdapter) {
+        if (this.db == null) open ();
+
         Cursor c = this.db.rawQuery("SELECT json FROM talks WHERE event_id = "+event_id, null);
         int count = c.getCount();
         populate (c, m_talkAdapter);
@@ -132,6 +153,8 @@ public class DataHelper {
 
     // Populates a talk comment adapter and retusn the number of items populated
     public int populateTalkComments(int talk_id, JITalkCommentAdapter m_talkCommentAdapter) {
+        if (this.db == null) open ();
+
         Cursor c = this.db.rawQuery("SELECT json FROM tcomments WHERE talk_id = "+talk_id, null);
         int count = c.getCount();
         populate (c, m_talkCommentAdapter);
@@ -140,6 +163,8 @@ public class DataHelper {
 
     // Populates an event comment adapter and returns the number of items populated
     public int populateEventComments(int event_id, JIEventCommentAdapter m_eventCommentAdapter) {
+        if (this.db == null) open ();
+
         Cursor c = this.db.rawQuery("SELECT json FROM ecomments WHERE event_id = "+event_id, null);
         int count = c.getCount();
         populate (c, m_eventCommentAdapter);
