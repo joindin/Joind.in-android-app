@@ -24,16 +24,6 @@
                 android:textSize="11px"
                 android:width="76px"></Button>
             <Button
-                android:text="Pending"
-                android:layout_height="fill_parent"
-                android:layout_width="fill_parent"
-                android:height="30px"
-                android:id="@+id/ButtonMainEventPending"
-                android:textStyle="bold"
-                android:textSize="11px"
-                android:width="76px"
-                android:visibility="gone"></Button>
-            <Button
                 android:text="Upcoming"
                 android:layout_height="fill_parent"
                 android:layout_width="fill_parent"
