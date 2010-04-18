@@ -53,8 +53,6 @@ public class main extends JIActivity implements OnClickListener {
         Button button;
         button = (Button)findViewById(R.id.ButtonMainEventHot);
         button.setOnClickListener(this);
-        button = (Button)findViewById(R.id.ButtonMainEventPending);
-        button.setOnClickListener(this);
         button = (Button)findViewById(R.id.ButtonMainEventPast);
         button.setOnClickListener(this);
         button = (Button)findViewById(R.id.ButtonMainEventUpcoming);
@@ -211,16 +209,6 @@ public class main extends JIActivity implements OnClickListener {
 
             // And in the meantime, load new events from the API (which are
             // displayed when loaded).
-            loadEvents(this.currentTab, this.currentTitle);
-        }
-
-        // Pending events clicked? (NOTE: this does not work, problem in the
-        // joind.in API that does not return "pending event" data
-        if (v == findViewById(R.id.ButtonMainEventPending)) {
-            // Load pending events
-            this.currentTab = "pending";
-            this.currentTitle = getString(R.string.activityMainEventsPending);
-            displayEvents(this.currentTab, this.currentTitle);
             loadEvents(this.currentTab, this.currentTitle);
         }
 
