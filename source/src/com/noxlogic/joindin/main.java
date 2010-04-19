@@ -71,6 +71,8 @@ public class main extends JIActivity implements OnClickListener {
         ListView eventlist =(ListView)findViewById(R.id.ListViewMainEvents);
         eventlist.setAdapter(m_eventAdapter);
 
+        displayEvents(this.currentTab, this.currentTitle);
+
         // When clicked on a event, check which one it is, and go to eventdetail class/activity
         eventlist.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?>parent, View view, int pos, long id) {
