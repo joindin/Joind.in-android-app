@@ -87,8 +87,10 @@ public class TalkComments extends JIActivity implements OnClickListener  {
 
     // This will add all comments for specified talk int he talkcomment listview / adapter
     public int displayTalkComments (int talk_id) {
+        DataHelper dh = DataHelper.getInstance();
+
         m_talkCommentAdapter.clear();
-        int count = this.dh.populateTalkComments(talk_id, m_talkCommentAdapter);
+        int count = dh.populateTalkComments(talk_id, m_talkCommentAdapter);
         m_talkCommentAdapter.notifyDataSetChanged();
 
         // Return the number of comments found
@@ -114,12 +116,13 @@ public class TalkComments extends JIActivity implements OnClickListener  {
                     // Remove all comments from this talk from the DB and insert all new loaded comments (except private comments)
                     try {
                         JSONArray json = new JSONArray(rest.getResult());
-                        TalkComments.this.dh.deleteCommentsFromTalk(talk_id);
+                        DataHelper dh = DataHelper.getInstance();
+                        dh.deleteCommentsFromTalk(talk_id);
                         for (int i=0; i!=json.length(); i++) {
                             JSONObject json_talkcomment = json.getJSONObject(i);
                             // If the comment is private, do not add it. We get them anyway from the joind.in API
                             if (json_talkcomment.optInt("private") == 0)
-                                TalkComments.this.dh.insertTalkComment (json_talkcomment);
+                                dh.insertTalkComment (json_talkcomment);
                         }
                     } catch (JSONException e) { }
                         // Something went wrong, display the talk comments like nothing happened

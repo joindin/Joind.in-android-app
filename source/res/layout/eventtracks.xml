@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Layout with all the talks for the specified event -->
+<!-- Layout with all the tracks for the specified event -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
@@ -11,12 +11,12 @@
         android:textSize="20px"
         android:gravity="center_vertical|center_horizontal"
         android:layout_height="wrap_content"
-        android:id="@+id/EventTalksCaption"
+        android:id="@+id/EventTracksCaption"
         android:textStyle="bold"></TextView>
     <ListView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:scrollbarAlwaysDrawVerticalTrack="true"
         android:scrollbars="vertical"
-        android:id="@+id/ListViewEventTalks"></ListView>
+        android:id="@+id/ListViewEventTracks"></ListView>
 </LinearLayout>

@@ -24,8 +24,7 @@ import android.view.Window;
 import android.widget.Toast;
 
 public class JIActivity extends Activity {
-    protected DataHelper dh;                       // Datahelper helps managing our data
-    
+
     // Returns boolean if the user has entered valid credentials in the preferences
     // screen to login into the joind.in API. Needed to send registered comments and
     // to attend events.
@@ -72,8 +71,6 @@ public class JIActivity extends Activity {
         super.onCreate(savedInstanceState);
         // Needed to show the circular progress animation in the top right corner.
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-        
-        this.dh = new DataHelper(this);
     }
 
     // Displays (or hides) the ciruclar progress animation in the top left corner
@@ -84,17 +81,6 @@ public class JIActivity extends Activity {
             }
         });
     }
-    
-    public void onPause () {
-        super.onPause();
-        this.dh.close();
-    }
-
-    public void onResume () {
-        super.onResume();
-        this.dh.open();
-    }
-    
 
     // Automatically called. Creates option menu. All activities share the same menu.
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -118,7 +104,8 @@ public class JIActivity extends Activity {
 
             case R.id.clear_menu_item :
                         // Removes all items from the database
-                        this.dh.deleteAll ();
+                        DataHelper dh = DataHelper.getInstance ();
+                        dh.deleteAll ();
                         Toast toast = Toast.makeText (getBaseContext(), R.string.generalCacheCleared, Toast.LENGTH_LONG);
                         toast.show ();
                         break;

@@ -49,6 +49,9 @@ public class main extends JIActivity implements OnClickListener {
         // Set 'main' layout
         setContentView(R.layout.main);
 
+        // Create instance of the database singleton. This needs a context 
+        DataHelper.createInstance (this.getApplicationContext());
+
         // Add listeners to the button. All buttons use the same listener
         Button button;
         button = (Button)findViewById(R.id.ButtonMainEventHot);
@@ -118,7 +121,8 @@ public class main extends JIActivity implements OnClickListener {
         m_eventAdapter.clear();
 
         // add events and return count
-        int count = this.dh.populateEvents(eventType, m_eventAdapter);
+        DataHelper dh = DataHelper.getInstance ();
+        int count = dh.populateEvents(eventType, m_eventAdapter);
 
         // Tell the adapter that our dataset has changed so it can update it
         m_eventAdapter.notifyDataSetChanged();
@@ -167,7 +171,8 @@ public class main extends JIActivity implements OnClickListener {
                         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 
                         // Delete all our events for specified type/category
-                        main.this.dh.deleteAllEventsFromType(event_type);
+                        DataHelper dh = DataHelper.getInstance();
+                        dh.deleteAllEventsFromType(event_type);
 
                         // Add new events
                         json = new JSONArray(rest.getResult());
@@ -176,7 +181,7 @@ public class main extends JIActivity implements OnClickListener {
 
                             // Don't add when we are adding to the Past AND we want to display "attended only"
                             if (event_type.compareTo("past") == 0 && prefs.getBoolean("attendonly", true) && ! json_event.optBoolean("user_attending")) continue;
-                            main.this.dh.insertEvent (event_type, json_event);
+                            dh.insertEvent (event_type, json_event);
                         }
                     } catch (JSONException e) { }
                         // Something when wrong. Just display the current events.

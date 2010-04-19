@@ -89,8 +89,10 @@ public class EventComments extends JIActivity implements OnClickListener {
 
     // Display all event comments in the event listview/adapter
     public int displayEventComments (int event_id) {
+        DataHelper dh = DataHelper.getInstance();
+
         m_eventCommentAdapter.clear();
-        int count = this.dh.populateEventComments(event_id, m_eventCommentAdapter);
+        int count = dh.populateEventComments(event_id, m_eventCommentAdapter);
         m_eventCommentAdapter.notifyDataSetChanged();
 
         // Return number of event comments.
@@ -114,13 +116,14 @@ public class EventComments extends JIActivity implements OnClickListener {
                     // Remove all event comments for this event and insert newly loaded comments
                     try {
                         JSONArray json = new JSONArray(rest.getResult());
-                        EventComments.this.dh.deleteCommentsFromEvent(event_id);
+                        DataHelper dh = DataHelper.getInstance();
+                        dh.deleteCommentsFromEvent(event_id);
                         for (int i=0; i!=json.length(); i++) {
                             JSONObject json_eventcomment = json.getJSONObject(i);
 
                             // Don't add private events
                             if (json_eventcomment.optInt("private") == 0)
-                                EventComments.this.dh.insertEventComment (json_eventcomment);
+                                dh.insertEventComment (json_eventcomment);
                         }
                     } catch (JSONException e) { }
                         // Something went wrong. Just act like nothing happened

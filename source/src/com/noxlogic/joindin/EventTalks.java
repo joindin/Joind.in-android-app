@@ -1,7 +1,7 @@
 package com.noxlogic.joindin;
 
 /*
- * Displays all talks from specified even.
+ * Displays all talks from specified event.
  */
 
 import java.util.ArrayList;
@@ -27,24 +27,38 @@ import android.widget.AdapterView.OnItemClickListener;
 public class EventTalks extends JIActivity implements OnClickListener {
     private JITalkAdapter m_talkAdapter;    // adapter for listview
     private JSONObject eventJSON;
+    private JSONObject trackJSON = null;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // Set layout
-        setContentView(R.layout.eventalks);
+        setContentView(R.layout.eventtalks);
 
         // Get event ID from the intent scratch board
         try {
             this.eventJSON = new JSONObject(getIntent().getStringExtra("eventJSON"));
+            if (getIntent().hasExtra("eventTrack")) {
+                this.trackJSON = new JSONObject(getIntent().getStringExtra("eventTrack"));
+            }
         } catch (JSONException e) {
             android.util.Log.e("JoindInApp", "No event passed to activity", e);
         }
+        
 
         // Set all the event information
         TextView t;
         t = (TextView) this.findViewById(R.id.EventTalksCaption);
         t.setText (this.eventJSON.optString("event_name"));
+
+        if (this.trackJSON == null) {
+            t = (TextView) this.findViewById(R.id.EventTalksTrackName);
+            t.setVisibility(View.INVISIBLE);
+        } else {
+            t = (TextView) this.findViewById(R.id.EventTalksTrackName);
+            t.setVisibility(View.VISIBLE);
+            t.setText ("("+this.trackJSON.optString("track_name")+")");
+        }
 
         // Init talk list
         ArrayList<JSONObject> m_talks = new ArrayList<JSONObject>();
@@ -66,10 +80,11 @@ public class EventTalks extends JIActivity implements OnClickListener {
 
         // Display cached talks
         int event_id = this.eventJSON.optInt("ID");
-        displayTalks (event_id);
+        int track_id = (this.trackJSON != null) ? this.trackJSON.optInt("ID") : -1;
+        displayTalks (event_id, track_id);
 
         // Load new talks (in background)
-        loadTalks (event_id);
+        loadTalks (event_id, track_id);
     }
 
 
@@ -84,10 +99,12 @@ public class EventTalks extends JIActivity implements OnClickListener {
     };
 
 
-    // Display all talks in the talk list (adapter)
-    public int displayTalks (int event_id) {
+    // Display talks in the talk list (adapter), depending on the track_id
+    public int displayTalks (int event_id, int track_id) {
+        DataHelper dh = DataHelper.getInstance();
+
         m_talkAdapter.clear();
-        int talkCount = this.dh.populateTalks(event_id, m_talkAdapter);
+        int talkCount = dh.populateTalks(event_id, track_id, m_talkAdapter);
         m_talkAdapter.notifyDataSetChanged();
 
         // Set titlebar with number of talks found
@@ -101,7 +118,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
 
 
     // Load talks in new thread...
-    public void loadTalks (final int event_id) {
+    public void loadTalks (final int event_id, final int track_id) {
         // Display progress bar
         displayProgressBar (true);
 
@@ -117,16 +134,17 @@ public class EventTalks extends JIActivity implements OnClickListener {
                     // Remove all talks from event, and insert new data
                     try {
                         JSONArray json = new JSONArray(rest.getResult());
-                        EventTalks.this.dh.deleteTalksFromEvent(event_id);
+                        DataHelper dh = DataHelper.getInstance();
+                        dh.deleteTalksFromEvent(event_id);
                         for (int i=0; i!=json.length(); i++) {
                             JSONObject json_talk = json.getJSONObject(i);
-                            EventTalks.this.dh.insertTalk (json_talk);
+                            dh.insertTalk (json_talk);
                         }
                     } catch (JSONException e) { }
                         // On error, display new talks like nothing happened
                         runOnUiThread(new Runnable() {
                             public void run() {
-                                displayTalks (event_id);
+                                displayTalks (event_id, track_id);
                             }
                         });
                 }

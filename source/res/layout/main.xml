@@ -13,7 +13,8 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_gravity="center_vertical|center_horizontal"
-            android:gravity="center_vertical|center_horizontal">
+            android:gravity="center_vertical|center_horizontal" 
+            android:layout_marginTop="5px">
             <Button
                 android:text="Hot"
                 android:layout_height="fill_parent"
@@ -22,7 +23,7 @@
                 android:id="@+id/ButtonMainEventHot"
                 android:textStyle="bold"
                 android:textSize="11px"
-                android:width="76px"></Button>
+                android:width="100px"></Button>
             <Button
                 android:text="Upcoming"
                 android:layout_height="fill_parent"
@@ -31,7 +32,7 @@
                 android:id="@+id/ButtonMainEventUpcoming"
                 android:textStyle="bold"
                 android:textSize="11px"
-                android:width="76px"></Button>
+                android:width="100px"></Button>
             <Button
                 android:text="Past"
                 android:layout_height="fill_parent"
@@ -40,7 +41,7 @@
                 android:id="@+id/ButtonMainEventPast"
                 android:textStyle="bold"
                 android:textSize="11px"
-                android:width="76px"></Button>
+                android:width="100px"></Button>
         </TableRow>
     </TableLayout>
     <ListView

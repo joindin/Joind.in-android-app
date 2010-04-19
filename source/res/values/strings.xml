@@ -29,7 +29,6 @@
 
     <string name="activityMainAttending">%d attending</string>
     <string name="activityMainEventsHot">Hot events</string>
-    <string name="activityMainEventsPending">Pending events</string>
     <string name="activityMainEventsPast">Past events</string>
     <string name="activityMainEventsUpcoming">Upcoming events</string>
 
@@ -43,11 +42,20 @@
 
     <!-- Global strings, can occur everywhere -->
     <string name="generalPleaseWait">Please wait...</string>
-    <string name="generalViewCommentSingular">View %d comment</string>
-    <string name="generalViewCommentPlural">View %d comments</string>
+    <string name="generalViewCommentSingular">View comment (%d)</string>
+    <string name="generalViewCommentPlural">View comments (%d)</string>
+
+    <string name="generalViewTrackSingular">View tracks (%d)</string>
+    <string name="generalViewTrackPlural">View tracks (%d)</string>
+
+    <string name="generalViewTalkSingular">View talk (%d)</string>
+    <string name="generalViewTalkPlural">View talks (%d)</string>
 
     <string name="generalEventTalksSingular">%d event talk</string>
     <string name="generalEventTalksPlural">%d event talks</string>
+
+    <string name="generalEventTracksSingular">%d event track</string>
+    <string name="generalEventTracksPlural">%d event tracks</string>
 
     <string name="generalCommentSingular">%d comment</string>
     <string name="generalCommentPlural">%d comments</string>

@@ -12,6 +12,7 @@ package com.noxlogic.joindin;
  * outside this class.
  */
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -23,30 +24,32 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.widget.ArrayAdapter;
 
 
-public class DataHelper {
+public final class DataHelper {
+    private static DataHelper DHinstance = null;
+
     private static final String DATABASE_NAME = "joindin.db";
-    private static final int DATABASE_VERSION = 4;  // Increasing this version number will result in automatic call to onUpgrade()
+    private static final int DATABASE_VERSION = 5;  // Increasing this version number will result in automatic call to onUpgrade()
 
     private SQLiteDatabase db = null;
-    private OpenHelper openHelper;
 
-    public DataHelper(Context context) {
-        openHelper = new OpenHelper(context);
-    }
-    
-    public void open () {
+    private DataHelper(Context context) {
+        OpenHelper openHelper = new OpenHelper (context);
         this.db = openHelper.getWritableDatabase();
     }
-    
-    public void close () {
-        if (this.db != null) this.db.close();
-        this.db = null;
+
+    public static DataHelper createInstance (Context context) {
+        if (DHinstance == null) DHinstance = new DataHelper (context);
+
+        return DHinstance;
+    }
+
+    public static DataHelper getInstance () {
+        if (DHinstance == null) return null;
+        return DHinstance;
     }
 
     // Updates a event
     public long updateEvent(int event_id, JSONObject event) {
-        if (this.db == null) open ();
-
         ContentValues values = new ContentValues();
         values.put("json", event.toString());
         return db.update("events", values, "event_id=?", new String[] {Integer.toString(event_id)});
@@ -54,29 +57,42 @@ public class DataHelper {
 
     // insert a new event to specified event_type (hot, pending, past etc)
     public long insertEvent(String event_type, JSONObject event) {
-        if (this.db == null) open ();
-
         ContentValues values = new ContentValues();
         values.put("event_id", event.optInt("ID"));
         values.put("event_type", event_type);
         values.put("json", event.toString());
         return db.insert("events", "", values);
     }
+    
+    // load event 
+    public JSONObject getEvent(int event_id) {
+        Cursor c = this.db.rawQuery("SELECT json FROM events WHERE event_id = "+event_id, null);
+        JSONObject json;
+        try {
+            c.moveToFirst();
+            json = new JSONObject (c.getString (0));
+        } catch (Exception e) {
+            json = new JSONObject();
+        }
+        return json;
+    }
 
     // Insert a new talk
     public long insertTalk (JSONObject talk) {
-        if (this.db == null) open ();
-
         ContentValues values = new ContentValues();
         values.put("event_id", talk.optInt("event_id"));
+
+        try {
+            if (talk.getJSONArray("tracks").length() > 0) {
+                values.put("track_id", talk.getJSONArray("tracks").getJSONObject(0).optInt("ID"));            
+            }
+        } catch (JSONException e) {}
         values.put("json", talk.toString());
         return db.insert("talks", "", values);
     }
 
     // Insert a new talk comment
     public long insertTalkComment (JSONObject talkComment) {
-        if (this.db == null) open ();
-
         ContentValues values = new ContentValues();
         values.put("talk_id", talkComment.optInt("talk_id"));
         values.put("json", talkComment.toString());
@@ -85,8 +101,6 @@ public class DataHelper {
 
     // Insert a new event comment
     public long insertEventComment (JSONObject eventComment) {
-        if (this.db == null) open ();
-
         ContentValues values = new ContentValues();
         values.put("event_id", eventComment.optInt("event_id"));
         values.put("json", eventComment.toString());
@@ -95,36 +109,26 @@ public class DataHelper {
 
     // Removes all events for specified event type (hot, pending, past etc)
     public void deleteAllEventsFromType(String event_type) {
-        if (this.db == null) open ();
-
         db.delete ("events", "event_type=?", new String[] {event_type});
     }
 
     // Removes all talks from specified event
     public void deleteTalksFromEvent(int event_id) {
-        if (this.db == null) open ();
-
         db.delete("talks", "event_id=?", new String[] {Integer.toString(event_id)});
     }
 
     // Removes all comments from specified event
     public void deleteCommentsFromEvent(int event_id) {
-        if (this.db == null) open ();
-
         db.delete("ecomments", "event_id=?", new String[] {Integer.toString(event_id)});
     }
 
     // Removes all comments from specified talk
     public void deleteCommentsFromTalk(int talk_id) {
-        if (this.db == null) open ();
-
         db.delete("tcomments", "talk_id=?", new String[] {Integer.toString(talk_id)});
     }
 
     // Removes EVERYTHING
     public void deleteAll () {
-        if (this.db == null) open ();
-
         db.delete("events", null, null);
         db.delete("talks", null, null);
         db.delete("ecomments", null, null);
@@ -133,19 +137,41 @@ public class DataHelper {
 
     // Populates an event adapter and return the number of items populated
     public int populateEvents(String event_type, JIEventAdapter m_eventAdapter) {
-        if (this.db == null) open ();
-
         Cursor c = this.db.rawQuery("SELECT json FROM events WHERE event_type = '"+event_type+"'", null);
         int count = c.getCount();
         populate (c, m_eventAdapter);
         return count;
     }
 
-    // Populates a talk adapter and returns the number of items populated
-    public int populateTalks(int event_id, JITalkAdapter m_talkAdapter) {
-        if (this.db == null) open ();
+    public int populateTracks(int event_id, JITrackAdapter m_trackAdapter) {
+        int trackCount = 0;
+        Cursor c = this.db.rawQuery("SELECT json FROM events WHERE event_id = "+event_id, null);
+        c.moveToFirst();
+        try {
+            JSONObject json = new JSONObject(c.getString(0));
+            JSONArray json_tracks = json.getJSONArray ("tracks");
+            trackCount = json_tracks.length();
 
-        Cursor c = this.db.rawQuery("SELECT json FROM talks WHERE event_id = "+event_id, null);
+            for (int i=0; i!=json_tracks.length(); i++) {
+                m_trackAdapter.add(json_tracks.getJSONObject(i));
+            }
+        } catch (JSONException e) { 
+            android.util.Log.e("JoindInApp", "Could not add item to list", e); 
+        }
+
+        c.close ();
+        return trackCount;
+    }
+
+    // Populates a talk adapter and returns the number of items populated
+    public int populateTalks(int event_id, int track_id, JITalkAdapter m_talkAdapter) {
+        Cursor c;
+
+        if (track_id == -1) {
+            c = this.db.rawQuery("SELECT json FROM talks WHERE event_id = "+event_id, null);
+        } else {
+            c = this.db.rawQuery("SELECT json FROM talks WHERE event_id = "+event_id+" and track_id = "+track_id, null);
+        }
         int count = c.getCount();
         populate (c, m_talkAdapter);
         return count;
@@ -153,8 +179,6 @@ public class DataHelper {
 
     // Populates a talk comment adapter and retusn the number of items populated
     public int populateTalkComments(int talk_id, JITalkCommentAdapter m_talkCommentAdapter) {
-        if (this.db == null) open ();
-
         Cursor c = this.db.rawQuery("SELECT json FROM tcomments WHERE talk_id = "+talk_id, null);
         int count = c.getCount();
         populate (c, m_talkCommentAdapter);
@@ -163,8 +187,6 @@ public class DataHelper {
 
     // Populates an event comment adapter and returns the number of items populated
     public int populateEventComments(int event_id, JIEventCommentAdapter m_eventCommentAdapter) {
-        if (this.db == null) open ();
-
         Cursor c = this.db.rawQuery("SELECT json FROM ecomments WHERE event_id = "+event_id, null);
         int count = c.getCount();
         populate (c, m_eventCommentAdapter);
@@ -200,7 +222,7 @@ public class DataHelper {
         // Create new database (if needed)
         public void onCreate(SQLiteDatabase db) {
             db.execSQL("CREATE TABLE [events]    ([event_id] INTEGER, [event_type] VARCHAR, [json] VARCHAR)");
-            db.execSQL("CREATE TABLE [talks]     ([event_id] INTEGER, [json] VARCHAR)");
+            db.execSQL("CREATE TABLE [talks]     ([event_id] INTEGER, [track_id] INTEGER, [json] VARCHAR)");
             db.execSQL("CREATE TABLE [ecomments] ([event_id] INTEGER, [json] VARCHAR)");
             db.execSQL("CREATE TABLE [tcomments] ([talk_id] INTEGER, [json] VARCHAR)");
         }

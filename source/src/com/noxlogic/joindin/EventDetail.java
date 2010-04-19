@@ -28,7 +28,7 @@ public class EventDetail extends JIActivity implements OnClickListener {
         // Set layout
         setContentView(R.layout.eventdetail);
 
-        // Get event ID from the intent scratch board
+        // Get info from the intent scratch board
         try {
             this.eventJSON = new JSONObject(getIntent().getStringExtra("eventJSON"));
         } catch (JSONException e) {
@@ -38,39 +38,115 @@ public class EventDetail extends JIActivity implements OnClickListener {
         // Set title
         setTitle (R.string.activityEventDetailTitle);
 
-        // Set all the event information
-        TextView t;
-        t = (TextView) this.findViewById(R.id.EventDetailsEventCaption);
-        t.setText (this.eventJSON.optString("event_name"));
-        t = (TextView) this.findViewById(R.id.EventDetailsEventLoc);
-        t.setText (this.eventJSON.optString("event_loc"));
-        t = (TextView) this.findViewById(R.id.EventDetailsDate);
-        String d1 = DateFormat.getDateInstance().format(this.eventJSON.optLong("event_start")*1000);
-        String d2 = DateFormat.getDateInstance().format(this.eventJSON.optLong("event_end")*1000);
-        t.setText(d1.equals(d2) ? d1 : d1 + " - " + d2);
-        t = (TextView) this.findViewById(R.id.EventDetailsStub);
-        t.setText (this.eventJSON.optString("event_stub"));
-        t = (TextView) this.findViewById(R.id.EventDetailsDescription);
-        t.setText (this.eventJSON.optString("event_desc"));
-
-        Button b = (Button) this.findViewById(R.id.ButtonEventDetailsViewComments);
-        int i = this.eventJSON.optInt("num_comments");
-        if (i == 1) {
-            b.setText(String.format(getString(R.string.generalViewCommentSingular), i));
-        } else {
-            b.setText(String.format(getString(R.string.generalViewCommentSingular), i));
-        }
-
-        CheckBox c = (CheckBox)findViewById(R.id.CheckBoxEventDetailsAttending);
-        c.setChecked(this.eventJSON.optBoolean("user_attending"));
-
         // Add handler to buttons
         Button button = (Button)findViewById(R.id.ButtonEventDetailsViewComments);
         button.setOnClickListener(this);
         button = (Button)findViewById(R.id.ButtonEventDetailsViewTalks);
         button.setOnClickListener(this);
+        button = (Button)findViewById(R.id.ButtonEventDetailsViewTracks);
+        button.setOnClickListener(this);
         CheckBox checkbox = (CheckBox)findViewById(R.id.CheckBoxEventDetailsAttending);
         checkbox.setOnClickListener(this);
+
+        int event_id = this.eventJSON.optInt("ID");
+        displayDetails (event_id);
+
+        loadDetails (event_id);
+    }
+
+    public void displayDetails (int event_id) {
+        DataHelper dh = DataHelper.getInstance();
+        JSONObject event = dh.getEvent (event_id);
+        if (event == null) return;
+
+        // Set all the event information
+        TextView t;
+        t = (TextView) this.findViewById(R.id.EventDetailsEventCaption);
+        t.setText (event.optString("event_name"));
+        t = (TextView) this.findViewById(R.id.EventDetailsEventLoc);
+        t.setText (event.optString("event_loc"));
+        t = (TextView) this.findViewById(R.id.EventDetailsDate);
+        String d1 = DateFormat.getDateInstance().format(event.optLong("event_start")*1000);
+        String d2 = DateFormat.getDateInstance().format(event.optLong("event_end")*1000);
+        t.setText(d1.equals(d2) ? d1 : d1 + " - " + d2);
+        t = (TextView) this.findViewById(R.id.EventDetailsStub);
+        t.setText (event.optString("event_stub"));
+        t = (TextView) this.findViewById(R.id.EventDetailsDescription);
+        t.setText (event.optString("event_desc"));
+
+        // Add number of comments to the correct button caption 
+        Button b = (Button) this.findViewById(R.id.ButtonEventDetailsViewComments);
+        int commentCount = event.optInt("num_comments");
+        if (commentCount == 1) {
+            b.setText(String.format(getString(R.string.generalViewCommentSingular), commentCount));
+        } else {
+            b.setText(String.format(getString(R.string.generalViewCommentPlural), commentCount));
+        }
+
+        /* Current API does not return the number of talks for specified event. As soon as it does
+         * we can update the button caption */
+        if (event.has("num_talks")) {
+            b = (Button) this.findViewById(R.id.ButtonEventDetailsViewTalks);
+            int talkCount = event.optInt("num_talks");
+
+            if (talkCount == 1) {
+                b.setText(String.format(getString(R.string.generalViewTalkSingular), talkCount));
+            } else {
+                b.setText(String.format(getString(R.string.generalViewTalkPlural), talkCount));
+            }
+        }
+
+        // See if this event has tracks
+        b = (Button) this.findViewById(R.id.ButtonEventDetailsViewTracks);                
+        JSONArray tracks = event.optJSONArray("tracks");
+        int trackCount = (tracks == null) ? 0 : tracks.length();
+        if (trackCount == 1) {
+            b.setText(String.format(getString(R.string.generalViewTrackSingular), trackCount));
+        } else {
+            b.setText(String.format(getString(R.string.generalViewTrackPlural), trackCount));
+        }
+
+        // Set track button enabled when we have at least 1 track
+        b.setEnabled((trackCount > 0));
+
+        // Tick the checkbox, depending on if we are attending or not
+        CheckBox c = (CheckBox)findViewById(R.id.CheckBoxEventDetailsAttending);
+        c.setChecked(event.optBoolean("user_attending"));
+    }
+
+    
+    public void loadDetails (final int event_id) {
+        // Display progress bar
+        displayProgressBar (true);
+
+        new Thread () {
+            public void run () {
+                // Fetch talk data from joind.in API
+                JIRest rest = new JIRest (EventDetail.this);
+                int error = rest.postXML ("event", "<request>"+JIRest.getAuthXML(EventDetail.this)+"<action type=\"getdetail\" output=\"json\"><event_id>"+event_id+"</event_id></action></request>");
+
+                if (error == JIRest.OK) {
+                    try {
+                        JSONArray json = new JSONArray (rest.getResult());
+                        JSONObject json_event = json.getJSONObject(0);
+
+                        //  Update event details
+                        DataHelper dh = DataHelper.getInstance();
+                        dh.updateEvent (event_id, json_event);
+                    } catch (JSONException e) { }
+                }
+
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        displayDetails (event_id);
+                    }
+                });
+
+                // Remove progress bar
+                displayProgressBar (false);
+            }
+
+        }.start();
     }
 
 
@@ -86,6 +162,13 @@ public class EventDetail extends JIActivity implements OnClickListener {
             // Display talks activity
             Intent myIntent = new Intent ();
             myIntent.setClass(getBaseContext(), EventTalks.class);
+            myIntent.putExtra("eventJSON", getIntent().getStringExtra("eventJSON"));
+            startActivity(myIntent);
+        }
+        if (v == findViewById(R.id.ButtonEventDetailsViewTracks)) {
+            // Display talks activity
+            Intent myIntent = new Intent ();
+            myIntent.setClass(getBaseContext(), EventTracks.class);
             myIntent.putExtra("eventJSON", getIntent().getStringExtra("eventJSON"));
             startActivity(myIntent);
         }
@@ -161,7 +244,8 @@ public class EventDetail extends JIActivity implements OnClickListener {
                     JSONArray json = new JSONArray(rest.getResult());
                     JSONObject json_event = json.getJSONObject(0);
                     // Update the event in the database
-                    this.dh.updateEvent (eventID, json_event);
+                    DataHelper dh = DataHelper.getInstance();
+                    dh.updateEvent (eventID, json_event);
                 } catch (JSONException e) { 
                     // Ignored
                 }
