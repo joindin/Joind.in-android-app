@@ -151,11 +151,23 @@ public class AddComment extends JIActivity implements OnClickListener {
 
         // Are we sending a talk comment?
         if (this.commentType.compareTo("talk") == 0) {
+            try {
+                this.talkJSON = new JSONObject(getIntent().getStringExtra("talkJSON"));
+            } catch (JSONException e) {
+                android.util.Log.e("JoindInApp", "No talk passed to activity", e);
+            }
+
             int talk_id = this.talkJSON.optInt("ID");
             url = "talk";
             xml = "<request>"+JIRest.getAuthXML(this)+"<action type=\"addcomment\" output=\"json\"><talk_id>"+talk_id+"</talk_id><rating>"+rating+"</rating><comment>"+comment+"</comment><private>"+priv+"</private></action></request>";
         } else {
             // We are sending an event comment
+            try {
+                this.eventJSON = new JSONObject(getIntent().getStringExtra("eventJSON"));
+            } catch (JSONException e) {
+                android.util.Log.e("JoindInApp", "No event passed to activity", e);
+            }
+
             int event_id = this.eventJSON.optInt("ID");
             url = "event";
             xml = "<request>"+JIRest.getAuthXML(this)+"<action type=\"addcomment\" output=\"json\"><event_id>"+event_id+"</event_id><comment>"+comment+"</comment></action></request>";
