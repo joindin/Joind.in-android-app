@@ -23,14 +23,19 @@
             android:text="Speaker: "
             android:gravity="center"
             android:id="@+id/TalkDetailSpeaker"></TextView>
-        <TextView
-            android:layout_width="fill_parent"
-            android:padding="3px"
-            android:scrollbars="vertical"
-            android:id="@+id/TalkDetailDescription"
+        <ScrollView
+            android:id="@+id/ScrollView01"
             android:layout_height="fill_parent"
-            android:textSize="6pt"
-            android:background="#eeeeee"></TextView>
+            android:layout_width="fill_parent">
+            <TextView
+                android:layout_width="fill_parent"
+                android:padding="3px"
+                android:scrollbars="vertical"
+                android:id="@+id/TalkDetailDescription"
+                android:layout_height="fill_parent"
+                android:textSize="6pt"
+                android:background="#eeeeee"></TextView>
+        </ScrollView>
     </LinearLayout>
     <LinearLayout
         android:id="@+id/LinearLayout02"
