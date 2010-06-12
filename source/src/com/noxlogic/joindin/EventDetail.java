@@ -123,7 +123,7 @@ public class EventDetail extends JIActivity implements OnClickListener {
             public void run () {
                 // Fetch talk data from joind.in API
                 JIRest rest = new JIRest (EventDetail.this);
-                int error = rest.postXML ("event", "<request>"+JIRest.getAuthXML(EventDetail.this)+"<action type=\"getdetail\" output=\"json\"><event_id>"+event_id+"</event_id></action></request>");
+                int error = rest.postXML ("event", "<request><action type=\"getdetail\" output=\"json\"><event_id>"+event_id+"</event_id></action></request>");
 
                 if (error == JIRest.OK) {
                     try {
