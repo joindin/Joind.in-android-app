@@ -43,7 +43,7 @@ public class EventTracks extends JIActivity {
         t = (TextView) this.findViewById(R.id.EventTracksCaption);
         t.setText (this.eventJSON.optString("event_name"));
 
-        // Init track list
+        // Initialize track list
         ArrayList<JSONObject> m_tracks = new ArrayList<JSONObject>();
         m_trackAdapter = new JITrackAdapter(this, R.layout.trackrow, m_tracks);
         ListView tracklist =(ListView)findViewById(R.id.ListViewEventTracks);
@@ -74,7 +74,7 @@ public class EventTracks extends JIActivity {
         int trackCount = dh.populateTracks(event_id, m_trackAdapter);
         m_trackAdapter.notifyDataSetChanged();
 
-        // Set titlebar with number of talks found
+        // Set title bar with number of talks found
         if (trackCount == 1) {
             setTitle (String.format(getString(R.string.generalEventTracksSingular), trackCount));
         } else {

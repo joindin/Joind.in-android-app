@@ -54,7 +54,7 @@ public class EventComments extends JIActivity implements OnClickListener {
             setTitle (String.format(getString(R.string.generalCommentPlural), commentCount));
         }
 
-        // Init comment list
+        // Initialize comment list
         ArrayList<JSONObject> m_eventcomments = new ArrayList<JSONObject>();
         m_eventCommentAdapter = new JIEventCommentAdapter(this, R.layout.talkrow, m_eventcomments);
         ListView eventcommentlist =(ListView)findViewById(R.id.EventDetailComments);

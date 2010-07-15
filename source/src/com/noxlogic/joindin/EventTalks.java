@@ -60,7 +60,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
             t.setText ("("+this.trackJSON.optString("track_name")+")");
         }
 
-        // Init talk list
+        // Initialize talk list
         ArrayList<JSONObject> m_talks = new ArrayList<JSONObject>();
         m_talkAdapter = new JITalkAdapter(this, R.layout.talkrow, m_talks);
         ListView talklist =(ListView)findViewById(R.id.ListViewEventTalks);
@@ -107,7 +107,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
         int talkCount = dh.populateTalks(event_id, track_id, m_talkAdapter);
         m_talkAdapter.notifyDataSetChanged();
 
-        // Set titlebar with number of talks found
+        // Set title bar with number of talks found
         if (talkCount == 1) {
             setTitle (String.format(getString(R.string.generalEventTalksSingular), talkCount));
         } else {
@@ -128,7 +128,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
                 JIRest rest = new JIRest (EventTalks.this);
                 int error = rest.postXML("event", "<request>"+JIRest.getAuthXML(EventTalks.this)+"<action type=\"gettalks\" output=\"json\"><event_id>"+event_id+"</event_id></action></request>");
 
-                // @TODO: we do not handle errors?
+                // @TODO: We do not handle errors?
 
                 if (error == JIRest.OK) {
                     // Remove all talks from event, and insert new data

@@ -65,7 +65,7 @@ public class main extends JIActivity implements OnClickListener {
         currentTab = "hot";
         currentTitle = getString(R.string.activityMainEventsHot);
 
-        // Create array with all found events and add it to the eventlist
+        // Create array with all found events and add it to the event list
         ArrayList<JSONObject> m_events = new ArrayList<JSONObject>();
         m_eventAdapter = new JIEventAdapter(this, R.layout.eventrow, m_events);
         ListView eventlist =(ListView)findViewById(R.id.ListViewMainEvents);
@@ -73,7 +73,7 @@ public class main extends JIActivity implements OnClickListener {
 
         displayEvents(this.currentTab, this.currentTitle);
 
-        // When clicked on a event, check which one it is, and go to eventdetail class/activity
+        // When clicked on a event, check which one it is, and go to event detail class/activity
         eventlist.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?>parent, View view, int pos, long id) {
                 Intent myIntent = new Intent ();
@@ -117,16 +117,16 @@ public class main extends JIActivity implements OnClickListener {
     }
 
 
-    // Display events by populating thje m_eventAdapter (customlist) with items loaded from DB
+    // Display events by populating the m_eventAdapter (custom list) with items loaded from DB
     public int displayEvents (final String eventType, final String eventCategory) {
-        // Clear all eventes
+        // Clear all events
         m_eventAdapter.clear();
 
         // add events and return count
         DataHelper dh = DataHelper.getInstance ();
         int count = dh.populateEvents(eventType, m_eventAdapter);
 
-        // Tell the adapter that our dataset has changed so it can update it
+        // Tell the adapter that our data set has changed so it can update it
         m_eventAdapter.notifyDataSetChanged();
 
         // Set main title to event category plus the number of events found
@@ -140,7 +140,7 @@ public class main extends JIActivity implements OnClickListener {
         // This will display a small progress circle in the top right corner
         displayProgressBar (true);
 
-        // We need to run this in a new thread, otherwise the progressbar does not show
+        // We need to run this in a new thread, otherwise the progress bar does not show
         new Thread () {
             public void run() {
                 // Get some event data from the joind.in API
@@ -163,7 +163,7 @@ public class main extends JIActivity implements OnClickListener {
 
                 } else {
                     /*
-                     * We just receievd new event data from joind.in API. Instead of modifying the current data
+                     * We just received new event data from joind.in API. Instead of modifying the current data
                      * already present in our database, we just remove all data and insert the new data. Makes
                      * life much easier :)
                      */

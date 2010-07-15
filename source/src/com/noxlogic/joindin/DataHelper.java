@@ -177,7 +177,7 @@ public final class DataHelper {
         return count;
     }
 
-    // Populates a talk comment adapter and retusn the number of items populated
+    // Populates a talk comment adapter and returns the number of items populated
     public int populateTalkComments(int talk_id, JITalkCommentAdapter m_talkCommentAdapter) {
         Cursor c = this.db.rawQuery("SELECT json FROM tcomments WHERE talk_id = "+talk_id, null);
         int count = c.getCount();

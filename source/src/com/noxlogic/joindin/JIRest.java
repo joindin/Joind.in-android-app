@@ -42,7 +42,7 @@ class JIRest {
         this.context = context;
     }
 
-    // Return the last communciation result
+    // Return the last communication result
     public String getResult () {
         return this.result;
     }
@@ -56,8 +56,8 @@ class JIRest {
     public int postXML (String urlPostfix, String xml) {
 
         try {
-            // Create http client with timeouts so we dont have to wait
-            // indefiniatly when internet is kaput
+            // Create http client with timeouts so we don't have to wait
+            // indefinitely when the internet is kaput
             HttpClient httpclient = new DefaultHttpClient();
             HttpParams params = httpclient.getParams();
             HttpConnectionParams.setConnectionTimeout(params, 30000);
@@ -82,7 +82,7 @@ class JIRest {
                 // Post stuff
                 HttpResponse response = httpclient.execute (httppost);
 
-                // Get repsonse
+                // Get response
                 HttpEntity entity = response.getEntity();
                 if (entity != null) {
                     // If we receive some data, place it in our result string
@@ -93,7 +93,7 @@ class JIRest {
                     return OK;
                 }
             } catch (ClientProtocolException e) {
-                // Eror during communcation
+                // Error during communication
                 this.error = String.format (this.context.getString(R.string.JIRestProtocolError), e.getMessage());
                 return ERROR;
             } catch (SocketTimeoutException e) {
@@ -101,7 +101,7 @@ class JIRest {
                 this.error = this.context.getString(R.string.JIRestSocketTimeout);
                 return TIMEOUT;
             } catch (IOException e) {
-                // IO expection ocurred
+                // IO exception occurred
                 this.error = String.format (this.context.getString(R.string.JIRestIOError), e.getMessage());
                 return ERROR;
             }
@@ -114,7 +114,7 @@ class JIRest {
     }
 
     // This will return either a empty string, or a xml auth string <auth><user><pass></auth> that can be used in messages.
-    // We need an activity because we need to fetch the preference manager which is only gettable from a context.
+    // We need an activity because we need to fetch the preference manager which is only fetchable from a context.
     // ( @TODO: find another way to fetch basecontext)
     public static String getAuthXML (Context context) {
         // Make authentication string from the preferences

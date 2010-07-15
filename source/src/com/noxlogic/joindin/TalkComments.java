@@ -58,7 +58,7 @@ public class TalkComments extends JIActivity implements OnClickListener  {
         Button button = (Button)findViewById(R.id.ButtonNewComment);
         button.setOnClickListener(this);
 
-        // Init comment list
+        // Initialize comment list
         ArrayList<JSONObject> m_talkcomments = new ArrayList<JSONObject>();
         m_talkCommentAdapter = new JITalkCommentAdapter(this, R.layout.talkrow, m_talkcomments);
         ListView talkcommentlist =(ListView)findViewById(R.id.EventDetailComments);
@@ -85,7 +85,7 @@ public class TalkComments extends JIActivity implements OnClickListener  {
         }
     };
 
-    // This will add all comments for specified talk int he talkcomment listview / adapter
+    // This will add all comments for specified talk in the talkcomment listview / adapter
     public int displayTalkComments (int talk_id) {
         DataHelper dh = DataHelper.getInstance();
 

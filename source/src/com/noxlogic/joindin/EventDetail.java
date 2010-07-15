@@ -182,7 +182,7 @@ public class EventDetail extends JIActivity implements OnClickListener {
 
                     // Fetch state of checkbox (on or off)
                     CheckBox cb = (CheckBox)findViewById(R.id.CheckBoxEventDetailsAttending);
-                    // Tell joind.in API that we attend (or unattend) this event
+                    // Tell joind.in API that we attend (or unattended) this event
                     final String result = attendEvent(cb.isChecked());
 
                     // Display result, must be done in UI thread
@@ -202,7 +202,7 @@ public class EventDetail extends JIActivity implements OnClickListener {
     };
 
 
-    // This function will send to joind.in if we attend (or unattend) specified event.
+    // This function will send to joind.in if we attend (or unattended) specified event.
     private String attendEvent (boolean initialState) {
         String result;
 
@@ -215,7 +215,7 @@ public class EventDetail extends JIActivity implements OnClickListener {
 
         if (error == JIRest.OK) {
             try {
-                    // When the api returns something, check if it's JSON. If so
+                    // When the API returns something, check if it's JSON. If so
                     // we parse the MSG key from it since it will be our value.
                     JSONObject json = new JSONObject(rest.getResult());
                     result = json.optString("msg");

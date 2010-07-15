@@ -25,7 +25,7 @@ public class Splash extends JIActivity {
           // This will run after a specified time (SPLASH_DISPLAY_LENGHT milliseconds)
           new Handler().postDelayed(new Runnable(){
                public void run() {
-                    // Intenting to start the activitiy "main".
+                    // Intenting to start the activity "main".
                     Intent mainIntent = new Intent(Splash.this, main.class);
                     Splash.this.startActivity(mainIntent);
                     Splash.this.finish();   // Splash screen is done now...

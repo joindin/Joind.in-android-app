@@ -119,7 +119,7 @@ public class AddComment extends JIActivity implements OnClickListener {
                     // Must be done if we want to display the toast on screen. This must be done by a thread that can update the UI
                     runOnUiThread(new Runnable() {
                         public void run() {
-                            // Display result from sendcomment
+                            // Display result from sendcomment()
                             Toast toast = Toast.makeText(getBaseContext(), result, Toast.LENGTH_LONG);
                             toast.show ();
 
@@ -178,7 +178,7 @@ public class AddComment extends JIActivity implements OnClickListener {
         int error = rest.postXML (url, xml);
         if (error == JIRest.OK) {
             try {
-                // When the api returns something, check if it's JSON. If so
+                // When the API returns something, check if it's JSON. If so
                 // we parse the MSG key from it since it will be our value.
                 JSONObject json = new JSONObject(rest.getResult());
                 result = json.optString("msg");

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.noxlogic.joindin"
-      android:versionCode="4"
-      android:versionName="1.4">
+      android:versionCode="5"
+      android:versionName="1.5">
       
-    <uses-sdk android:minSdkVersion="2" />
+    <uses-sdk android:minSdkVersion="3" />
     <!-- Application uses a light theme. I think it's much nicer than the standard
          dark android layout. -->
     <application
@@ -59,6 +59,6 @@
     </activity>
     </application>
 
-    <!-- Since we make requests over the internet, we need the users permission for it. -->
+    <!-- Since we make requests over the Internet, we need the users permission for it. -->
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
 </manifest>

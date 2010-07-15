@@ -1,7 +1,7 @@
 package com.noxlogic.joindin;
 
 /*
- * This is the main activity class. All activies in our application will extend
+ * This is the main activity class. All activities in our application will extend
  * JIActivity instead of activity. This class supplies us with some additional
  * tools and options which need to be set for all activity screens (for instance,
  * the menu)
@@ -73,7 +73,7 @@ public class JIActivity extends Activity {
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
     }
 
-    // Displays (or hides) the ciruclar progress animation in the top left corner
+    // Displays (or hides) the circular progress animation in the top left corner
     public void displayProgressBar (final boolean state) {
         runOnUiThread(new Runnable() {
             public void run() {
