@@ -193,8 +193,7 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> {
           TextView t3 = (TextView) v.findViewById(R.id.TalkRowSpeaker);
           if (t1 != null) t1.setText(o.optString("talk_title"));
           if (t2 != null) t2.setText(t2Text);
-          JSONObject speaker = o.optJSONArray("speaker").optJSONObject(0);
-          if (t3 != null) t3.setText(speaker.optString("speaker_name"));
+          if (t3 != null) t3.setText(o.optString("speaker"));
 
           // Set specified talk category image
           ImageView r = (ImageView) v.findViewById(R.id.TalkRowImageType);

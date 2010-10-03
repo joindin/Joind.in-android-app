@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- The preference activity is very simple. We just need a user's username and
-     password for the joind.in site in order to send registered comments. The only
-     setting currently in use is wether or not we should display past events or not. -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:title="Joind.in Settings">
         <EditTextPreference
@@ -20,5 +17,16 @@
             android:key="attendonly"
             android:title="@string/prefAttendOnlyTitle"
             android:summary="@string/prefAttendOnlySummary"/>
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="showsplashscreen"
+            android:title="@string/prefShowSplashTitle"
+            android:summary="@string/prefShowSplashSummary"/>
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="loadimages"
+            android:title="@string/prefLoadImagesTitle"
+            android:summary="@string/prefLoadImagesSummary"/>            
+                        
     </PreferenceCategory>
 </PreferenceScreen>

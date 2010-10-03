@@ -8,11 +8,24 @@ v1:
 [ ] Layouts could be better. Now it's a complete mess of tables, linears and absolute layouts.
 [ ] Naming of id (android:id) could be better.
 [ ] Probably a lot of bugfixes.
-[ ] The "star" rating sucks.. Can't find a decent rating-bar in android so i use a dropdown for the time being. Should change.
+[X] The "star" rating sucks.. Can't find a decent rating-bar in android so i use a dropdown for the time being. Should change.
 
 v2:
-[ ] Add image thumbnail to event (?).
+[X] Add image thumbnail to event.
 [ ] Change all layout ID's into correct stuff.
-[ ] Check why creating a list is sooooo very slow (inflate, cannot help?).
+[X] Check why creating a list is sooooo very slow (inflate, cannot help?).
 [ ] Display own comments only.
 [ ] Add new features from joind.in API
+[X] Add 'favourite' events button
+[X] Gravatar support
+[ ] Search/filter talks
+[X] splash screen on/off preferences
+[X] Logo/gravatar loading on/off
+[ ] Search/filter on dates
+[X] Different sorts (name, date)
+[ ] Add user/speaker detail
+[ ] Adding more info on the main-page (if cfp is available, currently busy, already passed etc) 
+
+* Cache dir is not correct on v1.6
+
+

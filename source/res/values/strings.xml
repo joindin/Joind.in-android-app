@@ -8,7 +8,14 @@
     <string name="OptionMenuSettings">Settings</string>
     <string name="OptionMenuClearCache">Clear cache</string>
     <string name="OptionMenuAbout">About</string>
-
+    
+    <string name="OptionMenuSortDate">Sort by date</string>
+    <string name="OptionMenuSortTitle">Sort by name</string>
+    
+    <!--  Context menu strings -->
+    <string name="ContextMainAddToFavorite">Add to favorite list</string>
+    <string name="ContextMainRemoveFromFavorite">Remove from favorite list</string>
+    
     <!-- Preference activity strings -->
     <string name="prefUserNameTitle">Username</string>
     <string name="prefUserNameSummary">Your joind.in username</string>
@@ -16,6 +23,10 @@
     <string name="prefPasswordSummary">Your joind.in password</string>
     <string name="prefAttendOnlyTitle">Attended only</string>
     <string name="prefAttendOnlySummary">Only display past attended events</string>
+    <string name="prefShowSplashTitle">Display splash screen</string>
+    <string name="prefShowSplashSummary">Should the splash screen be displayed when starting the application</string>
+    <string name="prefLoadImagesTitle">Load logos and gravatars</string>
+    <string name="prefLoadImagesSummary">Should the application load (and cache) event logo and user gravatars?</string>
 
     <string name="activityAddCommentTitle">Add comment to %s</string>
     <string name="activityAddCommentSpinnerOneStar">One star</string>
@@ -31,6 +42,7 @@
     <string name="activityMainEventsHot">Hot events</string>
     <string name="activityMainEventsPast">Past events</string>
     <string name="activityMainEventsUpcoming">Upcoming events</string>
+    <string name="activityMainEventsFavorites">Favorite events</string>
 
     <string name="JIActivityCorrectCredentials">Correct credentials supplied</string>
     <string name="JIActivityIncorrectCredentials">Incorrect login credentials. Change credentials in the Settings menu.</string>

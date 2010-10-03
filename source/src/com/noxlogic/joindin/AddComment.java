@@ -13,11 +13,10 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.Spinner;
+import android.widget.RatingBar;
 import android.widget.Toast;
 
 public class AddComment extends JIActivity implements OnClickListener {
@@ -48,7 +47,7 @@ public class AddComment extends JIActivity implements OnClickListener {
             // Set spinner and checkbox to invisible since they are not used while
             // commenting on events
             View v;
-            v = (View) findViewById(R.id.Spinner01);
+            v = (View) findViewById(R.id.RatingBar01);
             v.setVisibility(View.GONE);
             v = (View) findViewById(R.id.TextViewRating);
             v.setVisibility(View.GONE);
@@ -64,15 +63,15 @@ public class AddComment extends JIActivity implements OnClickListener {
         button.setOnClickListener(this);
 
         // Add spinner items (the star ratings)
-        String[] items = new String[] {getString(R.string.activityAddCommentSpinnerOneStar),
-                                       getString(R.string.activityAddCommentSpinnerTwoStars),
-                                       getString(R.string.activityAddCommentSpinnerThreeStars),
-                                       getString(R.string.activityAddCommentSpinnerFourStars),
-                                       getString(R.string.activityAddCommentSpinnerFiveStars)};
-        Spinner spinner = (Spinner) findViewById(R.id.Spinner01);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, items);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
+////        String[] items = new String[] {getString(R.string.activityAddCommentSpinnerOneStar),
+////                                       getString(R.string.activityAddCommentSpinnerTwoStars),
+////                                       getString(R.string.activityAddCommentSpinnerThreeStars),
+////                                       getString(R.string.activityAddCommentSpinnerFourStars),
+////                                       getString(R.string.activityAddCommentSpinnerFiveStars)};
+////        Spinner spinner = (Spinner) findViewById(R.id.Spinner01);
+//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, items);
+//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        spinner.setAdapter(adapter);
     }
 
 
@@ -142,8 +141,8 @@ public class AddComment extends JIActivity implements OnClickListener {
         displayProgressBar (true);
 
         // Get information from the layout
-        Spinner spinner = (Spinner) findViewById(R.id.Spinner01);
-        int rating = spinner.getSelectedItemPosition() + 1;
+        RatingBar ratingbar = (RatingBar)findViewById(R.id.RatingBar01);
+        int rating = (int) ratingbar.getRating();
         EditText tmp1 = (EditText) findViewById(R.id.EditText01);
         String comment = tmp1.getText().toString();
         CheckBox tmp2 = (CheckBox) findViewById(R.id.CheckBox01);

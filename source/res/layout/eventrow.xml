@@ -4,6 +4,11 @@
     android:layout_width="fill_parent"
     android:layout_height="?android:attr/listPreferredItemHeight"
     android:padding="6dip">
+    <ImageView android:id="@+id/EventDetailLogo" 
+    	android:layout_height="50px" 
+    	android:layout_width="50px" 
+    	android:visibility="gone" 
+    	android:layout_marginRight="5px"></ImageView>
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="0dip"
@@ -15,7 +20,6 @@
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:textStyle="bold"
-            android:text=""
             android:ellipsize="end"
             android:singleLine="true"
             android:id="@+id/EventDetailCaption"
@@ -33,7 +37,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/EventDetailAttendingImg"
-                    android:background="@drawable/rate_star_small_on"
+                    android:background="@drawable/rating_full_orange"
                     android:layout_margin="2px"></ImageView>
                 <TextView
                     android:layout_width="fill_parent"
@@ -47,5 +51,6 @@
                     android:id="@+id/EventDetailAttending"></TextView>
             </TableRow>
         </TableLayout>
-    </LinearLayout>
+    
+</LinearLayout>
 </LinearLayout>

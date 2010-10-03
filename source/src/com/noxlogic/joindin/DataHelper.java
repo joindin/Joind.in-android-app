@@ -21,6 +21,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 
 
@@ -28,7 +29,12 @@ public final class DataHelper {
     private static DataHelper DHinstance = null;
 
     private static final String DATABASE_NAME = "joindin.db";
-    private static final int DATABASE_VERSION = 5;  // Increasing this version number will result in automatic call to onUpgrade()
+    private static final int DATABASE_VERSION = 9;  // Increasing this version number will result in automatic call to onUpgrade()
+    
+    public static final int ORDER_DATE_ASC 		= 1;
+    public static final int ORDER_DATE_DESC 	= 2;
+    public static final int ORDER_TITLE_ASC 	= 3;
+    public static final int ORDER_TITLE_DESC 	= 4;
 
     private SQLiteDatabase db = null;
 
@@ -57,10 +63,16 @@ public final class DataHelper {
 
     // insert a new event to specified event_type (hot, pending, past etc)
     public long insertEvent(String event_type, JSONObject event) {
+    	int event_id = event.optInt("ID");
+    	
         ContentValues values = new ContentValues();
-        values.put("event_id", event.optInt("ID"));
+        values.put("event_id", event_id);
+        values.put("event_start", event.optInt("event_start"));
+        values.put("event_title", event.optString("event_name"));
         values.put("event_type", event_type);
         values.put("json", event.toString());
+        
+        db.delete("events", "event_id=?", new String[] {Integer.toString(event_id)});
         return db.insert("events", "", values);
     }
     
@@ -81,13 +93,25 @@ public final class DataHelper {
     public long insertTalk (JSONObject talk) {
         ContentValues values = new ContentValues();
         values.put("event_id", talk.optInt("event_id"));
-
+        
+        
+        int track_id = -1;	// Defaul track id (none) 
+        int talk_id = talk.optInt("ID");
+        
         try {
-            if (talk.getJSONArray("tracks").length() > 0) {
-                values.put("track_id", talk.getJSONArray("tracks").getJSONObject(0).optInt("ID"));            
-            }
-        } catch (JSONException e) {}
+			if (talk.getJSONArray("tracks").length() > 0) {
+				// There are tracks. This talk is inside the 1st track (could there be more tracks??) 
+				track_id = talk.getJSONArray("tracks").getJSONObject(0).optInt("ID");                 
+			}
+		} catch (JSONException e) {
+			// Ignore
+		}
+        
+        values.put("talk_id", talk_id);
+        values.put("track_id", track_id);
         values.put("json", talk.toString());
+        
+        db.delete("talks", "talk_id=?", new String[] {Integer.toString(talk_id)});
         return db.insert("talks", "", values);
     }
 
@@ -95,7 +119,7 @@ public final class DataHelper {
     public long insertTalkComment (JSONObject talkComment) {
         ContentValues values = new ContentValues();
         values.put("talk_id", talkComment.optInt("talk_id"));
-        values.put("json", talkComment.toString());
+        values.put("json", talkComment.toString());        
         return db.insert("tcomments", "", values);
     }
 
@@ -106,6 +130,20 @@ public final class DataHelper {
         values.put("json", eventComment.toString());
         return db.insert("ecomments", "", values);
     }
+    
+    // Add event to favorite list
+    public long addToFavorites (int event_id) {
+        ContentValues values = new ContentValues();
+        values.put("event_id", event_id);
+        db.delete("favlist", "event_id=?", new String[] {Integer.toString(event_id)});
+        return db.insert("favlist", "", values);
+    }
+    
+    // Remove from favorite list
+    public void removeFromFavorites (int event_id) {
+    	db.delete("favlist", "event_id=?", new String[] {Integer.toString(event_id)});	
+    }
+        
 
     // Removes all events for specified event type (hot, pending, past etc)
     public void deleteAllEventsFromType(String event_type) {
@@ -135,17 +173,52 @@ public final class DataHelper {
         db.delete("tcomments", null, null);
     }
 
+        
     // Populates an event adapter and return the number of items populated
-    public int populateEvents(String event_type, JIEventAdapter m_eventAdapter) {
-        Cursor c = this.db.rawQuery("SELECT json FROM events WHERE event_type = '"+event_type+"'", null);
-        int count = c.getCount();
+    public int populateEvents(String event_type, JIEventAdapter m_eventAdapter, int order) {
+    	// Different handling for favorite list
+    	if (event_type.equals("favorites")) {
+        	Cursor c = this.db.rawQuery("SELECT json FROM events INNER JOIN favlist ON favlist.event_id = events.event_id", null);            
+            int count = c.getCount();
+            populate (c, m_eventAdapter);
+            return count;    		
+    	}
+    	
+    	
+    	String order_sql = "";
+    	
+    	switch (order) {
+    		case ORDER_DATE_ASC :
+    			order_sql = "ORDER BY event_start ASC";
+    			break;
+    		case ORDER_DATE_DESC :
+    			order_sql = "ORDER BY event_start DESC";
+    			break;
+    		case ORDER_TITLE_ASC :
+    			order_sql = "ORDER BY event_title ASC";
+    			break;
+    		case ORDER_TITLE_DESC :
+    			order_sql = "ORDER BY event_title DESC";
+    			break;
+    	}
+    		    			
+    	Cursor c = this.db.rawQuery("SELECT json FROM events WHERE event_type = '"+event_type+"' "+order_sql, null);
+        
+        int count = c.getCount();     
+//        Log.d("joindin", "Event type "+event_type+" has got "+count+" records.");
         populate (c, m_eventAdapter);
         return count;
     }
 
     public int populateTracks(int event_id, JITrackAdapter m_trackAdapter) {
-        int trackCount = 0;
+    	int trackCount = 0;
         Cursor c = this.db.rawQuery("SELECT json FROM events WHERE event_id = "+event_id, null);
+        
+        if (c.getCount() == 0) {
+        	c.close();
+        	return 0;
+        }
+        
         c.moveToFirst();
         try {
             JSONObject json = new JSONObject(c.getString(0));
@@ -166,6 +239,8 @@ public final class DataHelper {
     // Populates a talk adapter and returns the number of items populated
     public int populateTalks(int event_id, int track_id, JITalkAdapter m_talkAdapter) {
         Cursor c;
+        
+//        Log.d("joindin", "POpulating talks from event "+event_id+" and track "+track_id);
 
         if (track_id == -1) {
             c = this.db.rawQuery("SELECT json FROM talks WHERE event_id = "+event_id, null);
@@ -173,6 +248,7 @@ public final class DataHelper {
             c = this.db.rawQuery("SELECT json FROM talks WHERE event_id = "+event_id+" and track_id = "+track_id, null);
         }
         int count = c.getCount();
+//        Log.d("joindin", "That would make it a total of "+count+" talks");
         populate (c, m_talkAdapter);
         return count;
     }
@@ -221,10 +297,11 @@ public final class DataHelper {
 
         // Create new database (if needed)
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL("CREATE TABLE [events]    ([event_id] INTEGER, [event_type] VARCHAR, [json] VARCHAR)");
-            db.execSQL("CREATE TABLE [talks]     ([event_id] INTEGER, [track_id] INTEGER, [json] VARCHAR)");
+            db.execSQL("CREATE TABLE [events]    ([event_id] INTEGER, [event_type] VARCHAR, [event_title] VARCHAR COLLATE NOCASE, [event_start] INTEGER, [json] VARCHAR)");
+            db.execSQL("CREATE TABLE [talks]     ([event_id] INTEGER, [talk_id] INTEGER, [track_id] INTEGER, [json] VARCHAR)");
             db.execSQL("CREATE TABLE [ecomments] ([event_id] INTEGER, [json] VARCHAR)");
             db.execSQL("CREATE TABLE [tcomments] ([talk_id] INTEGER, [json] VARCHAR)");
+            db.execSQL("CREATE TABLE [favlist]   ([event_id] INTEGER)");
         }
 
         // Upgrade database. Drop everything and call onCreate.. We do not care for old data anyway
@@ -234,6 +311,7 @@ public final class DataHelper {
             db.execSQL("DROP TABLE IF EXISTS talks");
             db.execSQL("DROP TABLE IF EXISTS ecomments");
             db.execSQL("DROP TABLE IF EXISTS tcomments");
+            db.execSQL("DROP TABLE IF EXISTS favlist");
 
             // Create new database
             onCreate(db);

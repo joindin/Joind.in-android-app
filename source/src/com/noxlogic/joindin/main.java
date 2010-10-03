@@ -15,16 +15,24 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -33,19 +41,26 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class main extends JIActivity implements OnClickListener {
+public class Main extends JIActivity implements OnClickListener {
     private JIEventAdapter m_eventAdapter;       // Adapter for displaying all the events
 
     private String currentTab;                   // Current selected tab
     private String currentTitle;                 // Current name
+    
+    // Constants for dynamically added menu items
+    private static final int MENU_SORT_DATE  	= 1;
+    private static final int MENU_SORT_TITLE 	= 2;
+    
+    private int event_sort_order = DataHelper.ORDER_DATE_ASC;
 
     JIRest rest;    // Our rest object to communicate with joind.in API
-
-
+    
+    EventLoaderThread event_loader_thread = null;
+    
     /** Called when the activity is first created. */
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+               
         // Set 'main' layout
         setContentView(R.layout.main);
 
@@ -60,6 +75,8 @@ public class main extends JIActivity implements OnClickListener {
         button.setOnClickListener(this);
         button = (Button)findViewById(R.id.ButtonMainEventUpcoming);
         button.setOnClickListener(this);
+        button = (Button)findViewById(R.id.ButtonMainEventFavorites);
+        button.setOnClickListener(this);        
 
         // Set default tab
         currentTab = "hot";
@@ -68,8 +85,12 @@ public class main extends JIActivity implements OnClickListener {
         // Create array with all found events and add it to the event list
         ArrayList<JSONObject> m_events = new ArrayList<JSONObject>();
         m_eventAdapter = new JIEventAdapter(this, R.layout.eventrow, m_events);
+        
         ListView eventlist =(ListView)findViewById(R.id.ListViewMainEvents);
         eventlist.setAdapter(m_eventAdapter);
+        
+        // Add contextmenu to event list items
+        registerForContextMenu(eventlist);
 
         displayEvents(this.currentTab, this.currentTitle);
 
@@ -85,12 +106,56 @@ public class main extends JIActivity implements OnClickListener {
             }
         });
     }
+    
+    void loadEvents(String type, String name) {
+    	if (event_loader_thread != null) {
+    		// Stop event loading thread.. we are going to start a new one... 
+    		event_loader_thread.stopThread ();
+    	}
+    	
+        // Create a event loader thread
+        event_loader_thread = new EventLoaderThread ();
+        event_loader_thread.setPriority(Thread.NORM_PRIORITY-1);
+        event_loader_thread.startThread(type, name);    	
+    }
 
 
     // Will reload events. Needed when we return to the screen.
     public void onResume () {
+    	loadEvents(this.currentTab, this.currentTitle);
         super.onResume();
-        loadEvents(this.currentTab, this.currentTitle);
+    }
+    
+    
+    // Overriding the JIActivity add sort-items
+    public boolean onCreateOptionsMenu(Menu menu) {
+    	super.onCreateOptionsMenu(menu);
+    	
+    	MenuItem menu_date = menu.add(0, MENU_SORT_DATE, 0, R.string.OptionMenuSortDate);
+    	menu_date.setIcon(android.R.drawable.ic_menu_month);
+    	MenuItem menu_title = menu.add(0, MENU_SORT_TITLE, 0, R.string.OptionMenuSortTitle);
+    	menu_title.setIcon(android.R.drawable.ic_menu_sort_alphabetically);
+
+    	return true;
+    }
+    
+    
+    // Overriding the JIActivity handler to handle the sorting
+    public boolean onOptionsItemSelected (MenuItem item) {
+        switch (item.getItemId()) {
+        	case MENU_SORT_DATE :
+        		// Toast.makeText(this, "Sorting by data", Toast.LENGTH_SHORT).show();
+        		this.event_sort_order = this.event_sort_order == DataHelper.ORDER_DATE_ASC ? DataHelper.ORDER_DATE_DESC : DataHelper.ORDER_DATE_ASC;
+        		displayEvents(this.currentTab, this.currentTitle);
+        		break;
+        	case MENU_SORT_TITLE :
+        		// Toast.makeText(this, "Sorting by title", Toast.LENGTH_SHORT).show();
+        		this.event_sort_order = this.event_sort_order == DataHelper.ORDER_TITLE_ASC ? DataHelper.ORDER_TITLE_DESC : DataHelper.ORDER_TITLE_ASC;
+        		displayEvents(this.currentTab, this.currentTitle);
+        		break;
+        }
+        
+        return super.onOptionsItemSelected (item);
     }
 
 
@@ -124,81 +189,105 @@ public class main extends JIActivity implements OnClickListener {
 
         // add events and return count
         DataHelper dh = DataHelper.getInstance ();
-        int count = dh.populateEvents(eventType, m_eventAdapter);
+        int count = dh.populateEvents(eventType, m_eventAdapter, this.event_sort_order);
 
         // Tell the adapter that our data set has changed so it can update it
         m_eventAdapter.notifyDataSetChanged();
 
         // Set main title to event category plus the number of events found
-        setTitle (eventCategory+" ("+count+")");
+        setTitle (eventCategory+" ("+count+" events)");
         return count;
     }
 
+    
+    
+    class EventLoaderThread extends Thread {
+    	private volatile Thread runner;
+    	
+    	private String event_type;
+    	private String event_name;
 
-    // Load events from API into the DB
-    public void loadEvents (final String event_type, final String event_name) {
-        // This will display a small progress circle in the top right corner
-        displayProgressBar (true);
+    	public synchronized void startThread(String type, String name){
+    		event_type = type;
+    		event_name = name;
+    		
+    		displayProgressBar (true);
+    		
+    		if (runner == null){
+    			runner = new Thread(this);
+    			runner.start();
+    		}
+    	}
 
-        // We need to run this in a new thread, otherwise the progress bar does not show
-        new Thread () {
-            public void run() {
-                // Get some event data from the joind.in API
-                rest = new JIRest (main.this);
-                int error = rest.postXML ("event", "<request>"+JIRest.getAuthXML(main.this)+"<action type=\"getlist\" output=\"json\"><event_type>"+event_type+"</event_type></action></request>");
+    	public synchronized void stopThread(){
+    		// Already stopped    			
+	        if (runner == null) return;
+	         	
+	        // We are done. So remove our progress-circle
+		    displayProgressBar (false); 
+	        	
+	        Thread moribund = runner;
+	        runner = null;
+	        moribund.interrupt();
+    	}
 
-                // Something bad happened :(
-                if (error != JIRest.OK) {
-                    // We can only modify the UI in a UIThread, so we create another thread
-                    runOnUiThread(new Runnable() {
-                        public void run() {
-                            // Done displaying the progress circle
-                            displayProgressBar (false);
+		public void run() {
+		    // Get some event data from the joind.in API
+	        rest = new JIRest (Main.this);
+	        int error = rest.postXML ("event", "<request>"+JIRest.getAuthXML(Main.this)+"<action type=\"getlist\" output=\"json\"><event_type>"+event_type+"</event_type></action></request>");
 
-                            // Display result from the rest to the user
-                            Toast toast = Toast.makeText (getBaseContext(), rest.getError(), Toast.LENGTH_LONG);
-                            toast.show ();
-                        }
-                    });
+	        // Something bad happened :(
+	        if (error != JIRest.OK) {
+	        	// We can only modify the UI in a UIThread, so we create another thread
+	            runOnUiThread(new Runnable() {
+	            	public void run() {
+	            		// Display result from the rest to the user
+	                    Toast toast = Toast.makeText (getBaseContext(), rest.getError(), Toast.LENGTH_LONG);
+	                    toast.show ();
+	                        
+	                    stopThread();
+	            	}
+	            });
 
-                } else {
-                    /*
-                     * We just received new event data from joind.in API. Instead of modifying the current data
-                     * already present in our database, we just remove all data and insert the new data. Makes
-                     * life much easier :)
-                     */
-                    JSONArray json;
-                    try {
-                        // Get preferences
-                        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+	        } else {
+	        	/*
+	             * We just received new event data from joind.in API. Instead of modifying the current data
+	             * already present in our database, we just remove all data and insert the new data. Makes
+	             * life much easier :)
+	             */
+	        	JSONArray json;
+	            try {
+	            	// Get preferences
+	                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 
-                        // Delete all our events for specified type/category
-                        DataHelper dh = DataHelper.getInstance();
-                        dh.deleteAllEventsFromType(event_type);
+	                // Delete all our events for specified type/category
+	                DataHelper dh = DataHelper.getInstance();
+	                dh.deleteAllEventsFromType(event_type);
 
-                        // Add new events
-                        json = new JSONArray(rest.getResult());
-                        for (int i=0; i!=json.length(); i++) {
-                            JSONObject json_event = json.getJSONObject(i);
+	                // Add new events
+	                json = new JSONArray(rest.getResult());
+	                for (int i=0; i!=json.length(); i++) {
+	                	JSONObject json_event = json.getJSONObject(i);
 
-                            // Don't add when we are adding to the Past AND we want to display "attended only"
-                            if (event_type.compareTo("past") == 0 && prefs.getBoolean("attendonly", true) && ! json_event.optBoolean("user_attending")) continue;
-                            dh.insertEvent (event_type, json_event);
-                        }
-                    } catch (JSONException e) { }
-                        // Something when wrong. Just display the current events.
-                        runOnUiThread(new Runnable() {
-                            public void run() {
-                                displayEvents (event_type, event_name);
-                            }
-                        });
-                }
+	                    // Don't add when we are adding to the Past AND we want to display "attended only"
+	                    if (event_type.compareTo("past") == 0 && prefs.getBoolean("attendonly", true) && ! json_event.optBoolean("user_attending")) continue;
+	                    dh.insertEvent (event_type, json_event);
+	                }
+	            } catch (JSONException e) { }
+	            	// Something when wrong. Just display the current events.
+	                runOnUiThread(new Runnable() {
+	                	public void run() {
+	                		displayEvents (event_type, event_name);
+	                        stopThread();
+	                	}
+	                });
+	            }
 
-                // We are done. So remove our progress-circle
-                displayProgressBar (false);
-            }
-        }.start();
-    }
+	            stopThread();
+			}
+    	}
+
+
 
 
     // Called when user clicked on one of the buttons
@@ -225,6 +314,7 @@ public class main extends JIActivity implements OnClickListener {
             this.currentTab = "past";
             this.currentTitle = getString(R.string.activityMainEventsPast);
             displayEvents(this.currentTab, this.currentTitle);
+            
             loadEvents(this.currentTab, this.currentTitle);
         }
 
@@ -234,9 +324,58 @@ public class main extends JIActivity implements OnClickListener {
             this.currentTab = "upcoming";
             this.currentTitle = getString(R.string.activityMainEventsUpcoming);
             displayEvents(this.currentTab, this.currentTitle);
+            
             loadEvents(this.currentTab, this.currentTitle);
         }
+        
+        
+        if (v == findViewById(R.id.ButtonMainEventFavorites)) {
+        	// Load favorite list
+        	this.currentTab = "favorites";
+        	this.currentTitle = getString(R.string.activityMainEventsFavorites);
+            displayEvents(this.currentTab, this.currentTitle);        	
+        }
     };
+
+ 
+    // Creates contextmenu for items
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+    	// Only register on the listview of the main events
+    	if (v.getId()==R.id.ListViewMainEvents) {
+    		AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+    		
+    		JSONObject json = m_eventAdapter.getItem(info.position);    		
+    	    menu.setHeaderTitle(json.optString("event_name"));
+    		
+        	MenuInflater inflater = getMenuInflater();
+        	inflater.inflate(R.menu.main_context_menu, menu);
+    	}
+	}
+    
+    
+    // Called when item is selected
+    public boolean onContextItemSelected(MenuItem item) {
+    	AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+    	JSONObject json = m_eventAdapter.getItem(info.position);
+    	
+    	int event_id = json.optInt("ID");
+    	  
+    	DataHelper dh = DataHelper.getInstance ();
+    	
+    	switch (item.getItemId()) {
+    		case R.id.context_main_addtofavorite:
+    	        dh.addToFavorites(event_id);
+    	        Toast.makeText(getBaseContext(), "Add to favorite list: "+json.optString("event_name"), Toast.LENGTH_SHORT).show();
+    			return true;
+    		case R.id.context_main_removefromfavorite:
+    	        dh.removeFromFavorites(event_id);
+    	        Toast.makeText(getBaseContext(), "Removed from favorite list: "+json.optString("event_name"), Toast.LENGTH_SHORT).show();
+    			return true;
+    		default:
+    			return super.onContextItemSelected(item);
+    	}
+    }
+    
 }
 
 
@@ -250,12 +389,16 @@ class JIEventAdapter extends ArrayAdapter<JSONObject> {
       private ArrayList<JSONObject> items;      // The current items in the listview
       private Context context;
       LayoutInflater inflator;
+      public ImageLoader image_loader;			// eventlogo image loader
+
 
       public JIEventAdapter(Context context, int textViewResourceId, ArrayList<JSONObject> items) {
           super(context, textViewResourceId, items);
           this.context = context;       // Saving context, sincve we need it on other places where the context is not known.
           this.items = items;
           this.inflator = (LayoutInflater)this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+          
+          this.image_loader = new ImageLoader(context.getApplicationContext(), "events");
       }
 
       // This function will create a custom row with our event data.
@@ -267,6 +410,21 @@ class JIEventAdapter extends ArrayAdapter<JSONObject> {
           // Get the (JSON) data we need
           JSONObject o = items.get(position);
           if (o == null) return convertView;
+
+          // Display (or load in the background if needed) the event logo
+          
+          // Remove logo (this could be a recycled row)
+          ImageView el = (ImageView) convertView.findViewById(R.id.EventDetailLogo);
+          el.setTag("");
+          el.setVisibility(View.GONE);
+          
+          // Display (or load in the background if needed) the event logo
+          if (! o.isNull("event_icon")) {
+        	  String filename = o.optString("event_icon");
+        	  el.setTag(filename);        	  
+        	  image_loader.displayImage("http://joind.in/inc/img/event_icons/", filename, (Activity)context, el);          
+          }
+
 
           // Find our textviews we need to fill
           TextView tt = (TextView) convertView.findViewById(R.id.EventDetailCaption);

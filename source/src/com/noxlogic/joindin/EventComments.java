@@ -11,6 +11,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -150,11 +151,14 @@ public class EventComments extends JIActivity implements OnClickListener {
 class JIEventCommentAdapter extends ArrayAdapter<JSONObject> {
       private ArrayList<JSONObject> items;
       private Context context;
+      private ImageLoader image_loader;			// gravatar image loader
 
       public JIEventCommentAdapter(Context context, int textViewResourceId, ArrayList<JSONObject> items) {
           super(context, textViewResourceId, items);
           this.context = context;
           this.items = items;
+          
+          this.image_loader = new ImageLoader(context.getApplicationContext(), "gravatars");
       }
 
       public View getView(int position, View convertview, ViewGroup parent) {
@@ -166,6 +170,16 @@ class JIEventCommentAdapter extends ArrayAdapter<JSONObject> {
 
           JSONObject o = items.get(position);
           if (o == null) return v;
+          
+          ImageView el = (ImageView) v.findViewById(R.id.CommentRowGravatar);
+          el.setTag("");
+          el.setVisibility(View.GONE);
+          
+    	  String filename = "user"+o.optString("user_id")+".jpg";
+    	  el.setTag(filename);        	  
+    	  image_loader.displayImage("http://joind.in/inc/img/user_gravatar/", filename, (Activity)context, el);          
+          
+          
 
           TextView t1 = (TextView) v.findViewById(R.id.CommentRowComment);
           TextView t2 = (TextView) v.findViewById(R.id.CommentRowUName);

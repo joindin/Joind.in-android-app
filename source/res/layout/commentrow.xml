@@ -10,12 +10,24 @@
         android:textStyle="bold"
         android:layout_width="fill_parent"
         android:id="@+id/CommentRowDate"></TextView>
-    <TextView
-        android:layout_height="wrap_content"
-        android:singleLine="false"
-        android:layout_width="fill_parent"
-        android:text=""
-        android:id="@+id/CommentRowComment"></TextView>
+	<LinearLayout 
+		android:id="@+id/LinearLayout02" 
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content" 
+		android:orientation="horizontal">
+		<ImageView 
+			android:layout_height="30px" 
+			android:layout_width="30px" 
+			android:layout_marginRight="5px" 
+			android:visibility="gone" 
+			android:id="@+id/CommentRowGravatar"></ImageView>
+		<TextView 
+			android:layout_height="wrap_content" 
+			android:singleLine="false" 
+			android:layout_width="fill_parent" 
+			android:text="" 
+			android:id="@+id/CommentRowComment"></TextView>
+	</LinearLayout>
     <LinearLayout
         android:id="@+id/LinearLayout01"
         android:layout_height="wrap_content"

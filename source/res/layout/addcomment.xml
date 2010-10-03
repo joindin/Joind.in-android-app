@@ -4,25 +4,14 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
-    <TextView
-        android:layout_height="wrap_content"
-        android:text="Your rating:"
-        android:layout_width="fill_parent"
-        android:id="@+id/TextViewRating"></TextView>
-    <Spinner
-        android:id="@+id/Spinner01"
-        android:layout_height="wrap_content"
-        android:layout_width="fill_parent"></Spinner>
-    <TableRow
-        android:id="@+id/TableRow02"
-        android:layout_height="wrap_content"
-        android:layout_width="fill_parent">
-    </TableRow>
-    <TextView
+    
+    
+    
+    
+    <LinearLayout android:id="@+id/LinearLayout02" android:layout_height="wrap_content" android:orientation="vertical" android:layout_width="fill_parent"><TextView android:layout_height="wrap_content" android:text="Your rating:" android:layout_width="fill_parent" android:id="@+id/TextViewRating"></TextView><RatingBar step="1" android:id="@+id/RatingBar01" android:layout_width="wrap_content" android:layout_height="wrap_content" android:numStars="5" android:rating="3" android:stepSize="1"></RatingBar></LinearLayout><TextView
         android:id="@+id/TextView05"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Comment:"></TextView>
+        android:layout_height="wrap_content" android:text="Your comment:"></TextView>
     <TableRow
         android:id="@+id/TableRow01"
         android:layout_height="wrap_content"
@@ -43,20 +32,14 @@
     <TextView
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
-        android:text="Posting as an anonymous user. Set your credentials in the Settings menu to post as a registered user."
-        android:id="@+id/AnonymousPost"></TextView>
+        android:id="@+id/AnonymousPost" android:text="You are posting as an anonymous user. Set your credentials in the Settings menu to post as a registered user. "></TextView><CheckBox android:id="@+id/CheckBox01" android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_gravity="bottom|right" android:text="This is a private comment "></CheckBox>
     <LinearLayout
         android:id="@+id/LinearLayout01"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
         android:layout_gravity="center"
-        android:gravity="center">
-        <CheckBox
-            android:id="@+id/CheckBox01"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Private comment "
-            android:layout_gravity="right"></CheckBox>
+        android:gravity="center" android:layout_marginTop="5px">
+        
         <Button
             android:text="Send"
             android:layout_height="wrap_content"
@@ -70,4 +53,9 @@
             android:layout_width="75px"
             android:id="@+id/ButtonAddCommentCancel"></Button>
     </LinearLayout>
+
+
+
+
+
 </LinearLayout>

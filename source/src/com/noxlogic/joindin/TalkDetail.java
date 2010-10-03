@@ -5,13 +5,11 @@ package com.noxlogic.joindin;
  */
 
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -40,8 +38,7 @@ public class TalkDetail extends JIActivity implements OnClickListener {
         t.setText (this.talkJSON.optString("talk_title"));
         t = (TextView) this.findViewById(R.id.TalkDetailSpeaker);
         
-        JSONObject speaker = this.talkJSON.optJSONArray("speaker").optJSONObject(0);
-        t.setText ("Speaker: "+speaker.optString("speaker_name"));
+        t.setText ("Speaker: "+this.talkJSON.optString("speaker"));
         t = (TextView) this.findViewById(R.id.TalkDetailDescription);
         String s = this.talkJSON.optString("talk_desc");
         // Strip away newlines and additional spaces. Somehow these get added when

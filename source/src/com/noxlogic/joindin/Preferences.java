@@ -6,6 +6,7 @@ package com.noxlogic.joindin;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
@@ -13,6 +14,16 @@ public class Preferences extends PreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
+        
+        // Get username from preference
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        String username = prefs.getString("username", "");
+        
+        // Is there a username? Then change the title of the 'username' preference to add this name... looks nicer
+        if (! username.equals("")) {
+        	Preference usernamePref = (Preference) findPreference("username");
+        	usernamePref.setTitle(usernamePref.getTitle().toString() + " - " + username);
+        }
     }
 
     protected void onPause () {

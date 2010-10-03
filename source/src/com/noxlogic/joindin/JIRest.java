@@ -25,6 +25,7 @@ import org.apache.http.params.HttpParams;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 class JIRest {
     public static final int OK = 0;
@@ -75,6 +76,8 @@ class JIRest {
                 // Ignore exception
             }
 
+//            Log.d("joindin", JOINDIN_URL+urlPostfix + " --> " + xml);
+            
             httppost.setEntity(xmlentity);
             httppost.addHeader("Content-type", "text/xml");
 
@@ -87,9 +90,9 @@ class JIRest {
                 if (entity != null) {
                     // If we receive some data, place it in our result string
                     InputStream instream = entity.getContent();
-                    this.result = main.convertStreamToString(instream);
+                    this.result = Main.convertStreamToString(instream);
                     instream.close();
-
+//                    Log.d("joindin", this.result);
                     return OK;
                 }
             } catch (ClientProtocolException e) {
