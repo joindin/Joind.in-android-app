@@ -54,7 +54,7 @@ public class EventTracks extends JIActivity {
             public void onItemClick(AdapterView<?>parent, View view, int pos, long id) {
                 // Open event details with additional eventTrack data.
                 Intent myIntent = new Intent ();
-                myIntent.setClass(getBaseContext(), EventTalks.class);
+                myIntent.setClass(getApplicationContext(), EventTalks.class);
                 myIntent.putExtra("eventJSON", getIntent().getStringExtra("eventJSON"));
                 myIntent.putExtra("eventTrack", parent.getAdapter().getItem(pos).toString());
                 startActivity(myIntent);

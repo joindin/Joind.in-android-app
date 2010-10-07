@@ -68,7 +68,7 @@ public class TalkDetail extends JIActivity implements OnClickListener {
         if (v == findViewById(R.id.ButtonNewComment)) {
             // Goto comment activity and add new comment to this talk
             Intent myIntent = new Intent ();
-            myIntent.setClass(getBaseContext(), AddComment.class);
+            myIntent.setClass(getApplicationContext(), AddComment.class);
 
             myIntent.putExtra("commentType", "talk");
             myIntent.putExtra("talkJSON", getIntent().getStringExtra("talkJSON"));
@@ -77,7 +77,7 @@ public class TalkDetail extends JIActivity implements OnClickListener {
         if (v == findViewById(R.id.ButtonViewComment)) {
             // Goto talk comments activity and display all comments about this talk
             Intent myIntent = new Intent ();
-            myIntent.setClass(getBaseContext(), TalkComments.class);
+            myIntent.setClass(getApplicationContext(), TalkComments.class);
 
             myIntent.putExtra("talkJSON", getIntent().getStringExtra("talkJSON"));
             startActivity(myIntent);

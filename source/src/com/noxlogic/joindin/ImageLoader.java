@@ -46,7 +46,7 @@ public class ImageLoader {
     
     public void displayImage(String url, String filename, Activity activity, ImageView imageView) {
     	// Check if we are allowed to load images. If not, just return.
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity.getBaseContext());
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext());
         boolean loadimages = prefs.getBoolean("loadimages", true);
         if (! loadimages) return;
         	

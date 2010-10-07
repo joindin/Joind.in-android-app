@@ -106,13 +106,13 @@ public class JIActivity extends Activity {
                         // Removes all items from the database
                         DataHelper dh = DataHelper.getInstance ();
                         dh.deleteAll ();
-                        Toast toast = Toast.makeText (getBaseContext(), R.string.generalCacheCleared, Toast.LENGTH_LONG);
+                        Toast toast = Toast.makeText (getApplicationContext(), R.string.generalCacheCleared, Toast.LENGTH_LONG);
                         toast.show ();
                         break;
 
             case R.id.settings_menu_item :
                         // Displays preferences
-                        Intent settingsActivity = new Intent(getBaseContext(), Preferences.class);
+                        Intent settingsActivity = new Intent(getApplicationContext(), Preferences.class);
                         startActivity(settingsActivity);
                         break;
         }

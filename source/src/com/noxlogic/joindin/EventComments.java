@@ -77,7 +77,7 @@ public class EventComments extends JIActivity implements OnClickListener {
         if (v == findViewById(R.id.ButtonNewComment)) {
             // Start activity to add new comment
             Intent myIntent = new Intent ();
-            myIntent.setClass(getBaseContext(), AddComment.class);
+            myIntent.setClass(getApplicationContext(), AddComment.class);
 
             // commentType decides if it's an event or talk comment
             myIntent.putExtra("commentType", "event");

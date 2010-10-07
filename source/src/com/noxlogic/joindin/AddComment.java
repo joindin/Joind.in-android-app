@@ -85,7 +85,7 @@ public class AddComment extends JIActivity implements OnClickListener {
         // text that the user is commenting anonymously..
 
         View v = (View) findViewById(R.id.AnonymousPost);
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         if (prefs.getBoolean("validated", false)) {
             v.setVisibility (View.GONE);
         } else {
@@ -119,7 +119,7 @@ public class AddComment extends JIActivity implements OnClickListener {
                     runOnUiThread(new Runnable() {
                         public void run() {
                             // Display result from sendcomment()
-                            Toast toast = Toast.makeText(getBaseContext(), result, Toast.LENGTH_LONG);
+                            Toast toast = Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG);
                             toast.show ();
 
                             // After displaying, close this activity and return

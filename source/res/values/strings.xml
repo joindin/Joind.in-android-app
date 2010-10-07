@@ -27,6 +27,8 @@
     <string name="prefShowSplashSummary">Should the splash screen be displayed when starting the application</string>
     <string name="prefLoadImagesTitle">Load logos and gravatars</string>
     <string name="prefLoadImagesSummary">Should the application load (and cache) event logo and user gravatars?</string>
+    <string name="prefDefaultTabTitle">Default event tab</string>
+    <string name="prefDefaultTabSummary">Which event tab should be loaded on startup?</string>
 
     <string name="activityAddCommentTitle">Add comment to %s</string>
     <string name="activityAddCommentSpinnerOneStar">One star</string>

@@ -71,7 +71,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
             public void onItemClick(AdapterView<?>parent, View view, int pos, long id) {
                 // open talk detail activity with event and talk data
                 Intent myIntent = new Intent ();
-                myIntent.setClass(getBaseContext(), TalkDetail.class);
+                myIntent.setClass(getApplicationContext(), TalkDetail.class);
                 myIntent.putExtra("eventJSON", getIntent().getStringExtra("eventJSON"));
                 myIntent.putExtra("talkJSON", parent.getAdapter().getItem(pos).toString());
                 startActivity(myIntent);
@@ -92,7 +92,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
         if (v == findViewById(R.id.ButtonEventDetailsViewComments)) {
             // Open event comment activity
             Intent myIntent = new Intent ();
-            myIntent.setClass(getBaseContext(), EventComments.class);
+            myIntent.setClass(getApplicationContext(), EventComments.class);
             myIntent.putExtra("eventJSON", getIntent().getStringExtra("eventJSON"));
             startActivity(myIntent);
         }

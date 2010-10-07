@@ -12,6 +12,7 @@ import org.json.JSONObject;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -45,12 +46,16 @@ public class EventDetail extends JIActivity implements OnClickListener {
         button.setOnClickListener(this);
         button = (Button)findViewById(R.id.ButtonEventDetailsViewTracks);
         button.setOnClickListener(this);
-        CheckBox checkbox = (CheckBox)findViewById(R.id.CheckBoxEventDetailsAttending);
-        checkbox.setOnClickListener(this);
 
         int event_id = this.eventJSON.optInt("ID");
         displayDetails (event_id);
-
+        
+        // We et the onclick listener for the 'i attended' button AFTER loaded the details.
+        // Otherwise we might end up clicking it when it's not in the correct state (disabled when you are 
+        // attending the event) 
+        CheckBox checkbox = (CheckBox)findViewById(R.id.CheckBoxEventDetailsAttending);
+        checkbox.setOnClickListener(this);
+        
         loadDetails (event_id);
     }
 
@@ -111,6 +116,7 @@ public class EventDetail extends JIActivity implements OnClickListener {
 
         // Tick the checkbox, depending on if we are attending or not
         CheckBox c = (CheckBox)findViewById(R.id.CheckBoxEventDetailsAttending);
+        Log.d("joindin", "Event attended: " + event.optBoolean("user_attending"));
         c.setChecked(event.optBoolean("user_attending"));
     }
 
@@ -123,7 +129,7 @@ public class EventDetail extends JIActivity implements OnClickListener {
             public void run () {
                 // Fetch talk data from joind.in API
                 JIRest rest = new JIRest (EventDetail.this);
-                int error = rest.postXML ("event", "<request><action type=\"getdetail\" output=\"json\"><event_id>"+event_id+"</event_id></action></request>");
+                int error = rest.postXML ("event", "<request>"+JIRest.getAuthXML(getApplicationContext())+"<action type=\"getdetail\" output=\"json\"><event_id>"+event_id+"</event_id></action></request>");
 
                 if (error == JIRest.OK) {
                     try {
@@ -154,21 +160,21 @@ public class EventDetail extends JIActivity implements OnClickListener {
         if (v == findViewById(R.id.ButtonEventDetailsViewComments)) {
             // Display event comments activity
             Intent myIntent = new Intent ();
-            myIntent.setClass(getBaseContext(), EventComments.class);
+            myIntent.setClass(getApplicationContext(), EventComments.class);
             myIntent.putExtra("eventJSON", getIntent().getStringExtra("eventJSON"));
             startActivity(myIntent);
         }
         if (v == findViewById(R.id.ButtonEventDetailsViewTalks)) {
             // Display talks activity
             Intent myIntent = new Intent ();
-            myIntent.setClass(getBaseContext(), EventTalks.class);
+            myIntent.setClass(getApplicationContext(), EventTalks.class);
             myIntent.putExtra("eventJSON", getIntent().getStringExtra("eventJSON"));
             startActivity(myIntent);
         }
         if (v == findViewById(R.id.ButtonEventDetailsViewTracks)) {
             // Display talks activity
             Intent myIntent = new Intent ();
-            myIntent.setClass(getBaseContext(), EventTracks.class);
+            myIntent.setClass(getApplicationContext(), EventTracks.class);
             myIntent.putExtra("eventJSON", getIntent().getStringExtra("eventJSON"));
             startActivity(myIntent);
         }
@@ -189,7 +195,7 @@ public class EventDetail extends JIActivity implements OnClickListener {
                     runOnUiThread(new Runnable() {
                         public void run() {
                             // Display result from attendEvent
-                            Toast toast = Toast.makeText(getBaseContext(), result, Toast.LENGTH_LONG);
+                            Toast toast = Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG);
                             toast.show ();
                         }
                     });

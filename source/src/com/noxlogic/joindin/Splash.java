@@ -22,7 +22,7 @@ public class Splash extends JIActivity {
           requestWindowFeature(Window.FEATURE_NO_TITLE);
           
           // Check if we need to display the splash screen. If no, go directly to the main intent
-          SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+          SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
           boolean showscreen = prefs.getBoolean("showsplashscreen", true);
           if (! showscreen) {
         	  gotoMainIntent();

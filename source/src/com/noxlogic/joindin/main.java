@@ -21,7 +21,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -45,7 +44,6 @@ public class Main extends JIActivity implements OnClickListener {
     private JIEventAdapter m_eventAdapter;       // Adapter for displaying all the events
 
     private String currentTab;                   // Current selected tab
-    private String currentTitle;                 // Current name
     
     // Constants for dynamically added menu items
     private static final int MENU_SORT_DATE  	= 1;
@@ -78,10 +76,10 @@ public class Main extends JIActivity implements OnClickListener {
         button = (Button)findViewById(R.id.ButtonMainEventFavorites);
         button.setOnClickListener(this);        
 
-        // Set default tab
-        currentTab = "hot";
-        currentTitle = getString(R.string.activityMainEventsHot);
-
+        // Set default tab from preferences
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        currentTab = prefs.getString("defaultEventTab", "upcoming");
+        
         // Create array with all found events and add it to the event list
         ArrayList<JSONObject> m_events = new ArrayList<JSONObject>();
         m_eventAdapter = new JIEventAdapter(this, R.layout.eventrow, m_events);
@@ -92,13 +90,13 @@ public class Main extends JIActivity implements OnClickListener {
         // Add contextmenu to event list items
         registerForContextMenu(eventlist);
 
-        displayEvents(this.currentTab, this.currentTitle);
+        displayEvents(this.currentTab);
 
         // When clicked on a event, check which one it is, and go to event detail class/activity
         eventlist.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?>parent, View view, int pos, long id) {
                 Intent myIntent = new Intent ();
-                myIntent.setClass(getBaseContext(), EventDetail.class);
+                myIntent.setClass(getApplicationContext(), EventDetail.class);
 
                 // pass the JSON data for specified event to the next activity
                 myIntent.putExtra("eventJSON", parent.getAdapter().getItem(pos).toString());
@@ -107,22 +105,25 @@ public class Main extends JIActivity implements OnClickListener {
         });
     }
     
-    void loadEvents(String type, String name) {
+    
+    void loadEvents(String type) {
     	if (event_loader_thread != null) {
     		// Stop event loading thread.. we are going to start a new one... 
     		event_loader_thread.stopThread ();
     	}
     	
         // Create a event loader thread
+//    	Log.d("joindin", "loadevents "+type+"  "+name);
         event_loader_thread = new EventLoaderThread ();
+        event_loader_thread.setDaemon(true);
         event_loader_thread.setPriority(Thread.NORM_PRIORITY-1);
-        event_loader_thread.startThread(type, name);    	
+        event_loader_thread.startThread(type);    	
     }
 
 
     // Will reload events. Needed when we return to the screen.
     public void onResume () {
-    	loadEvents(this.currentTab, this.currentTitle);
+    	loadEvents(this.currentTab);
         super.onResume();
     }
     
@@ -146,12 +147,12 @@ public class Main extends JIActivity implements OnClickListener {
         	case MENU_SORT_DATE :
         		// Toast.makeText(this, "Sorting by data", Toast.LENGTH_SHORT).show();
         		this.event_sort_order = this.event_sort_order == DataHelper.ORDER_DATE_ASC ? DataHelper.ORDER_DATE_DESC : DataHelper.ORDER_DATE_ASC;
-        		displayEvents(this.currentTab, this.currentTitle);
+        		displayEvents(this.currentTab);
         		break;
         	case MENU_SORT_TITLE :
         		// Toast.makeText(this, "Sorting by title", Toast.LENGTH_SHORT).show();
         		this.event_sort_order = this.event_sort_order == DataHelper.ORDER_TITLE_ASC ? DataHelper.ORDER_TITLE_DESC : DataHelper.ORDER_TITLE_ASC;
-        		displayEvents(this.currentTab, this.currentTitle);
+        		displayEvents(this.currentTab);
         		break;
         }
         
@@ -183,7 +184,8 @@ public class Main extends JIActivity implements OnClickListener {
 
 
     // Display events by populating the m_eventAdapter (custom list) with items loaded from DB
-    public int displayEvents (final String eventType, final String eventCategory) {
+    public int displayEvents (final String eventType) {
+//    	Log.d("joindin", "displayevents "+eventType+"  "+eventCategory);
         // Clear all events
         m_eventAdapter.clear();
 
@@ -193,9 +195,16 @@ public class Main extends JIActivity implements OnClickListener {
 
         // Tell the adapter that our data set has changed so it can update it
         m_eventAdapter.notifyDataSetChanged();
+        
+        String title = "";
+        if (eventType.equals("hot")) title = this.getString(R.string.activityMainEventsHot);
+        if (eventType.equals("past")) title = this.getString(R.string.activityMainEventsPast);
+        if (eventType.equals("upcoming")) title = this.getString(R.string.activityMainEventsUpcoming);
+        if (eventType.equals("favorites")) title = this.getString(R.string.activityMainEventsFavorites);
+        
 
         // Set main title to event category plus the number of events found
-        setTitle (eventCategory+" ("+count+" events)");
+        setTitle (title+" ("+count+" events)");
         return count;
     }
 
@@ -205,11 +214,10 @@ public class Main extends JIActivity implements OnClickListener {
     	private volatile Thread runner;
     	
     	private String event_type;
-    	private String event_name;
 
-    	public synchronized void startThread(String type, String name){
+    	public synchronized void startThread(String type){
+//    		Log.d("joindin", "Startin loader thread: "+type+" "+name);
     		event_type = type;
-    		event_name = name;
     		
     		displayProgressBar (true);
     		
@@ -220,8 +228,12 @@ public class Main extends JIActivity implements OnClickListener {
     	}
 
     	public synchronized void stopThread(){
+//    		Log.d("joindin", "Stopping loader thread");
     		// Already stopped    			
-	        if (runner == null) return;
+	        if (runner == null) {
+//	        	Log.d("joindin", "Already stopped");
+	        	return;
+	        }
 	         	
 	        // We are done. So remove our progress-circle
 		    displayProgressBar (false); 
@@ -236,16 +248,21 @@ public class Main extends JIActivity implements OnClickListener {
 	        rest = new JIRest (Main.this);
 	        int error = rest.postXML ("event", "<request>"+JIRest.getAuthXML(Main.this)+"<action type=\"getlist\" output=\"json\"><event_type>"+event_type+"</event_type></action></request>");
 
+	        if (Thread.currentThread() != runner) {
+//	        	Log.d("joindin", "Quiting run() 1");
+	        	displayProgressBar (false); 
+	        	return;
+	        }
+
+
 	        // Something bad happened :(
 	        if (error != JIRest.OK) {
 	        	// We can only modify the UI in a UIThread, so we create another thread
 	            runOnUiThread(new Runnable() {
 	            	public void run() {
 	            		// Display result from the rest to the user
-	                    Toast toast = Toast.makeText (getBaseContext(), rest.getError(), Toast.LENGTH_LONG);
+	                    Toast toast = Toast.makeText (getApplicationContext(), rest.getError(), Toast.LENGTH_LONG);
 	                    toast.show ();
-	                        
-	                    stopThread();
 	            	}
 	            });
 
@@ -258,11 +275,11 @@ public class Main extends JIActivity implements OnClickListener {
 	        	JSONArray json;
 	            try {
 	            	// Get preferences
-	                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+	                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
 	                // Delete all our events for specified type/category
 	                DataHelper dh = DataHelper.getInstance();
-	                dh.deleteAllEventsFromType(event_type);
+	                // dh.deleteAllEventsFromType(event_type);
 
 	                // Add new events
 	                json = new JSONArray(rest.getResult());
@@ -274,16 +291,22 @@ public class Main extends JIActivity implements OnClickListener {
 	                    dh.insertEvent (event_type, json_event);
 	                }
 	            } catch (JSONException e) { }
+	            	if (Thread.currentThread() != runner) {
+//	            		Log.d("joindin", "Quiting run() 2");
+	            		displayProgressBar (false); 
+	            		return;
+	            	}
+	            	
 	            	// Something when wrong. Just display the current events.
 	                runOnUiThread(new Runnable() {
 	                	public void run() {
-	                		displayEvents (event_type, event_name);
-	                        stopThread();
+//	                		Log.d("joindin", "InThread: display events: "+event_type+" "+event_name);
+	                		displayEvents (event_type);
 	                	}
 	                });
 	            }
-
-	            stopThread();
+//	        	Log.d("joindin", "Quiting run() 3");
+	        	displayProgressBar (false);
 			}
     	}
 
@@ -298,42 +321,36 @@ public class Main extends JIActivity implements OnClickListener {
 
             // Set correct tab and title
             this.currentTab = "hot";
-            this.currentTitle = getString(R.string.activityMainEventsHot);
 
             // Display events that are currently in the database
-            displayEvents(this.currentTab, this.currentTitle);
+            displayEvents(this.currentTab);
 
             // And in the meantime, load new events from the API (which are
             // displayed when loaded).
-            loadEvents(this.currentTab, this.currentTitle);
+            loadEvents(this.currentTab);
         }
 
         // Past events clicked?
         if (v == findViewById(R.id.ButtonMainEventPast)) {
             // Load past events
             this.currentTab = "past";
-            this.currentTitle = getString(R.string.activityMainEventsPast);
-            displayEvents(this.currentTab, this.currentTitle);
-            
-            loadEvents(this.currentTab, this.currentTitle);
+            displayEvents(this.currentTab);
+            loadEvents(this.currentTab);
         }
 
         // Upcoming events clicked?
         if (v == findViewById(R.id.ButtonMainEventUpcoming)) {
             // Load upcoming events
             this.currentTab = "upcoming";
-            this.currentTitle = getString(R.string.activityMainEventsUpcoming);
-            displayEvents(this.currentTab, this.currentTitle);
-            
-            loadEvents(this.currentTab, this.currentTitle);
+            displayEvents(this.currentTab);
+            loadEvents(this.currentTab);
         }
         
         
         if (v == findViewById(R.id.ButtonMainEventFavorites)) {
         	// Load favorite list
         	this.currentTab = "favorites";
-        	this.currentTitle = getString(R.string.activityMainEventsFavorites);
-            displayEvents(this.currentTab, this.currentTitle);        	
+            displayEvents(this.currentTab);        	
         }
     };
 
@@ -365,11 +382,11 @@ public class Main extends JIActivity implements OnClickListener {
     	switch (item.getItemId()) {
     		case R.id.context_main_addtofavorite:
     	        dh.addToFavorites(event_id);
-    	        Toast.makeText(getBaseContext(), "Add to favorite list: "+json.optString("event_name"), Toast.LENGTH_SHORT).show();
+    	        Toast.makeText(getApplicationContext(), "Add to favorite list: "+json.optString("event_name"), Toast.LENGTH_SHORT).show();
     			return true;
     		case R.id.context_main_removefromfavorite:
     	        dh.removeFromFavorites(event_id);
-    	        Toast.makeText(getBaseContext(), "Removed from favorite list: "+json.optString("event_name"), Toast.LENGTH_SHORT).show();
+    	        Toast.makeText(getApplicationContext(), "Removed from favorite list: "+json.optString("event_name"), Toast.LENGTH_SHORT).show();
     			return true;
     		default:
     			return super.onContextItemSelected(item);

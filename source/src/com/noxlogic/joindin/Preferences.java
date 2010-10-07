@@ -16,7 +16,7 @@ public class Preferences extends PreferenceActivity {
         addPreferencesFromResource(R.xml.preferences);
         
         // Get username from preference
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         String username = prefs.getString("username", "");
         
         // Is there a username? Then change the title of the 'username' preference to add this name... looks nicer
@@ -32,9 +32,9 @@ public class Preferences extends PreferenceActivity {
         /* When we are paused (also called when we quit the preference activity), we check
          * to see if our credentials are valid. If so, we set an additional flag so we can
          * let the user send registered comments instead of anonymous ones */
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean("validated", JIActivity.hasValidCredentials (getBaseContext()));
+        editor.putBoolean("validated", JIActivity.hasValidCredentials (getApplicationContext()));
         editor.commit();
     }
 }

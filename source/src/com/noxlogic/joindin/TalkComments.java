@@ -78,7 +78,7 @@ public class TalkComments extends JIActivity implements OnClickListener  {
         if (v == findViewById(R.id.ButtonNewComment)) {
             // Goto new talk comment activity
             Intent myIntent = new Intent ();
-            myIntent.setClass(getBaseContext(), AddComment.class);
+            myIntent.setClass(getApplicationContext(), AddComment.class);
 
             myIntent.putExtra("commentType", "talk");
             myIntent.putExtra("talkJSON", getIntent().getStringExtra("talkJSON"));
@@ -182,8 +182,7 @@ class JITalkCommentAdapter extends ArrayAdapter<JSONObject> {
           if (t1 != null) t1.setText(o.optString("comment"));
           if (t2 != null) t2.setText(o.isNull("uname") ? "("+this.context.getString(R.string.generalAnonymous)+") " : o.optString("uname")+" ");
           if (t3 != null) t3.setText(DateFormat.getDateInstance().format(o.optLong("date_made")*1000));
-
-          // TODO: Do dynamically.. but troubles finding getBaseContext()          
+          
           ImageView r = (ImageView) v.findViewById(R.id.CommentRowRate);
           switch (o.optInt("rating")) {
             default :

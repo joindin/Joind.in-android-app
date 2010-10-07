@@ -76,7 +76,7 @@ class JIRest {
                 // Ignore exception
             }
 
-//            Log.d("joindin", JOINDIN_URL+urlPostfix + " --> " + xml);
+            Log.d("joindin", JOINDIN_URL+urlPostfix + " --> " + xml);
             
             httppost.setEntity(xmlentity);
             httppost.addHeader("Content-type", "text/xml");
@@ -92,7 +92,7 @@ class JIRest {
                     InputStream instream = entity.getContent();
                     this.result = Main.convertStreamToString(instream);
                     instream.close();
-//                    Log.d("joindin", this.result);
+                    Log.d("joindin", this.result);
                     return OK;
                 }
             } catch (ClientProtocolException e) {

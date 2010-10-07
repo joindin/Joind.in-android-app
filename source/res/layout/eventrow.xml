@@ -2,11 +2,11 @@
 <!-- A single event row, used in the event listview -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="?android:attr/listPreferredItemHeight"
     android:padding="6dip">
-    <ImageView android:id="@+id/EventDetailLogo" 
-    	android:layout_height="50px" 
-    	android:layout_width="50px" 
+    <ImageView 
+    	android:id="@+id/EventDetailLogo" 
+    	android:layout_height="50dip" 
+    	android:layout_width="50dip" 
     	android:visibility="gone" 
     	android:layout_marginRight="5px"></ImageView>
     <LinearLayout
@@ -51,6 +51,5 @@
                     android:id="@+id/EventDetailAttending"></TextView>
             </TableRow>
         </TableLayout>
-    
-</LinearLayout>
+	</LinearLayout>
 </LinearLayout>
