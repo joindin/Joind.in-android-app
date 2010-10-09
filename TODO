@@ -18,10 +18,10 @@ v2:
 [ ] Add new features from joind.in API
 [X] Add 'favourite' events button
 [X] Gravatar support
-[ ] Search/filter talks
+[X] Search/filter talks
 [X] splash screen on/off preferences
 [X] Logo/gravatar loading on/off
-[ ] Search/filter on dates
+[X] Search/filter on dates
 [X] Different sorts (name, date)
 [ ] Add user/speaker detail
 [ ] Adding more info on the main-page (if cfp is available, currently busy, already passed etc) 

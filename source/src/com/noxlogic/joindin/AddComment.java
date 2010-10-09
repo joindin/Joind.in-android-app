@@ -61,17 +61,6 @@ public class AddComment extends JIActivity implements OnClickListener {
         button.setOnClickListener(this);
         button = (Button)findViewById(R.id.ButtonAddCommentSend);
         button.setOnClickListener(this);
-
-        // Add spinner items (the star ratings)
-////        String[] items = new String[] {getString(R.string.activityAddCommentSpinnerOneStar),
-////                                       getString(R.string.activityAddCommentSpinnerTwoStars),
-////                                       getString(R.string.activityAddCommentSpinnerThreeStars),
-////                                       getString(R.string.activityAddCommentSpinnerFourStars),
-////                                       getString(R.string.activityAddCommentSpinnerFiveStars)};
-////        Spinner spinner = (Spinner) findViewById(R.id.Spinner01);
-//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, items);
-//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        spinner.setAdapter(adapter);
     }
 
 

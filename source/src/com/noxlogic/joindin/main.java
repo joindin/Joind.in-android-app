@@ -21,6 +21,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -34,6 +36,8 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Filter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -53,7 +57,23 @@ public class Main extends JIActivity implements OnClickListener {
 
     JIRest rest;    // Our rest object to communicate with joind.in API
     
+    private EditText filterText;
+    
     EventLoaderThread event_loader_thread = null;
+    
+    private TextWatcher filterTextWatcher = new TextWatcher() {
+
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+        	m_eventAdapter.getFilter().filter(s);
+        }
+
+		public void afterTextChanged(Editable s) {
+			
+		}	
+    };    
     
     /** Called when the activity is first created. */
     public void onCreate(Bundle savedInstanceState) {
@@ -87,8 +107,12 @@ public class Main extends JIActivity implements OnClickListener {
         ListView eventlist =(ListView)findViewById(R.id.ListViewMainEvents);
         eventlist.setAdapter(m_eventAdapter);
         
-        // Add contextmenu to event list items
+        // Add contextmenu to event list itemsllo
         registerForContextMenu(eventlist);
+        
+        filterText = (EditText) findViewById(R.id.FilterBar);
+        filterText.addTextChangedListener(filterTextWatcher);
+        
 
         displayEvents(this.currentTab);
 
@@ -106,6 +130,14 @@ public class Main extends JIActivity implements OnClickListener {
     }
     
     
+    
+    protected void onDestroy() {
+        super.onDestroy();
+        filterText.removeTextChangedListener(filterTextWatcher);
+    }
+    
+    
+    
     void loadEvents(String type) {
     	if (event_loader_thread != null) {
     		// Stop event loading thread.. we are going to start a new one... 
@@ -113,7 +145,6 @@ public class Main extends JIActivity implements OnClickListener {
     	}
     	
         // Create a event loader thread
-//    	Log.d("joindin", "loadevents "+type+"  "+name);
         event_loader_thread = new EventLoaderThread ();
         event_loader_thread.setDaemon(true);
         event_loader_thread.setPriority(Thread.NORM_PRIORITY-1);
@@ -185,7 +216,6 @@ public class Main extends JIActivity implements OnClickListener {
 
     // Display events by populating the m_eventAdapter (custom list) with items loaded from DB
     public int displayEvents (final String eventType) {
-//    	Log.d("joindin", "displayevents "+eventType+"  "+eventCategory);
         // Clear all events
         m_eventAdapter.clear();
 
@@ -216,7 +246,6 @@ public class Main extends JIActivity implements OnClickListener {
     	private String event_type;
 
     	public synchronized void startThread(String type){
-//    		Log.d("joindin", "Startin loader thread: "+type+" "+name);
     		event_type = type;
     		
     		displayProgressBar (true);
@@ -228,12 +257,8 @@ public class Main extends JIActivity implements OnClickListener {
     	}
 
     	public synchronized void stopThread(){
-//    		Log.d("joindin", "Stopping loader thread");
     		// Already stopped    			
-	        if (runner == null) {
-//	        	Log.d("joindin", "Already stopped");
-	        	return;
-	        }
+	        if (runner == null) return;
 	         	
 	        // We are done. So remove our progress-circle
 		    displayProgressBar (false); 
@@ -244,12 +269,17 @@ public class Main extends JIActivity implements OnClickListener {
     	}
 
 		public void run() {
+			// We do not need to reload favorite list from the server. It's not there :)
+			if (event_type.equals("favorites")) {
+				displayProgressBar (false); 
+				return;
+			}
+			
 		    // Get some event data from the joind.in API
 	        rest = new JIRest (Main.this);
 	        int error = rest.postXML ("event", "<request>"+JIRest.getAuthXML(Main.this)+"<action type=\"getlist\" output=\"json\"><event_type>"+event_type+"</event_type></action></request>");
 
 	        if (Thread.currentThread() != runner) {
-//	        	Log.d("joindin", "Quiting run() 1");
 	        	displayProgressBar (false); 
 	        	return;
 	        }
@@ -292,7 +322,6 @@ public class Main extends JIActivity implements OnClickListener {
 	                }
 	            } catch (JSONException e) { }
 	            	if (Thread.currentThread() != runner) {
-//	            		Log.d("joindin", "Quiting run() 2");
 	            		displayProgressBar (false); 
 	            		return;
 	            	}
@@ -300,12 +329,10 @@ public class Main extends JIActivity implements OnClickListener {
 	            	// Something when wrong. Just display the current events.
 	                runOnUiThread(new Runnable() {
 	                	public void run() {
-//	                		Log.d("joindin", "InThread: display events: "+event_type+" "+event_name);
 	                		displayEvents (event_type);
 	                	}
 	                });
 	            }
-//	        	Log.d("joindin", "Quiting run() 3");
 	        	displayProgressBar (false);
 			}
     	}
@@ -403,16 +430,23 @@ public class Main extends JIActivity implements OnClickListener {
  * very VERY slow.. :(
  */
 class JIEventAdapter extends ArrayAdapter<JSONObject> {
-      private ArrayList<JSONObject> items;      // The current items in the listview
+      private ArrayList<JSONObject> all_items;        // The all items for the listview
+      private ArrayList<JSONObject> filtered_items;   // The current currently viewed in the listview
       private Context context;
       LayoutInflater inflator;
-      public ImageLoader image_loader;			// eventlogo image loader
+      public ImageLoader image_loader;			// eventlogo image loader      
+      private PTypeFilter filter;
+
+      public int getCount () {
+    	  return filtered_items.size();
+      }
 
 
       public JIEventAdapter(Context context, int textViewResourceId, ArrayList<JSONObject> items) {
           super(context, textViewResourceId, items);
           this.context = context;       // Saving context, sincve we need it on other places where the context is not known.
-          this.items = items;
+          this.all_items = items;
+          this.filtered_items = items;
           this.inflator = (LayoutInflater)this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
           
           this.image_loader = new ImageLoader(context.getApplicationContext(), "events");
@@ -425,7 +459,7 @@ class JIEventAdapter extends ArrayAdapter<JSONObject> {
           }
 
           // Get the (JSON) data we need
-          JSONObject o = items.get(position);
+          JSONObject o = filtered_items.get(position);
           if (o == null) return convertView;
 
           // Display (or load in the background if needed) the event logo
@@ -468,4 +502,47 @@ class JIEventAdapter extends ArrayAdapter<JSONObject> {
           
           return convertView;
       }
+      
+      
+      public Filter getFilter() {
+    	  if (filter == null) {
+    		  filter  = new PTypeFilter();
+    	  }
+    	  return filter;
+      }
+      
+      private class PTypeFilter extends Filter {
+    	    @SuppressWarnings("unchecked")
+			protected void publishResults(CharSequence prefix, FilterResults results) {
+    	    	filtered_items =  (ArrayList<JSONObject>)results.values;
+    	    	notifyDataSetChanged();    	    	
+    	    }
+
+    	    protected FilterResults performFiltering(CharSequence prefix) {
+    	          FilterResults results = new FilterResults();
+    	          ArrayList<JSONObject> i = new ArrayList<JSONObject>();
+
+    	          if (prefix!= null && prefix.toString().length() > 0) {
+    	        	  
+    	              for (int index = 0; index < all_items.size(); index++) {
+    	                  JSONObject json = all_items.get(index);
+    	                  String title = json.optString("event_name");
+    	                  // Add to the filtered result list when our string is found in the event_name
+    	                  if (title.toUpperCase().indexOf(prefix.toString().toUpperCase()) >= 0) i.add(json);  
+    	              }
+    	              results.values = i;
+    	              results.count = i.size();                   
+    	          } else {
+    	        	  // No more filtering, display all items
+    	              synchronized (all_items){
+    	                  results.values = all_items;
+    	                  results.count = all_items.size();
+    	              }
+    	          }
+
+    	          return results;
+    	    }    
+    	}
+      
+      
 }

@@ -12,7 +12,6 @@ import org.json.JSONObject;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -116,7 +115,6 @@ public class EventDetail extends JIActivity implements OnClickListener {
 
         // Tick the checkbox, depending on if we are attending or not
         CheckBox c = (CheckBox)findViewById(R.id.CheckBoxEventDetailsAttending);
-        Log.d("joindin", "Event attended: " + event.optBoolean("user_attending"));
         c.setChecked(event.optBoolean("user_attending"));
     }
 

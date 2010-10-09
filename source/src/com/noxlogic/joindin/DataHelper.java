@@ -21,7 +21,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 import android.widget.ArrayAdapter;
 
 
@@ -205,7 +204,6 @@ public final class DataHelper {
     	Cursor c = this.db.rawQuery("SELECT json FROM events WHERE event_type = '"+event_type+"' "+order_sql, null);
         
         int count = c.getCount();     
-//        Log.d("joindin", "Event type "+event_type+" has got "+count+" records.");
         populate (c, m_eventAdapter);
         return count;
     }
@@ -240,15 +238,12 @@ public final class DataHelper {
     public int populateTalks(int event_id, int track_id, JITalkAdapter m_talkAdapter) {
         Cursor c;
         
-//        Log.d("joindin", "POpulating talks from event "+event_id+" and track "+track_id);
-
         if (track_id == -1) {
             c = this.db.rawQuery("SELECT json FROM talks WHERE event_id = "+event_id, null);
         } else {
             c = this.db.rawQuery("SELECT json FROM talks WHERE event_id = "+event_id+" and track_id = "+track_id, null);
         }
         int count = c.getCount();
-//        Log.d("joindin", "That would make it a total of "+count+" talks");
         populate (c, m_talkAdapter);
         return count;
     }

@@ -7,7 +7,7 @@
     <TableLayout
         android:id="@+id/TableLayout01"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content" android:layout_weight="30">
         <TableRow
             android:id="@+id/TableRow01"
             android:layout_width="fill_parent"
@@ -19,51 +19,67 @@
                 android:text="Hot"
                 android:layout_height="fill_parent"
                 android:layout_width="fill_parent"
-                android:height="30px"
+                android:height="30dip"
                 android:id="@+id/ButtonMainEventHot"
                 android:textStyle="bold"
-                android:textSize="11px"
+                android:textSize="11dip"
                 android:layout_weight=".25"
                 android:width="0dip"></Button>
             <Button
                 android:text="Upcoming"
                 android:layout_height="fill_parent"
                 android:layout_width="fill_parent"
-                android:height="30px"
+                android:height="30dip"
                 android:id="@+id/ButtonMainEventUpcoming"
                 android:textStyle="bold"
-                android:textSize="11px"
+                android:textSize="11dip"
                 android:layout_weight=".25"
                 android:width="0dip"></Button>
             <Button
                 android:text="Past"
                 android:layout_height="fill_parent"
                 android:layout_width="fill_parent"
-                android:height="30px"
+                android:height="30dip"
                 android:id="@+id/ButtonMainEventPast"
                 android:textStyle="bold"
-                android:textSize="11px"
+                android:textSize="11dip"
                 android:layout_weight=".25"
                 android:width="0dip"></Button>
             <Button
                 android:text="Favorites"
                 android:layout_height="fill_parent"
                 android:layout_width="fill_parent"
-                android:height="30px"
+                android:height="30dip"
                 android:id="@+id/ButtonMainEventFavorites"
                 android:textStyle="bold"
-                android:textSize="11px"
+                android:textSize="11dip"
                 android:layout_weight=".25"
                 android:width="0dip"></Button>                
         </TableRow>
     </TableLayout>
     <ListView
-        android:layout_height="fill_parent"
         android:layout_width="fill_parent"
         android:id="@+id/ListViewMainEvents"
-        android:scrollbars="vertical"></ListView>
-    <AbsoluteLayout
-        android:id="@+id/AbsoluteLayout01"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"></AbsoluteLayout>
+        android:scrollbars="vertical" 
+        android:layout_height="0px" 
+        android:layout_weight="10000">
+	</ListView>
+	<LinearLayout 
+		android:id="@+id/LinearLayout01" 
+		android:layout_height="wrap_content" 
+		android:layout_width="fill_parent" 
+		android:layout_gravity="bottom" android:layout_weight="10">
+		<ImageView 
+			android:id="@+id/ImageView01" 
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content" 
+			android:background="@android:drawable/ic_menu_search"></ImageView>
+		<EditText 
+			android:layout_height="wrap_content" 
+			android:id="@+id/FilterBar" 
+			android:gravity="fill_horizontal" 
+			android:layout_width="fill_parent" 
+			android:inputType="text" 
+			android:layout_marginRight="5px"></EditText>
+	</LinearLayout>
 </LinearLayout>
