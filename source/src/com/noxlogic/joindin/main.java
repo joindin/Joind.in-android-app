@@ -440,6 +440,10 @@ class JIEventAdapter extends ArrayAdapter<JSONObject> {
       public int getCount () {
     	  return filtered_items.size();
       }
+      
+      public JSONObject getItem (int position) {
+    	  return filtered_items.get(position);
+      }
 
 
       public JIEventAdapter(Context context, int textViewResourceId, ArrayList<JSONObject> items) {
