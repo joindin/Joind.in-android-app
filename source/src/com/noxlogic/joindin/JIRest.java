@@ -19,6 +19,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 
@@ -76,9 +77,11 @@ class JIRest {
             }
 
             // Log.d("joindin", JOINDIN_URL+urlPostfix + " --> " + xml);
-            
             httppost.setEntity(xmlentity);
             httppost.addHeader("Content-type", "text/xml");
+            
+            // Do not add the "expect: 100-continue" headerline. It will mess up some proxy systems 
+            httppost.getParams().setBooleanParameter(CoreProtocolPNames.USE_EXPECT_CONTINUE, false);
 
             try {
                 // Post stuff
