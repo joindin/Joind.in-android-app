@@ -19,6 +19,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.Editable;
@@ -480,7 +481,17 @@ class JIEventAdapter extends ArrayAdapter<JSONObject> {
         	  image_loader.displayImage("http://joind.in/inc/img/event_icons/", filename, (Activity)context, el);          
           }
 
-
+          // Set a darker color when the event is currently running.
+          long event_start = o.optLong("event_start");
+          long event_end = o.optLong("event_end");
+          long cts = System.currentTimeMillis() / 1000;
+          if (event_start <= cts && cts <= event_end) {
+        	  convertView.setBackgroundColor(Color.rgb(238, 238, 224));
+          } else {
+        	  // This isn't right. We shouldn't set a white color, but the default color	
+        	  convertView.setBackgroundColor(Color.rgb(255, 255, 255));
+          }
+                              
           // Find our textviews we need to fill
           TextView tt = (TextView) convertView.findViewById(R.id.EventDetailCaption);
           TextView bt = (TextView) convertView.findViewById(R.id.EventDetailDate);

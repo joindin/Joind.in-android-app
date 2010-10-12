@@ -71,6 +71,7 @@
     <string name="generalEventTracksSingular">%d event track</string>
     <string name="generalEventTracksPlural">%d event tracks</string>
 
+	<string name="generalTime">Time start: %02d:%02d</string>
     <string name="generalCommentSingular">%d comment</string>
     <string name="generalCommentPlural">%d comments</string>
     <string name="generalAnonymous">Anonymous</string>
@@ -83,6 +84,6 @@
     <string name="generalAboutButtonCaption">Close</string>
     <string name="generalAboutMessage">Joind.In Android application created by Joshua Thijssen. Please send bugreports, feature requests etc to jthijssen@noxlogic.nl \n\nLogos and images are copyright Joind.in</string>
 
-    <string name="generalCacheCleared">Cache is cleared</string>
+    <string name="generalCacheCleared">The cache is cleared</string>
 
 </resources>

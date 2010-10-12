@@ -4,6 +4,7 @@ package com.noxlogic.joindin;
  * Displays all talks from specified event.
  */
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import org.json.JSONArray;
@@ -12,6 +13,7 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -157,6 +159,9 @@ public class EventTalks extends JIActivity implements OnClickListener {
 
 }
 
+
+
+
 /**
  * Adapter that hold our talk rows. See  JIEventAdapter class in main.java for more info
  */
@@ -176,9 +181,24 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> {
                 LayoutInflater vi = (LayoutInflater)this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 v = vi.inflate(R.layout.talkrow, null);
           }
-
+          
           JSONObject o = items.get(position);
           if (o == null) return v;
+          
+          long l = o.optLong("date_given");
+          long cts = System.currentTimeMillis() / 1000;
+          
+          
+          // Set a bit of darker color when the talk is currently held (the date_given is less than an hour old)
+          if (cts-l <= 3600 && cts-l >= 0) {  
+        	  v.setBackgroundColor(Color.rgb(238, 238, 224));
+          } else {
+        	  // This isn't right. We shouldn't set a white color, but the default color
+        	  v.setBackgroundColor(Color.rgb(255, 255, 255));
+          }
+        		            
+          // Get the timestamp (in milliseconds) from the talk
+          Timestamp ts = new Timestamp (l*1000);
 
           String t2Text;
           int commentCount = o.optInt("comment_count");
@@ -187,13 +207,15 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> {
           } else {
               t2Text = String.format(this.context.getString(R.string.generalCommentPlural), commentCount);
           }
-
+          
           TextView t1 = (TextView) v.findViewById(R.id.TalkRowCaption);
           TextView t2 = (TextView) v.findViewById(R.id.TalkRowComments);
           TextView t3 = (TextView) v.findViewById(R.id.TalkRowSpeaker);
+          TextView t4 = (TextView) v.findViewById(R.id.TalkRowTime);
           if (t1 != null) t1.setText(o.optString("talk_title"));
           if (t2 != null) t2.setText(t2Text);
           if (t3 != null) t3.setText(o.optString("speaker"));
+          if (t4 != null) t4.setText(String.format(this.context.getString(R.string.generalTime), ts.getHours(), ts.getMinutes()));
 
           // Set specified talk category image
           ImageView r = (ImageView) v.findViewById(R.id.TalkRowImageType);
