@@ -486,7 +486,7 @@ class JIEventAdapter extends ArrayAdapter<JSONObject> {
           long event_end = o.optLong("event_end");
           long cts = System.currentTimeMillis() / 1000;
           if (event_start <= cts && cts <= event_end) {
-        	  convertView.setBackgroundColor(Color.rgb(238, 238, 224));
+        	  convertView.setBackgroundColor(Color.rgb(218, 218, 204));
           } else {
         	  // This isn't right. We shouldn't set a white color, but the default color	
         	  convertView.setBackgroundColor(Color.rgb(255, 255, 255));

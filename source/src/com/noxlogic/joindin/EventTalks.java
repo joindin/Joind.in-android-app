@@ -191,7 +191,7 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> {
           
           // Set a bit of darker color when the talk is currently held (the date_given is less than an hour old)
           if (cts-l <= 3600 && cts-l >= 0) {  
-        	  v.setBackgroundColor(Color.rgb(238, 238, 224));
+        	  v.setBackgroundColor(Color.rgb(218, 218, 204));
           } else {
         	  // This isn't right. We shouldn't set a white color, but the default color
         	  v.setBackgroundColor(Color.rgb(255, 255, 255));

@@ -11,6 +11,8 @@ import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -34,6 +36,21 @@ public class AddComment extends JIActivity implements OnClickListener {
         // Get comment type from the intent scratch board
         this.commentType = getIntent().getStringExtra("commentType");
         setTitle (String.format(getString(R.string.activityAddCommentTitle), this.commentType));
+        
+        EditText te = (EditText) findViewById(R.id.CommentText);
+        te.setText(JIActivity.getCommentHistory());
+        te.addTextChangedListener(new TextWatcher() {
+        	public void onTextChanged (CharSequence s, int start, int before, int count) {
+        		JIActivity.setCommentHistory(s.toString());
+        	}
+
+			public void afterTextChanged(Editable s) {				
+			}
+
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+			}
+        });
+        
 
         // Are we commenting on an event?
         if (this.commentType.compareTo("event") == 0) {
@@ -44,14 +61,14 @@ public class AddComment extends JIActivity implements OnClickListener {
                 android.util.Log.e("JoindInApp", "No event passed to activity", e); 
             }
 
-            // Set spinner and checkbox to invisible since they are not used while
+            // Set rating bar and checkbox to invisible since they are not used while
             // commenting on events
             View v;
-            v = (View) findViewById(R.id.RatingBar01);
+            v = (View) findViewById(R.id.CommentRatingBar);
             v.setVisibility(View.GONE);
             v = (View) findViewById(R.id.TextViewRating);
             v.setVisibility(View.GONE);
-            v = findViewById(R.id.CheckBox01);
+            v = (View) findViewById(R.id.CommentPrivate);
             v.setVisibility(View.GONE);
         }
 
@@ -81,7 +98,7 @@ public class AddComment extends JIActivity implements OnClickListener {
             v.setVisibility (View.VISIBLE);
         }
     }
-
+    
     // Called when button is clicked
     public void onClick(View v) {
         // Did we click cancel button?
@@ -130,11 +147,11 @@ public class AddComment extends JIActivity implements OnClickListener {
         displayProgressBar (true);
 
         // Get information from the layout
-        RatingBar ratingbar = (RatingBar)findViewById(R.id.RatingBar01);
+        RatingBar ratingbar = (RatingBar)findViewById(R.id.CommentRatingBar);
         int rating = (int) ratingbar.getRating();
-        EditText tmp1 = (EditText) findViewById(R.id.EditText01);
+        EditText tmp1 = (EditText) findViewById(R.id.CommentText);
         String comment = tmp1.getText().toString();
-        CheckBox tmp2 = (CheckBox) findViewById(R.id.CheckBox01);
+        CheckBox tmp2 = (CheckBox) findViewById(R.id.CommentPrivate);
         int priv = tmp2.isChecked() ? 1 : 0;
 
         // Are we sending a talk comment?

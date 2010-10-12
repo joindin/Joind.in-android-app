@@ -24,6 +24,14 @@ import android.view.Window;
 import android.widget.Toast;
 
 public class JIActivity extends Activity {
+	
+	static String _comment_history;	
+	static public String getCommentHistory () {
+		return _comment_history;
+	}
+	public static void setCommentHistory(String comment) {
+		_comment_history = comment;
+	}
 
     // Returns boolean if the user has entered valid credentials in the preferences
     // screen to login into the joind.in API. Needed to send registered comments and
