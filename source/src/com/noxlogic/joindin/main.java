@@ -232,7 +232,6 @@ public class Main extends JIActivity implements OnClickListener {
         if (eventType.equals("past")) title = this.getString(R.string.activityMainEventsPast);
         if (eventType.equals("upcoming")) title = this.getString(R.string.activityMainEventsUpcoming);
         if (eventType.equals("favorites")) title = this.getString(R.string.activityMainEventsFavorites);
-        
 
         // Set main title to event category plus the number of events found
         setTitle (title+" ("+count+" events)");
@@ -558,6 +557,4 @@ class JIEventAdapter extends ArrayAdapter<JSONObject> {
     	          return results;
     	    }    
     	}
-      
-      
 }

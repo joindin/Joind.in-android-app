@@ -5,47 +5,65 @@
     android:layout_height="?android:attr/listPreferredItemHeight"
     android:padding="6dip" 
     android:orientation="vertical">
-    <TextView
+    <LinearLayout
+        android:id="@+id/LinearLayout01"
         android:layout_height="wrap_content"
-        android:textStyle="bold"
-        android:id="@+id/TalkRowCaption"
-        android:ellipsize="end"
-        android:singleLine="true"
-        android:layout_width="fill_parent"></TextView>
+        android:orientation="horizontal"
+        android:layout_width="fill_parent">
+		<ImageView
+    		android:background="@drawable/talk"
+			android:layout_height="wrap_content"
+        	android:layout_width="wrap_content"
+        	android:layout_marginRight="5px"
+        	android:id="@+id/TalkRowImageType"></ImageView>    
+    	<TextView
+        	android:layout_height="wrap_content"
+        	android:textStyle="bold"
+        	android:id="@+id/TalkRowCaption"
+        	android:ellipsize="end"
+        	android:singleLine="true"
+        	android:layout_width="fill_parent"></TextView>
+	</LinearLayout>
     <LinearLayout
         android:id="@+id/LinearLayout01"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent">
-        <ImageView
-            android:background="@drawable/talk"
-            android:layout_marginRight="5px"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:id="@+id/TalkRowImageType"></ImageView>
+		<ImageView
+    		android:background="@drawable/rating_0"
+			android:layout_height="15dip"
+        	android:layout_width="75dip"
+        	android:layout_marginTop="5px"
+        	android:layout_marginRight="5px"
+        	android:id="@+id/TalkRowRating"></ImageView>    
         <TextView
             android:layout_height="wrap_content"
             android:id="@+id/TalkRowSpeaker"
             android:layout_weight="3"
             android:layout_width="fill_parent"></TextView>
-	    <LinearLayout
-    	    android:id="@+id/LinearLayout01"
-	        android:layout_height="wrap_content"
-    	    android:layout_width="wrap_content"
-    	    android:layout_marginRight="5px"
-    	    android:orientation="vertical">
-        	<TextView
-            	android:layout_width="wrap_content"
-            	android:layout_height="wrap_content"
-            	android:id="@+id/TalkRowComments"
-				android:gravity="right"
-				android:layout_gravity="right"            	
-            	android:text="0 comments"></TextView>
-        	<TextView
-            	android:layout_width="wrap_content"
-            	android:layout_height="wrap_content"
-            	android:id="@+id/TalkRowTime"
-            	android:gravity="right"
-            	android:text="Time start: 00:00"></TextView>
-		</LinearLayout>
+	    <TextView 
+	    	android:layout_width="wrap_content" 
+	    	android:layout_height="wrap_content" 
+	    	android:id="@+id/TalkRowComments" 
+	    	android:gravity="right" 
+	    	android:layout_gravity="right" 
+	    	android:text="0 comments"></TextView>
     </LinearLayout>
+    <LinearLayout 
+    	android:id="@+id/LinearLayout01" 
+    	android:layout_height="wrap_content" 
+    	android:layout_width="fill_parent">
+		<TextView 
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content" 
+			android:id="@+id/TalkRowTrack" 
+			android:text="Track 1"></TextView>
+		<TextView 
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content"
+			android:layout_gravity="right" 
+			android:id="@+id/TalkRowTime" 
+			android:gravity="right" 
+			android:layout_weight="3"
+			android:text="Time start: 00:00"></TextView>
+		</LinearLayout>
 </LinearLayout>
