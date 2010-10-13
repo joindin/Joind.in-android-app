@@ -7,7 +7,8 @@
     <TableLayout
         android:id="@+id/TableLayout01"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" android:layout_weight="30">
+        android:layout_height="wrap_content" 
+        android:layout_weight="30">
         <TableRow
             android:id="@+id/TableRow01"
             android:layout_width="fill_parent"

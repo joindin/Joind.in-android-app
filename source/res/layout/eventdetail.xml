@@ -11,7 +11,7 @@
         android:orientation="vertical">
         <TextView
             android:layout_width="fill_parent"
-            android:textSize="20px"
+            android:textSize="18dip"
             android:gravity="center_vertical|center_horizontal"
             android:layout_height="wrap_content"
             android:id="@+id/EventDetailsEventCaption"
@@ -55,7 +55,6 @@
             android:ellipsize="none"
             android:layout_height="fill_parent"
             android:layout_width="fill_parent"
-            android:textSize="7pt"
             android:background="#eeeeee"></TextView>
     </ScrollView>
     <TableLayout
@@ -71,14 +70,12 @@
                 android:id="@+id/ButtonEventDetailsViewTalks"
                 android:layout_marginTop="2px"
                 android:layout_height="wrap_content"
-                android:textSize="5pt"
                 android:layout_width="150px" 
                 android:layout_gravity="bottom"
                 android:text="View talks"></Button>
             <Button 
                 android:layout_height="wrap_content"
                 android:id="@+id/ButtonEventDetailsViewTracks"
-                android:textSize="5pt"
                 android:layout_marginTop="2px"
                 android:layout_width="150px" 
                 android:text="View tracks (0)"
@@ -92,14 +89,12 @@
                 android:id="@+id/ButtonEventDetailsViewComments"
                 android:layout_marginTop="2px"
                 android:layout_height="wrap_content"
-                android:textSize="5pt"
                 android:layout_width="150px"
                 android:text="View comments (0)"
                 android:layout_gravity="bottom"></Button>
             <CheckBox 
                 android:layout_height="wrap_content"
                 android:text="I'm attending"
-                android:textSize="5pt"
                 android:id="@+id/CheckBoxEventDetailsAttending"
                 android:layout_width="150px"
                 android:layout_gravity="bottom"></CheckBox>

@@ -23,7 +23,7 @@
             android:ellipsize="end"
             android:singleLine="true"
             android:id="@+id/EventDetailCaption"
-            android:textSize="7pt"/>
+            android:textSize="16dip"/>
         <TableLayout
             android:id="@+id/TableLayout01"
             android:layout_height="wrap_content"

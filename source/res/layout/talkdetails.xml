@@ -12,7 +12,7 @@
         android:layout_width="fill_parent">
         <TextView
             android:layout_width="fill_parent"
-            android:textSize="20px"
+            android:textSize="18dip"
             android:gravity="center_vertical|center_horizontal"
             android:layout_height="wrap_content"
             android:text=""
@@ -33,7 +33,6 @@
                 android:scrollbars="vertical"
                 android:id="@+id/TalkDetailDescription"
                 android:layout_height="fill_parent"
-                android:textSize="6pt"
                 android:background="#eeeeee"></TextView>
         </ScrollView>
     </LinearLayout>

@@ -3,12 +3,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="?android:attr/listPreferredItemHeight"
-    android:padding="6dip" android:orientation="vertical">
+    android:padding="6dip" 
+    android:orientation="vertical">
     <TextView
         android:layout_height="wrap_content"
         android:textStyle="bold"
         android:id="@+id/TalkRowCaption"
-        android:textSize="8pt"
         android:ellipsize="end"
         android:singleLine="true"
         android:layout_width="fill_parent"></TextView>
