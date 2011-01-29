@@ -53,6 +53,7 @@
             android:text=""
             android:id="@+id/EventDetailsDescription"
             android:ellipsize="none"
+            android:textSize="14dip"
             android:layout_height="fill_parent"
             android:layout_width="fill_parent"
             android:background="#eeeeee"></TextView>
@@ -64,39 +65,43 @@
         <TableRow
             android:id="@+id/TableRow01"
             android:layout_height="wrap_content"
-            android:layout_width="wrap_content">
+            android:layout_width="fill_parent">
             <Button
                 android:gravity="center_vertical|center_horizontal"
                 android:id="@+id/ButtonEventDetailsViewTalks"
                 android:layout_marginTop="2px"
                 android:layout_height="wrap_content"
-                android:layout_width="150px" 
+                android:layout_width="0px"
+                android:layout_weight=".50"
                 android:layout_gravity="bottom"
                 android:text="View talks"></Button>
             <Button 
                 android:layout_height="wrap_content"
                 android:id="@+id/ButtonEventDetailsViewTracks"
                 android:layout_marginTop="2px"
-                android:layout_width="150px" 
+                android:layout_width="0px"
+                android:layout_weight=".50"
                 android:text="View tracks (0)"
                 android:layout_gravity="bottom"></Button>
         </TableRow>
         <TableRow 
             android:id="@+id/TableRow02" 
             android:layout_height="wrap_content"
-            android:layout_width="wrap_content">
+            android:layout_width="fill_parent">
             <Button 
                 android:id="@+id/ButtonEventDetailsViewComments"
                 android:layout_marginTop="2px"
                 android:layout_height="wrap_content"
-                android:layout_width="150px"
+                android:layout_width="0px"
+                android:layout_weight=".50"
                 android:text="View comments (0)"
                 android:layout_gravity="bottom"></Button>
             <CheckBox 
                 android:layout_height="wrap_content"
                 android:text="I'm attending"
                 android:id="@+id/CheckBoxEventDetailsAttending"
-                android:layout_width="150px"
+                android:layout_width="0px"
+                android:layout_weight=".50"
                 android:layout_gravity="bottom"></CheckBox>
         </TableRow>
     </TableLayout>
