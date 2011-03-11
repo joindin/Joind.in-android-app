@@ -74,7 +74,7 @@ public class EventDetail extends JIActivity implements OnClickListener {
         String d2 = DateFormat.getDateInstance().format(event.optLong("event_end")*1000);
         t.setText(d1.equals(d2) ? d1 : d1 + " - " + d2);
         t = (TextView) this.findViewById(R.id.EventDetailsStub);
-        t.setText ("#"+event.optString("event_stub"));
+        t.setText (event.optString("event_hashtag"));
         t = (TextView) this.findViewById(R.id.EventDetailsDescription);
         t.setText (event.optString("event_desc"));
 
