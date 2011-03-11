@@ -46,7 +46,7 @@
 	    	android:id="@+id/TalkRowComments" 
 	    	android:gravity="right" 
 	    	android:layout_gravity="right" 
-	    	android:text="0 comments"></TextView>
+	    	android:text=""></TextView>
     </LinearLayout>
     <LinearLayout 
     	android:id="@+id/LinearLayout01" 
@@ -56,7 +56,7 @@
 			android:layout_width="wrap_content" 
 			android:layout_height="wrap_content" 
 			android:id="@+id/TalkRowTrack" 
-			android:text="Track 1"></TextView>
+			android:text=""></TextView>
 		<TextView 
 			android:layout_width="wrap_content" 
 			android:layout_height="wrap_content"
@@ -64,6 +64,6 @@
 			android:id="@+id/TalkRowTime" 
 			android:gravity="right" 
 			android:layout_weight="3"
-			android:text="Time start: 00:00"></TextView>
+			android:text=""></TextView>
 		</LinearLayout>
 </LinearLayout>
