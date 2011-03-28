@@ -15,6 +15,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -171,9 +172,12 @@ class JITalkCommentAdapter extends ArrayAdapter<JSONObject> {
           el.setTag("");
           el.setVisibility(View.GONE);
           
-    	  String filename = "user"+o.optString("user_id")+".jpg";
-    	  el.setTag(filename);        	  
-    	  image_loader.displayImage("http://joind.in/inc/img/user_gravatar/", filename, (Activity)context, el);          
+          if (o.optInt("user_id") > 0) {
+        	  String filename = "user"+o.optString("user_id")+".jpg";
+        	  el.setTag(filename);        	  
+        	  image_loader.displayImage("http://joind.in/inc/img/user_gravatar/", filename, (Activity)context, el);          
+          }
+
           
 
           TextView t1 = (TextView) v.findViewById(R.id.CommentRowComment);
@@ -182,6 +186,7 @@ class JITalkCommentAdapter extends ArrayAdapter<JSONObject> {
           if (t1 != null) t1.setText(o.optString("comment"));
           if (t2 != null) t2.setText(o.isNull("uname") ? "("+this.context.getString(R.string.generalAnonymous)+") " : o.optString("uname")+" ");
           if (t3 != null) t3.setText(DateFormat.getDateInstance().format(o.optLong("date_made")*1000));
+          Linkify.addLinks(t1, Linkify.ALL);
           
           ImageView r = (ImageView) v.findViewById(R.id.CommentRowRate);
           switch (o.optInt("rating")) {

@@ -12,6 +12,7 @@ import org.json.JSONObject;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.util.Linkify;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -77,6 +78,7 @@ public class EventDetail extends JIActivity implements OnClickListener {
         t.setText (event.optString("event_hashtag"));
         t = (TextView) this.findViewById(R.id.EventDetailsDescription);
         t.setText (event.optString("event_desc"));
+        Linkify.addLinks(t, Linkify.ALL);
 
         // Add number of comments to the correct button caption 
         Button b = (Button) this.findViewById(R.id.ButtonEventDetailsViewComments);

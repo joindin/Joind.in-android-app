@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.util.Linkify;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -43,9 +44,10 @@ public class TalkDetail extends JIActivity implements OnClickListener {
         String s = this.talkJSON.optString("talk_desc");
         // Strip away newlines and additional spaces. Somehow these get added when
         // adding talks. It doesn't really look nice when viewing.
-        s = s.replace("\n ", "");
-        s = s.replace("   ", "");
+        s = s.replace("\n", "");
+        s = s.replace("  ", "");
         t.setText (s);
+        Linkify.addLinks(t, Linkify.ALL);
 
         // Update view X comments button
         Button b = (Button) this.findViewById(R.id.ButtonViewComment);

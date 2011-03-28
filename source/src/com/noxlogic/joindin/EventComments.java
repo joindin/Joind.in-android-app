@@ -175,10 +175,11 @@ class JIEventCommentAdapter extends ArrayAdapter<JSONObject> {
           el.setTag("");
           el.setVisibility(View.GONE);
           
-    	  String filename = "user"+o.optString("user_id")+".jpg";
-    	  el.setTag(filename);        	  
-    	  image_loader.displayImage("http://joind.in/inc/img/user_gravatar/", filename, (Activity)context, el);          
-          
+          if (o.optInt("user_id") > 0) {
+        	  String filename = "user"+o.optString("user_id")+".jpg";
+        	  el.setTag(filename);        	  
+        	  image_loader.displayImage("http://joind.in/inc/img/user_gravatar/", filename, (Activity)context, el);          
+          }
           
 
           TextView t1 = (TextView) v.findViewById(R.id.CommentRowComment);
