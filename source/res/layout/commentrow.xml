@@ -16,9 +16,9 @@
 		android:layout_height="wrap_content" 
 		android:orientation="horizontal">
 		<ImageView 
-			android:layout_height="30px" 
-			android:layout_width="30px" 
-			android:layout_marginRight="5px" 
+			android:layout_height="30dip" 
+			android:layout_width="30dip" 
+			android:layout_margin="5dip" 
 			android:visibility="gone" 
 			android:id="@+id/CommentRowGravatar"></ImageView>
 		<TextView 
