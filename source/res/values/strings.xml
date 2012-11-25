@@ -4,6 +4,9 @@
 <resources>
     <string name="app_name">Joind.in</string>
 
+    <!-- API URL to use -->
+    <string name="apiURL">http://api.joind.in/v2.1/</string>
+
     <!-- Option menu strings -->
     <string name="OptionMenuSettings">Settings</string>
     <string name="OptionMenuClearCache">Clear cache</string>

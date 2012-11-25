@@ -32,7 +32,7 @@ class JIRest {
     public static final int TIMEOUT = 1;
     public static final int ERROR = 2;
 
-    public static final String JOINDIN_URL = "http://joind.in/api/";
+    public static String JOINDIN_URL = "";
 
     private String error = "";
     private String result = "";
@@ -41,6 +41,7 @@ class JIRest {
 
     public JIRest (Context context) {
         this.context = context;
+        JOINDIN_URL = context.getResources().getString(R.string.apiURL);
     }
 
     // Return the last communication result
