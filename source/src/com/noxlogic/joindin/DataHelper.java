@@ -28,7 +28,7 @@ public final class DataHelper {
     private static DataHelper DHinstance = null;
 
     private static final String DATABASE_NAME = "joindin.db";
-    private static final int DATABASE_VERSION = 9;  // Increasing this version number will result in automatic call to onUpgrade()
+    private static final int DATABASE_VERSION = 10;  // Increasing this version number will result in automatic call to onUpgrade()
     
     public static final int ORDER_DATE_ASC 		= 1;
     public static final int ORDER_DATE_DESC 	= 2;
@@ -292,7 +292,7 @@ public final class DataHelper {
 
         // Create new database (if needed)
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL("CREATE TABLE [events]    ([event_id] INTEGER, [event_type] VARCHAR, [event_title] VARCHAR COLLATE NOCASE, [event_start] INTEGER, [json] VARCHAR)");
+            db.execSQL("CREATE TABLE [events]    ([event_uri] VARCHAR COLLATE NOCASE, [event_type] VARCHAR, [event_title] VARCHAR COLLATE NOCASE, [event_start] INTEGER, [json] VARCHAR)");
             db.execSQL("CREATE TABLE [talks]     ([event_id] INTEGER, [talk_id] INTEGER, [track_id] INTEGER, [json] VARCHAR)");
             db.execSQL("CREATE TABLE [ecomments] ([event_id] INTEGER, [json] VARCHAR)");
             db.execSQL("CREATE TABLE [tcomments] ([talk_id] INTEGER, [json] VARCHAR)");
