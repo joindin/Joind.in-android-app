@@ -277,7 +277,7 @@ public class Main extends JIActivity implements OnClickListener {
 			
 		    // Get some event data from the joind.in API
 	        rest = new JIRest (Main.this);
-	        int error = rest.postXML ("event", "<request>"+JIRest.getAuthXML(Main.this)+"<action type=\"getlist\" output=\"json\"><event_type>"+event_type+"</event_type></action></request>");
+	        int error = rest.getJSON("events");
 
 	        if (Thread.currentThread() != runner) {
 	        	displayProgressBar (false); 
@@ -302,24 +302,27 @@ public class Main extends JIActivity implements OnClickListener {
 	             * already present in our database, we just remove all data and insert the new data. Makes
 	             * life much easier :)
 	             */
-	        	JSONArray json;
+                JSONObject jsonObj;
+                JSONArray json;
 	            try {
 	            	// Get preferences
 	                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
 	                // Delete all our events for specified type/category
 	                DataHelper dh = DataHelper.getInstance();
-	                // dh.deleteAllEventsFromType(event_type);
+	                dh.deleteAllEventsFromType(event_type);
 
 	                // Add new events
-	                json = new JSONArray(rest.getResult());
-	                for (int i=0; i!=json.length(); i++) {
-	                	JSONObject json_event = json.getJSONObject(i);
+                    if (rest.getJSONResult() != null) {
+                        json = rest.getJSONResult().getJSONArray("events");
+                        for (int i=0; i!=json.length(); i++) {
+                            JSONObject json_event = json.getJSONObject(i);
 
-	                    // Don't add when we are adding to the Past AND we want to display "attended only"
-	                    if (event_type.compareTo("past") == 0 && prefs.getBoolean("attendonly", true) && ! json_event.optBoolean("user_attending")) continue;
-	                    dh.insertEvent (event_type, json_event);
-	                }
+                            // Don't add when we are adding to the Past AND we want to display "attended only"
+                            if (event_type.compareTo("past") == 0 && prefs.getBoolean("attendonly", true) && ! json_event.optBoolean("user_attending")) continue;
+                            dh.insertEvent (event_type, json_event);
+                        }
+                    }
 	            } catch (JSONException e) { }
 	            	if (Thread.currentThread() != runner) {
 	            		displayProgressBar (false); 
