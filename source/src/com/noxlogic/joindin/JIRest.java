@@ -12,10 +12,12 @@ import java.net.SocketTimeoutException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import android.util.Log;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -26,6 +28,8 @@ import org.apache.http.params.HttpParams;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 class JIRest {
     public static final int OK = 0;
@@ -36,6 +40,7 @@ class JIRest {
 
     private String error = "";
     private String result = "";
+    private JSONObject jsonResult = null;
 
     private Context context;
 
@@ -49,9 +54,137 @@ class JIRest {
         return this.result;
     }
 
+    public JSONObject getJSONResult() {
+        return this.jsonResult;
+    }
+
     // Return last communication error
     public String getError () {
         return this.error;
+    }
+
+    public int getJSON(String urlPostfix) {
+
+        try {
+            // Create http client with timeouts so we don't have to wait
+            // indefinitely when the internet is kaput
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpParams params = httpclient.getParams();
+            HttpConnectionParams.setConnectionTimeout(params, 30000);
+            HttpConnectionParams.setSoTimeout(params, 15000);
+
+            HttpGet httpget = new HttpGet(JOINDIN_URL+urlPostfix);
+
+            httpget.addHeader("Content-type", "application/json");
+
+            // Do not add the "expect: 100-continue" headerline. It will mess up some proxy systems
+            httpget.getParams().setBooleanParameter(CoreProtocolPNames.USE_EXPECT_CONTINUE, false);
+
+            try {
+                // Post stuff
+                HttpResponse response = httpclient.execute (httpget);
+
+                // Get response
+                HttpEntity entity = response.getEntity();
+                if (entity != null) {
+                    // If we receive some data, place it in our result string
+                    // and try and convert it to JSON
+                    InputStream instream = entity.getContent();
+                    this.result = Main.convertStreamToString(instream);
+                    try {
+                        this.jsonResult = new JSONObject(this.result);
+                    } catch (JSONException e) {
+                        // Couldn't parse JSON result; leave as null
+                    }
+                    instream.close();
+                    return OK;
+                }
+            } catch (ClientProtocolException e) {
+                // Error during communication
+                this.error = String.format (this.context.getString(R.string.JIRestProtocolError), e.getMessage());
+                return ERROR;
+            } catch (SocketTimeoutException e) {
+                // Socket has timed out
+                this.error = this.context.getString(R.string.JIRestSocketTimeout);
+                return TIMEOUT;
+            } catch (IOException e) {
+                // IO exception occurred
+                this.error = String.format (this.context.getString(R.string.JIRestIOError), e.getMessage());
+                return ERROR;
+            }
+        } catch (Exception e) {
+            // Something else happened
+            this.error  = String.format (this.context.getString(R.string.JIRestUnknownError), e.getMessage());
+            return ERROR;
+        }
+        return OK;
+    }
+
+    public int postJSON(String urlPostfix, JSONObject json) {
+
+        try {
+            // Create http client with timeouts so we don't have to wait
+            // indefinitely when the internet is kaput
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpParams params = httpclient.getParams();
+            HttpConnectionParams.setConnectionTimeout(params, 30000);
+            HttpConnectionParams.setSoTimeout(params, 15000);
+
+            // We POST our data.
+            HttpPost httppost = new HttpPost(JOINDIN_URL+urlPostfix);
+
+            StringEntity jsonentity = null;
+            try {
+                jsonentity = new StringEntity(json.toString());
+                jsonentity.setContentType("application/json");
+            } catch (UnsupportedEncodingException e) {
+                // Ignore exception
+            }
+
+            httppost.setEntity(jsonentity);
+            httppost.addHeader("Content-type", "application/json");
+
+            // Do not add the "expect: 100-continue" headerline. It will mess up some proxy systems
+            httppost.getParams().setBooleanParameter(CoreProtocolPNames.USE_EXPECT_CONTINUE, false);
+
+            try {
+                // Post stuff
+                HttpResponse response = httpclient.execute (httppost);
+
+                // Get response
+                HttpEntity entity = response.getEntity();
+                if (entity != null) {
+                    // If we receive some data, place it in our result string
+                    // and try and convert to JSON
+                    InputStream instream = entity.getContent();
+                    this.result = Main.convertStreamToString(instream);
+                    try {
+                        this.jsonResult = new JSONObject(this.result);
+                    } catch (JSONException e) {
+                        // Couldn't parse JSON result; leave as null
+                    }
+                    instream.close();
+                    return OK;
+                }
+            } catch (ClientProtocolException e) {
+                // Error during communication
+                this.error = String.format (this.context.getString(R.string.JIRestProtocolError), e.getMessage());
+                return ERROR;
+            } catch (SocketTimeoutException e) {
+                // Socket has timed out
+                this.error = this.context.getString(R.string.JIRestSocketTimeout);
+                return TIMEOUT;
+            } catch (IOException e) {
+                // IO exception occurred
+                this.error = String.format (this.context.getString(R.string.JIRestIOError), e.getMessage());
+                return ERROR;
+            }
+        } catch (Exception e) {
+            // Something else happened
+            this.error  = String.format (this.context.getString(R.string.JIRestUnknownError), e.getMessage());
+            return ERROR;
+        }
+        return OK;
     }
 
     // Post XML.. funny.. we post XML and we receive JSON.
