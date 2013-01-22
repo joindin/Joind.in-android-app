@@ -414,11 +414,11 @@ public class Main extends JIActivity implements OnClickListener {
     	switch (item.getItemId()) {
     		case R.id.context_main_addtofavorite:
     	        dh.addToFavorites(event_id);
-    	        Toast.makeText(getApplicationContext(), "Add to favorite list: "+json.optString("event_name"), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Added to favorite list: "+json.optString("name"), Toast.LENGTH_SHORT).show();
     			return true;
     		case R.id.context_main_removefromfavorite:
     	        dh.removeFromFavorites(event_id);
-    	        Toast.makeText(getApplicationContext(), "Removed from favorite list: "+json.optString("event_name"), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Removed from favorite list: "+json.optString("name"), Toast.LENGTH_SHORT).show();
     			return true;
     		default:
     			return super.onContextItemSelected(item);
