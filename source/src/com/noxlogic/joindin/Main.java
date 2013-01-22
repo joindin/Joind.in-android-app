@@ -392,10 +392,10 @@ public class Main extends JIActivity implements OnClickListener {
     	// Only register on the listview of the main events
     	if (v.getId()==R.id.ListViewMainEvents) {
     		AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
-    		
-    		JSONObject json = m_eventAdapter.getItem(info.position);    		
-    	    menu.setHeaderTitle(json.optString("event_name"));
-    		
+
+            JSONObject json = m_eventAdapter.getItem(info.position);
+            menu.setHeaderTitle(json.optString("name"));
+
         	MenuInflater inflater = getMenuInflater();
         	inflater.inflate(R.menu.main_context_menu, menu);
     	}
