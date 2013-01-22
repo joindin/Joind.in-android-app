@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import org.json.JSONArray;
@@ -477,15 +479,21 @@ class JIEventAdapter extends ArrayAdapter<JSONObject> {
           el.setVisibility(View.GONE);
           
           // Display (or load in the background if needed) the event logo
-          if (! o.isNull("event_icon")) {
-        	  String filename = o.optString("event_icon");
-        	  el.setTag(filename);        	  
-        	  image_loader.displayImage("http://joind.in/inc/img/event_icons/", filename, (Activity)context, el);          
+          if (! o.isNull("icon")) {
+              String filename = o.optString("icon");
+              el.setTag(filename);
+              image_loader.displayImage("http://joind.in/inc/img/event_icons/", filename, (Activity)context, el);
           }
 
           // Set a darker color when the event is currently running.
-          long event_start = o.optLong("event_start");
-          long event_end = o.optLong("event_end");
+          long event_start = 0;
+          long event_end = 0;
+          try {
+              event_start = new SimpleDateFormat().parse(o.optString("start_date")).getTime();
+              event_end = new SimpleDateFormat().parse(o.optString("end_date")).getTime();
+          } catch (ParseException e) {
+              e.printStackTrace();
+          }
           long cts = System.currentTimeMillis() / 1000;
           if (event_start <= cts && cts <= event_end) {
         	  convertView.setBackgroundColor(Color.rgb(218, 218, 204));
@@ -501,19 +509,26 @@ class JIEventAdapter extends ArrayAdapter<JSONObject> {
 
           // When the user is attending this event, we display our "attending" image.
           ImageView im = (ImageView)convertView.findViewById(R.id.EventDetailAttendingImg);
-          if (o.optBoolean("user_attending") == false) {
+          if (o.optBoolean("attending") == false) {
               im.setVisibility(View.INVISIBLE);
           } else {
               im.setVisibility(View.VISIBLE);
           }
 
           // Set our texts
-          if (at != null) at.setText(String.format(this.context.getString(R.string.activityMainAttending), o.optInt("num_attend")));
-          if (tt != null) tt.setText(o.optString("event_name"));
+          if (at != null) at.setText(String.format(this.context.getString(R.string.activityMainAttending), o.optInt("attendee_count")));
+          if (tt != null) tt.setText(o.optString("name"));
           if (bt != null) {
               // Display start date. Only display end date when it differs (ie: it's multiple day event)
-              String d1 = DateFormat.getDateInstance().format(o.optLong("event_start")*1000);
-              String d2 = DateFormat.getDateInstance().format(o.optLong("event_end")*1000);
+              String d1 = null;
+              String d2 = null;
+              SimpleDateFormat dfOutput = new SimpleDateFormat("d LLL yyyy"), dfInput = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+              try {
+                  d1 = dfOutput.format(dfInput.parse(o.optString("start_date")));
+                  d2 = dfOutput.format(dfInput.parse(o.optString("end_date")));
+              } catch (ParseException e) {
+                  e.printStackTrace();
+              }
               bt.setText(d1.equals(d2) ? d1 : d1 + " - " + d2);
           }
           

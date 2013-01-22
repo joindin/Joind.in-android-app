@@ -62,16 +62,14 @@ public final class DataHelper {
 
     // insert a new event to specified event_type (hot, pending, past etc)
     public long insertEvent(String event_type, JSONObject event) {
-    	int event_id = event.optInt("ID");
-    	
         ContentValues values = new ContentValues();
-        values.put("event_id", event_id);
-        values.put("event_start", event.optInt("event_start"));
-        values.put("event_title", event.optString("event_name"));
+        values.put("event_uri", event.optString("uri"));
+        values.put("event_start", event.optInt("start_date"));
+        values.put("event_title", event.optString("name"));
         values.put("event_type", event_type);
         values.put("json", event.toString());
         
-        db.delete("events", "event_id=?", new String[] {Integer.toString(event_id)});
+        db.delete("events", "event_uri=?", new String[] {event.optString("event_uri")});
         return db.insert("events", "", values);
     }
     
@@ -177,7 +175,7 @@ public final class DataHelper {
     public int populateEvents(String event_type, JIEventAdapter m_eventAdapter, int order) {
     	// Different handling for favorite list
     	if (event_type.equals("favorites")) {
-        	Cursor c = this.db.rawQuery("SELECT json FROM events INNER JOIN favlist ON favlist.event_id = events.event_id", null);            
+            Cursor c = this.db.rawQuery("SELECT json FROM events INNER JOIN favlist ON favlist.event_id = events._rowid_", null);
             int count = c.getCount();
             populate (c, m_eventAdapter);
             return count;    		
