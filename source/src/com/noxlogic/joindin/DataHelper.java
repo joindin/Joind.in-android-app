@@ -54,10 +54,10 @@ public final class DataHelper {
     }
 
     // Updates a event
-    public long updateEvent(int event_id, JSONObject event) {
+    public long updateEvent(int eventRowID, JSONObject event) {
         ContentValues values = new ContentValues();
         values.put("json", event.toString());
-        return db.update("events", values, "event_id=?", new String[] {Integer.toString(event_id)});
+        return db.update("events", values, "_rowid_=?", new String[] {Integer.toString(eventRowID)});
     }
 
     // insert a new event to specified event_type (hot, pending, past etc)
