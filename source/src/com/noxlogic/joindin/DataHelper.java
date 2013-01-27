@@ -198,10 +198,10 @@ public final class DataHelper {
     			order_sql = "ORDER BY event_title DESC";
     			break;
     	}
-    		    			
-    	Cursor c = this.db.rawQuery("SELECT json FROM events WHERE event_type = '"+event_type+"' "+order_sql, null);
-        
-        int count = c.getCount();     
+
+        Cursor c = this.db.rawQuery("SELECT json,events._rowid_ FROM events WHERE event_type = '"+event_type+"' "+order_sql, null);
+
+        int count = c.getCount();
         populate (c, m_eventAdapter);
         return count;
     }
@@ -272,9 +272,11 @@ public final class DataHelper {
             do {
                 try {
                     // Add JSON data to the adapter
-                    adapter.add(new JSONObject(c.getString(0)));
-                } catch (JSONException e) { 
-                    android.util.Log.e("JoindInApp", "Could not add item to list", e); 
+                    JSONObject eventData = new JSONObject(c.getString(0));
+                    eventData.put("eventRowID", c.getInt(1));
+                    adapter.add(eventData);
+                } catch (JSONException e) {
+                    android.util.Log.e("JoindInApp", "Could not add item to list", e);
                 }
             } while (c.moveToNext());
         }
