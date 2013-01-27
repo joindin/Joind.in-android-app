@@ -5,7 +5,10 @@ package com.noxlogic.joindin;
  */
 
 import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
+import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,6 +25,7 @@ import android.widget.Toast;
 
 public class EventDetail extends JIActivity implements OnClickListener {
     private JSONObject eventJSON;
+    private int eventRowID;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +39,15 @@ public class EventDetail extends JIActivity implements OnClickListener {
         } catch (JSONException e) {
             android.util.Log.e("JoindInApp", "No event passed to activity", e);
         }
+        try {
+            eventRowID = this.eventJSON.getInt("eventRowID");
+        } catch (JSONException e) {
+            android.util.Log.e("JoindInApp", "No event row ID in event JSON");
+        }
+        if (eventRowID == 0) {
+            // TODO alert and stop activity
+            android.util.Log.e("JoindInApp", "Event row ID is invalid");
+        }
 
         // Set title
         setTitle (R.string.activityEventDetailTitle);
@@ -47,42 +60,54 @@ public class EventDetail extends JIActivity implements OnClickListener {
         button = (Button)findViewById(R.id.ButtonEventDetailsViewTracks);
         button.setOnClickListener(this);
 
-        int event_id = this.eventJSON.optInt("ID");
-        displayDetails (event_id);
-        
+        displayDetails(eventRowID);
+
         // We et the onclick listener for the 'i attended' button AFTER loaded the details.
-        // Otherwise we might end up clicking it when it's not in the correct state (disabled when you are 
-        // attending the event) 
+        // Otherwise we might end up clicking it when it's not in the correct state (disabled when you are
+        // attending the event)
         CheckBox checkbox = (CheckBox)findViewById(R.id.CheckBoxEventDetailsAttending);
         checkbox.setOnClickListener(this);
-        
-        loadDetails (event_id);
+
+        try {
+            loadDetails(eventRowID, eventJSON.getString("verbose_uri"));
+        } catch (JSONException e) {
+            android.util.Log.e("JoindInApp", "No verbose URI available");
+        }
     }
 
-    public void displayDetails (int event_id) {
+    public void displayDetails (int event_row_ID) {
         DataHelper dh = DataHelper.getInstance();
-        JSONObject event = dh.getEvent (event_id);
+        JSONObject event = dh.getEvent (event_row_ID);
         if (event == null) return;
 
         // Set all the event information
         TextView t;
         t = (TextView) this.findViewById(R.id.EventDetailsEventCaption);
-        t.setText (event.optString("event_name"));
+        t.setText (event.optString("name"));
         t = (TextView) this.findViewById(R.id.EventDetailsEventLoc);
-        t.setText (event.optString("event_loc"));
+        t.setText (event.optString("location"));
+
         t = (TextView) this.findViewById(R.id.EventDetailsDate);
-        String d1 = DateFormat.getDateInstance().format(event.optLong("event_start")*1000);
-        String d2 = DateFormat.getDateInstance().format(event.optLong("event_end")*1000);
+        String d1 = null;
+        String d2 = null;
+        SimpleDateFormat dfOutput = new SimpleDateFormat("d LLL yyyy"), dfInput = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+        try {
+            d1 = dfOutput.format(dfInput.parse(event.optString("start_date")));
+            d2 = dfOutput.format(dfInput.parse(event.optString("end_date")));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         t.setText(d1.equals(d2) ? d1 : d1 + " - " + d2);
+
         t = (TextView) this.findViewById(R.id.EventDetailsStub);
-        t.setText (event.optString("event_hashtag"));
+        t.setText (event.optString("hashtag"));
         t = (TextView) this.findViewById(R.id.EventDetailsDescription);
-        t.setText (event.optString("event_desc"));
+        t.setText (event.optString("description"));
         Linkify.addLinks(t, Linkify.ALL);
 
-        // Add number of comments to the correct button caption 
+        // Add number of comments to the correct button caption
         Button b = (Button) this.findViewById(R.id.ButtonEventDetailsViewComments);
-        int commentCount = event.optInt("num_comments");
+        int commentCount = event.optInt("event_comments_count");
         if (commentCount == 1) {
             b.setText(String.format(getString(R.string.generalViewCommentSingular), commentCount));
         } else {
@@ -120,8 +145,8 @@ public class EventDetail extends JIActivity implements OnClickListener {
         c.setChecked(event.optBoolean("user_attending"));
     }
 
-    
-    public void loadDetails (final int event_id) {
+
+    public void loadDetails (final int eventRowID, final String eventVerboseURI) {
         // Display progress bar
         displayProgressBar (true);
 
@@ -129,22 +154,26 @@ public class EventDetail extends JIActivity implements OnClickListener {
             public void run () {
                 // Fetch talk data from joind.in API
                 JIRest rest = new JIRest (EventDetail.this);
-                int error = rest.postXML ("event", "<request>"+JIRest.getAuthXML(getApplicationContext())+"<action type=\"getdetail\" output=\"json\"><event_id>"+event_id+"</event_id></action></request>");
+                int error = rest.getJSONFullURI(eventVerboseURI);
 
                 if (error == JIRest.OK) {
+                    JSONObject fullResponse = rest.getJSONResult();
+                    JSONObject jsonEvent = null;
                     try {
-                        JSONArray json = new JSONArray (rest.getResult());
-                        JSONObject json_event = json.getJSONObject(0);
+                        jsonEvent = fullResponse.getJSONArray("events").getJSONObject(0);
+                    } catch (JSONException e) {
+                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    }
 
-                        //  Update event details
-                        DataHelper dh = DataHelper.getInstance();
-                        dh.updateEvent (event_id, json_event);
-                    } catch (JSONException e) { }
+
+                    //  Update event details
+                    DataHelper dh = DataHelper.getInstance();
+                    dh.updateEvent (eventRowID, jsonEvent);
                 }
 
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        displayDetails (event_id);
+                        displayDetails (eventRowID);
                     }
                 });
 
