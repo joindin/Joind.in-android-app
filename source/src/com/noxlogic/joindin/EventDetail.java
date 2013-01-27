@@ -25,7 +25,7 @@ import android.widget.Toast;
 
 public class EventDetail extends JIActivity implements OnClickListener {
     private JSONObject eventJSON;
-    private int eventRowID;
+    private int eventRowID = 0;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
