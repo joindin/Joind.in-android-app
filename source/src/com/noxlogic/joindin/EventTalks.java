@@ -30,6 +30,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
     private JITalkAdapter m_talkAdapter;    // adapter for listview
     private JSONObject eventJSON;
     private JSONObject trackJSON = null;
+    private int eventRowID = 0;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,18 +41,27 @@ public class EventTalks extends JIActivity implements OnClickListener {
         // Get event ID from the intent scratch board
         try {
             this.eventJSON = new JSONObject(getIntent().getStringExtra("eventJSON"));
-            if (getIntent().hasExtra("eventTrack")) {
+            if (getIntent().hasExtra("tracks")) {
                 this.trackJSON = new JSONObject(getIntent().getStringExtra("eventTrack"));
             }
         } catch (JSONException e) {
             android.util.Log.e("JoindInApp", "No event passed to activity", e);
         }
-        
+        try {
+            eventRowID = this.eventJSON.getInt("eventRowID");
+        } catch (JSONException e) {
+            android.util.Log.e("JoindInApp", "No event row ID in event JSON");
+        }
+        if (eventRowID == 0) {
+            // TODO alert and stop activity
+            android.util.Log.e("JoindInApp", "Event row ID is invalid");
+        }
+
 
         // Set all the event information
         TextView t;
         t = (TextView) this.findViewById(R.id.EventTalksCaption);
-        t.setText (this.eventJSON.optString("event_name"));
+        t.setText (this.eventJSON.optString("name"));
 
         if (this.trackJSON == null) {
             t = (TextView) this.findViewById(R.id.EventTalksTrackName);
@@ -81,21 +91,24 @@ public class EventTalks extends JIActivity implements OnClickListener {
         });
 
         // Display cached talks
-        int event_id = this.eventJSON.optInt("ID");
         int track_id = (this.trackJSON != null) ? this.trackJSON.optInt("ID") : -1;
-        displayTalks (event_id, track_id);
-        
+        displayTalks (eventRowID, track_id);
+
         // Load new talks (in background)
-        loadTalks (event_id, track_id);
+        try {
+            loadTalks (eventRowID, track_id, eventJSON.getString("talks_uri"));
+        } catch (JSONException e) {
+            android.util.Log.e("JoindInApp", "No talks URI available");
+        }
     }
 
 
     // Display talks in the talk list (adapter), depending on the track_id
-    public int displayTalks (int event_id, int track_id) {
+    public int displayTalks (int eventRowID, int track_id) {
         DataHelper dh = DataHelper.getInstance();
 
         m_talkAdapter.clear();
-        int talkCount = dh.populateTalks(event_id, track_id, m_talkAdapter);
+        int talkCount = dh.populateTalks(eventRowID, track_id, m_talkAdapter);
         m_talkAdapter.notifyDataSetChanged();
 
         // Set title bar with number of talks found
@@ -109,7 +122,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
 
 
     // Load talks in new thread...
-    public void loadTalks (final int event_id, final int track_id) {
+    public void loadTalks (final int eventRowID, final int track_id, final String talkVerboseURI) {
         // Display progress bar
         displayProgressBar (true);
 
@@ -117,25 +130,26 @@ public class EventTalks extends JIActivity implements OnClickListener {
             public void run () {
                 // Fetch talk data from joind.in API
                 JIRest rest = new JIRest (EventTalks.this);
-                int error = rest.postXML("event", "<request>"+JIRest.getAuthXML(EventTalks.this)+"<action type=\"gettalks\" output=\"json\"><event_id>"+event_id+"</event_id></action></request>");
+                int error = rest.getJSONFullURI(talkVerboseURI);
 
                 // @TODO: We do not handle errors?
 
                 if (error == JIRest.OK) {
+                    JSONObject fullResponse = rest.getJSONResult();
                     // Remove all talks from event, and insert new data
                     try {
-                        JSONArray json = new JSONArray(rest.getResult());
+                        JSONArray json = fullResponse.getJSONArray("talks");
                         DataHelper dh = DataHelper.getInstance();
-                        dh.deleteTalksFromEvent(event_id);
+                        dh.deleteTalksFromEvent(eventRowID);
                         for (int i=0; i!=json.length(); i++) {
                             JSONObject json_talk = json.getJSONObject(i);
-                            dh.insertTalk (json_talk);
+                            dh.insertTalk (eventRowID, json_talk);
                         }
                     } catch (JSONException e) { }
                         // On error, display new talks like nothing happened
                         runOnUiThread(new Runnable() {
                             public void run() {
-                                displayTalks (event_id, track_id);
+                                displayTalks (eventRowID, track_id);
                             }
                         });
                 }
