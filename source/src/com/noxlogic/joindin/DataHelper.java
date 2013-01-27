@@ -68,14 +68,14 @@ public final class DataHelper {
         values.put("event_title", event.optString("name"));
         values.put("event_type", event_type);
         values.put("json", event.toString());
-        
+
         db.delete("events", "event_uri=?", new String[] {event.optString("event_uri")});
         return db.insert("events", "", values);
     }
-    
-    // load event 
-    public JSONObject getEvent(int event_id) {
-        Cursor c = this.db.rawQuery("SELECT json FROM events WHERE event_id = "+event_id, null);
+
+    // load event
+    public JSONObject getEvent(int eventRowID) {
+        Cursor c = this.db.rawQuery("SELECT json FROM events WHERE _rowid_ = " + eventRowID, null);
         JSONObject json;
         try {
             c.moveToFirst();
