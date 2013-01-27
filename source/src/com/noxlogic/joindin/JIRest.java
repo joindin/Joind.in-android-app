@@ -63,6 +63,63 @@ class JIRest {
         return this.error;
     }
 
+    public int getJSONFullURI(String fullURI) {
+
+        try {
+            // Create http client with timeouts so we don't have to wait
+            // indefinitely when the internet is kaput
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpParams params = httpclient.getParams();
+            HttpConnectionParams.setConnectionTimeout(params, 30000);
+            HttpConnectionParams.setSoTimeout(params, 15000);
+
+            HttpGet httpget = new HttpGet(fullURI);
+
+            httpget.addHeader("Content-type", "application/json");
+
+            // Do not add the "expect: 100-continue" headerline. It will mess up some proxy systems
+            httpget.getParams().setBooleanParameter(CoreProtocolPNames.USE_EXPECT_CONTINUE, false);
+
+            try {
+                // Post stuff
+                HttpResponse response = httpclient.execute (httpget);
+
+                // Get response
+                HttpEntity entity = response.getEntity();
+                if (entity != null) {
+                    // If we receive some data, place it in our result string
+                    // and try and convert it to JSON
+                    InputStream instream = entity.getContent();
+                    this.result = Main.convertStreamToString(instream);
+                    try {
+                        this.jsonResult = new JSONObject(this.result);
+                    } catch (JSONException e) {
+                        // Couldn't parse JSON result; leave as null
+                    }
+                    instream.close();
+                    return OK;
+                }
+            } catch (ClientProtocolException e) {
+                // Error during communication
+                this.error = String.format (this.context.getString(R.string.JIRestProtocolError), e.getMessage());
+                return ERROR;
+            } catch (SocketTimeoutException e) {
+                // Socket has timed out
+                this.error = this.context.getString(R.string.JIRestSocketTimeout);
+                return TIMEOUT;
+            } catch (IOException e) {
+                // IO exception occurred
+                this.error = String.format (this.context.getString(R.string.JIRestIOError), e.getMessage());
+                return ERROR;
+            }
+        } catch (Exception e) {
+            // Something else happened
+            this.error  = String.format (this.context.getString(R.string.JIRestUnknownError), e.getMessage());
+            return ERROR;
+        }
+        return OK;
+    }
+
     public int getJSON(String urlPostfix) {
 
         try {
