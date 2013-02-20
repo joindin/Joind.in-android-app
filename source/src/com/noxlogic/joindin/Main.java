@@ -405,7 +405,10 @@ public class Main extends JIActivity implements OnClickListener {
 
         	MenuInflater inflater = getMenuInflater();
         	inflater.inflate(R.menu.main_context_menu, menu);
-    	}
+
+            // Are we on the Favourites tab? Hide 'Add to favourites', otherwise show it
+            menu.findItem(R.id.context_main_addtofavorite).setVisible(this.currentTab != "favorites");
+        }
 	}
 
 
