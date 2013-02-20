@@ -207,12 +207,11 @@ public final class DataHelper {
         db.delete("tcomments", null, null);
     }
 
-        
     // Populates an event adapter and return the number of items populated
     public int populateEvents(String event_type, JIEventAdapter m_eventAdapter, int order) {
     	// Different handling for favorite list
     	if (event_type.equals("favorites")) {
-            Cursor c = this.db.rawQuery("SELECT json FROM events INNER JOIN favlist ON favlist.event_id = events._rowid_", null);
+            Cursor c = this.db.rawQuery("SELECT json,events._rowid_ FROM events INNER JOIN favlist ON favlist.event_id = events._rowid_", null);
             int count = c.getCount();
             populate (c, m_eventAdapter);
             return count;    		

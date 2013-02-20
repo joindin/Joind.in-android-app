@@ -407,31 +407,38 @@ public class Main extends JIActivity implements OnClickListener {
         	inflater.inflate(R.menu.main_context_menu, menu);
     	}
 	}
-    
-    
+
+
     // Called when item is selected
     public boolean onContextItemSelected(MenuItem item) {
     	AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
     	JSONObject json = m_eventAdapter.getItem(info.position);
-    	
-    	int event_id = json.optInt("ID");
-    	  
-    	DataHelper dh = DataHelper.getInstance ();
-    	
+        int eventRowID = 0;
+
+        try {
+            eventRowID = json.getInt("eventRowID");
+        } catch (JSONException e) {
+            Log.d("JoindInApp", "Couldn't add event to favorites list: " + e.getMessage());
+            Toast.makeText(getApplicationContext(), "Couldn't add to favorite list", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        DataHelper dh = DataHelper.getInstance ();
+
     	switch (item.getItemId()) {
     		case R.id.context_main_addtofavorite:
-    	        dh.addToFavorites(event_id);
+    	        dh.addToFavorites(eventRowID);
                 Toast.makeText(getApplicationContext(), "Added to favorite list: "+json.optString("name"), Toast.LENGTH_SHORT).show();
     			return true;
     		case R.id.context_main_removefromfavorite:
-    	        dh.removeFromFavorites(event_id);
+    	        dh.removeFromFavorites(eventRowID);
                 Toast.makeText(getApplicationContext(), "Removed from favorite list: "+json.optString("name"), Toast.LENGTH_SHORT).show();
     			return true;
     		default:
     			return super.onContextItemSelected(item);
     	}
     }
-    
+
 }
 
 
