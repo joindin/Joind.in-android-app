@@ -237,12 +237,16 @@ public class Main extends JIActivity implements OnClickListener {
         if (eventType.equals("favorites")) title = this.getString(R.string.activityMainEventsFavorites);
 
         // Set main title to event category plus the number of events found
-        setTitle (title+" ("+count+" events)");
+        setTabTitle(title, count);
         return count;
     }
 
-    
-    
+    protected void setTabTitle(String title, int eventCount) {
+        setTitle(title + " (" + eventCount + " event" + (eventCount == 1 ? "" : "s") + ")");
+    }
+
+
+
     class EventLoaderThread extends Thread {
     	private volatile Thread runner;
     	
@@ -406,8 +410,9 @@ public class Main extends JIActivity implements OnClickListener {
         	MenuInflater inflater = getMenuInflater();
         	inflater.inflate(R.menu.main_context_menu, menu);
 
-            // Are we on the Favourites tab? Hide 'Add to favourites', otherwise show it
+            // Are we on the Favourites tab? Hide 'Add to favourites' and show 'remove', otherwise do the reverse
             menu.findItem(R.id.context_main_addtofavorite).setVisible(this.currentTab != "favorites");
+            menu.findItem(R.id.context_main_removefromfavorite).setVisible(this.currentTab == "favorites");
         }
 	}
 
@@ -434,7 +439,13 @@ public class Main extends JIActivity implements OnClickListener {
                 Toast.makeText(getApplicationContext(), "Added to favorite list: "+json.optString("name"), Toast.LENGTH_SHORT).show();
     			return true;
     		case R.id.context_main_removefromfavorite:
-    	        dh.removeFromFavorites(eventRowID);
+                // We are on the Favourites tab here, so we can remove and update
+                JSONObject eventItem = m_eventAdapter.getItem(info.position);
+                m_eventAdapter.remove(eventItem);
+                m_eventAdapter.notifyDataSetChanged();
+                setTabTitle(this.getString(R.string.activityMainEventsFavorites), m_eventAdapter.getCount());
+
+                dh.removeFromFavorites(eventRowID);
                 Toast.makeText(getApplicationContext(), "Removed from favorite list: "+json.optString("name"), Toast.LENGTH_SHORT).show();
     			return true;
     		default:
