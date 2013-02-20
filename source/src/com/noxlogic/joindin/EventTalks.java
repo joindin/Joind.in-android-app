@@ -126,32 +126,45 @@ public class EventTalks extends JIActivity implements OnClickListener {
         // Display progress bar
         displayProgressBar (true);
 
+
         new Thread () {
             public void run () {
-                // Fetch talk data from joind.in API
+                // This URI may change depending on how many talks are to be loaded
+                String uriToUse = talkVerboseURI;
+                JSONObject fullResponse;
+                JSONObject metaObj = new JSONObject();
                 JIRest rest = new JIRest (EventTalks.this);
-                int error = rest.getJSONFullURI(talkVerboseURI);
+                boolean isFirst = true;
 
-                // @TODO: We do not handle errors?
+                try {
+                    do {
+                        // Fetch talk data from joind.in API
+                        int error = rest.getJSONFullURI(uriToUse);
 
-                if (error == JIRest.OK) {
-                    JSONObject fullResponse = rest.getJSONResult();
-                    // Remove all talks from event, and insert new data
-                    try {
-                        JSONArray json = fullResponse.getJSONArray("talks");
-                        DataHelper dh = DataHelper.getInstance();
-                        dh.deleteTalksFromEvent(eventRowID);
-                        for (int i=0; i!=json.length(); i++) {
-                            JSONObject json_talk = json.getJSONObject(i);
-                            dh.insertTalk (eventRowID, json_talk);
-                        }
-                    } catch (JSONException e) { }
-                        // On error, display new talks like nothing happened
-                        runOnUiThread(new Runnable() {
-                            public void run() {
-                                displayTalks (eventRowID, track_id);
+                        // @TODO: We do not handle errors?
+
+                        if (error == JIRest.OK) {
+                            fullResponse = rest.getJSONResult();
+                            metaObj = fullResponse.getJSONObject("meta");
+
+                            DataHelper dh = DataHelper.getInstance();
+                            if (isFirst) {
+                                dh.deleteTalksFromEvent(eventRowID);
+                                isFirst = false;
                             }
-                        });
+
+                            // Remove all talks from event, and insert new data
+                            JSONArray json = fullResponse.getJSONArray("talks");
+
+                            for (int i=0; i!=json.length(); i++) {
+                                JSONObject json_talk = json.getJSONObject(i);
+                                dh.insertTalk (eventRowID, json_talk);
+                            }
+                            uriToUse = metaObj.getString("next_page");
+                        }
+                    } while (metaObj.getInt("count") != 0);
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
 
                 // Remove progress bar
@@ -239,11 +252,11 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> {
 
           // Set specified talk category image
           ImageView r = (ImageView) v.findViewById(R.id.TalkRowImageType);
-          if (o.optString("tcid").compareTo("Talk")==0) r.setBackgroundResource(R.drawable.talk);
-          if (o.optString("tcid").compareTo("Social Event")==0) r.setBackgroundResource(R.drawable.socialevent);
-          if (o.optString("tcid").compareTo("Workshop")==0) r.setBackgroundResource(R.drawable.workshop);
-          if (o.optString("tcid").compareTo("Keynote")==0) r.setBackgroundResource(R.drawable.keynote);
-          
+          if (o.optString("type").compareTo("Talk")==0) r.setBackgroundResource(R.drawable.talk);
+          if (o.optString("type").compareTo("Social Event")==0) r.setBackgroundResource(R.drawable.socialevent);
+          if (o.optString("type").compareTo("Workshop")==0) r.setBackgroundResource(R.drawable.workshop);
+          if (o.optString("type").compareTo("Keynote")==0) r.setBackgroundResource(R.drawable.keynote);
+
           ImageView rateview = (ImageView) v.findViewById(R.id.TalkRowRating);
           int rate = o.optInt("rank", 0);
           switch (rate) {
