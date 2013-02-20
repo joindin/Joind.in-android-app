@@ -71,13 +71,12 @@ public final class DataHelper {
         values.put("event_title", event.optString("name"));
         values.put("json", event.toString());
 
-        long eventID = getEventIDByURI(event.optString("event_uri"));
+        long eventID = getEventIDByURI(event.optString("uri"));
         if (eventID > 0) {
             db.delete("event_types", "event_id=? AND event_type=?", new String[]{String.valueOf(eventID), event_type});
         }
         else {
             eventID = db.insert("events", "", values);
-
         }
 
         // add event type
