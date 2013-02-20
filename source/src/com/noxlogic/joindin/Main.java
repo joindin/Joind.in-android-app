@@ -13,6 +13,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -273,16 +274,21 @@ public class Main extends JIActivity implements OnClickListener {
 		public void run() {
 			// We do not need to reload favorite list from the server. It's not there :)
 			if (event_type.equals("favorites")) {
-				displayProgressBar (false); 
+				displayProgressBar (false);
 				return;
 			}
-			
+
 		    // Get some event data from the joind.in API
-	        rest = new JIRest (Main.this);
-	        int error = rest.getJSON("events");
+            rest = new JIRest (Main.this);
+            String urlPostfix = "events";
+            if (event_type.length() > 0) {
+                urlPostfix += "?filter=" + event_type;
+            }
+            Log.d("JoindInApp", "Event postfix url is " + urlPostfix);
+            int error = rest.getJSON(urlPostfix);
 
 	        if (Thread.currentThread() != runner) {
-	        	displayProgressBar (false); 
+	        	displayProgressBar (false);
 	        	return;
 	        }
 
@@ -310,8 +316,9 @@ public class Main extends JIActivity implements OnClickListener {
 	            	// Get preferences
 	                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
-	                // Delete all our events for specified type/category
-	                DataHelper dh = DataHelper.getInstance();
+                    DataHelper dh = DataHelper.getInstance();
+
+	                // Remove the specified type from any events
 	                dh.deleteAllEventsFromType(event_type);
 
 	                // Add new events

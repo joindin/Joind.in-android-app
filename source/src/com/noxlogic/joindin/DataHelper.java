@@ -24,13 +24,15 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.widget.ArrayAdapter;
 
+import java.util.ArrayList;
+
 
 public final class DataHelper {
     private static DataHelper DHinstance = null;
 
     private static final String DATABASE_NAME = "joindin.db";
-    private static final int DATABASE_VERSION = 10;  // Increasing this version number will result in automatic call to onUpgrade()
-    
+    private static final int DATABASE_VERSION = 11;  // Increasing this version number will result in automatic call to onUpgrade()
+
     public static final int ORDER_DATE_ASC 		= 1;
     public static final int ORDER_DATE_DESC 	= 2;
     public static final int ORDER_TITLE_ASC 	= 3;
@@ -67,11 +69,24 @@ public final class DataHelper {
         values.put("event_uri", event.optString("uri"));
         values.put("event_start", event.optInt("start_date"));
         values.put("event_title", event.optString("name"));
-        values.put("event_type", event_type);
         values.put("json", event.toString());
 
-        db.delete("events", "event_uri=?", new String[] {event.optString("event_uri")});
-        return db.insert("events", "", values);
+        long eventID = getEventIDByURI(event.optString("event_uri"));
+        if (eventID > 0) {
+            db.delete("event_types", "event_id=? AND event_type=?", new String[]{String.valueOf(eventID), event_type});
+        }
+        else {
+            eventID = db.insert("events", "", values);
+
+        }
+
+        // add event type
+        values = new ContentValues();
+        values.put("event_id", eventID);
+        values.put("event_type", event_type);
+        db.insert("event_types", "", values);
+
+        return eventID;
     }
 
     // load event
@@ -85,6 +100,21 @@ public final class DataHelper {
             json = new JSONObject();
         }
         return json;
+    }
+
+    public long getEventIDByURI(String eventURI) {
+        if (eventURI.length() == 0) {
+            return 0;
+        }
+        long eventID;
+        Cursor c = this.db.rawQuery("SELECT _rowid_ FROM events WHERE event_uri = ?", new String[]{eventURI});
+        try {
+            c.moveToFirst();
+            eventID = c.getLong(0);
+        } catch (Exception e) {
+            eventID = 0;
+        }
+        return eventID;
     }
 
     // Insert a new talk
@@ -131,24 +161,27 @@ public final class DataHelper {
         values.put("json", eventComment.toString());
         return db.insert("ecomments", "", values);
     }
-    
+
     // Add event to favorite list
-    public long addToFavorites (int event_id) {
+    public long addToFavorites (int eventRowID) {
         ContentValues values = new ContentValues();
-        values.put("event_id", event_id);
-        db.delete("favlist", "event_id=?", new String[] {Integer.toString(event_id)});
+        values.put("event_id", eventRowID);
+        db.delete("favlist", "event_id=?", new String[] {Integer.toString(eventRowID)});
         return db.insert("favlist", "", values);
     }
-    
-    // Remove from favorite list
-    public void removeFromFavorites (int event_id) {
-    	db.delete("favlist", "event_id=?", new String[] {Integer.toString(event_id)});	
-    }
-        
 
-    // Removes all events for specified event type (hot, pending, past etc)
+    // Remove from favorite list
+    public void removeFromFavorites (int eventRowID) {
+        db.delete("favlist", "event_id=?", new String[] {Integer.toString(eventRowID)});
+    }
+
+    /**
+     * Remove the specified type from the event.
+     *
+     * @param event_type
+     */
     public void deleteAllEventsFromType(String event_type) {
-        db.delete ("events", "event_type=?", new String[] {event_type});
+        db.execSQL("DELETE FROM event_types WHERE event_type=?", new String[] {event_type});
     }
 
     // Removes all talks from specified event
@@ -203,7 +236,7 @@ public final class DataHelper {
     			break;
     	}
 
-        Cursor c = this.db.rawQuery("SELECT json,events._rowid_ FROM events WHERE event_type = '"+event_type+"' "+order_sql, null);
+        Cursor c = this.db.rawQuery("SELECT json,events._rowid_ FROM events INNER JOIN event_types ON event_id = events._rowid_ WHERE event_types.event_type = '"+event_type+"' "+order_sql, null);
 
         int count = c.getCount();
         populate (c, m_eventAdapter);
@@ -296,7 +329,8 @@ public final class DataHelper {
 
         // Create new database (if needed)
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL("CREATE TABLE [events]    ([event_uri] VARCHAR COLLATE NOCASE, [event_type] VARCHAR, [event_title] VARCHAR COLLATE NOCASE, [event_start] INTEGER, [json] VARCHAR)");
+            db.execSQL("CREATE TABLE [events]    ([event_uri] VARCHAR COLLATE NOCASE, [event_title] VARCHAR COLLATE NOCASE, [event_start] INTEGER, [json] VARCHAR)");
+            db.execSQL("CREATE TABLE [event_types] ([event_id] INTEGER, [event_type] VARCHAR COLLATE NOCASE)");
             db.execSQL("CREATE TABLE [talks]     ([event_id] INTEGER, [uri] VARCHAR, [track_id] INTEGER, [json] VARCHAR)");
             db.execSQL("CREATE TABLE [ecomments] ([event_id] INTEGER, [json] VARCHAR)");
             db.execSQL("CREATE TABLE [tcomments] ([talk_id] INTEGER, [json] VARCHAR)");
@@ -307,6 +341,7 @@ public final class DataHelper {
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             // Drop everything
             db.execSQL("DROP TABLE IF EXISTS events");
+            db.execSQL("DROP TABLE IF EXISTS event_types");
             db.execSQL("DROP TABLE IF EXISTS talks");
             db.execSQL("DROP TABLE IF EXISTS ecomments");
             db.execSQL("DROP TABLE IF EXISTS tcomments");
