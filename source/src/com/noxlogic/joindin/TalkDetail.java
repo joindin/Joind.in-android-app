@@ -5,6 +5,9 @@ package com.noxlogic.joindin;
  */
 
 
+import android.text.TextUtils;
+import android.util.Log;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -15,6 +18,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 public class TalkDetail extends JIActivity implements OnClickListener {
     private JSONObject talkJSON;
@@ -38,8 +43,27 @@ public class TalkDetail extends JIActivity implements OnClickListener {
         t = (TextView) this.findViewById(R.id.TalkDetailCaption);
         t.setText (this.talkJSON.optString("talk_title"));
         t = (TextView) this.findViewById(R.id.TalkDetailSpeaker);
-        
-        t.setText ("Speaker: "+this.talkJSON.optString("speaker"));
+
+        ArrayList<String> speakerNames = new ArrayList<String>();
+        try {
+            JSONArray speakerEntries = this.talkJSON.getJSONArray("speakers");
+            for (int i = 0; i < speakerEntries.length(); i++) {
+                speakerNames.add(speakerEntries.getJSONObject(i).getString("speaker_name"));
+            }
+        } catch (JSONException e) {
+            Log.d("JoindInApp", "Couldn't get speaker names");
+            e.printStackTrace();
+        }
+        if (speakerNames.size() == 1) {
+            t.setText("Speaker: " + speakerNames.get(0));
+        }
+        else if (speakerNames.size() > 1) {
+            String allSpeakers = TextUtils.join(", ", speakerNames);
+            t.setText("Speakers: " + allSpeakers);
+        }
+        else {
+            t.setText("");
+        }
         t = (TextView) this.findViewById(R.id.TalkDetailDescription);
         String s = this.talkJSON.optString("talk_desc");
         // Strip away newlines and additional spaces. Somehow these get added when
