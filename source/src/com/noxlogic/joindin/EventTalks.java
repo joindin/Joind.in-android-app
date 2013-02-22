@@ -271,7 +271,7 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> {
           if (o.optString("type").compareTo("Keynote")==0) r.setBackgroundResource(R.drawable.keynote);
 
           ImageView rateview = (ImageView) v.findViewById(R.id.TalkRowRating);
-          int rate = o.optInt("rank", 0);
+          int rate = o.optInt("average_rating", 0);
           switch (rate) {
           		case 0 : rateview.setBackgroundResource(R.drawable.rating_0); break;
           		case 1 : rateview.setBackgroundResource(R.drawable.rating_1); break;
