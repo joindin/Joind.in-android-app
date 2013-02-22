@@ -307,9 +307,9 @@ public final class DataHelper {
             do {
                 try {
                     // Add JSON data to the adapter
-                    JSONObject eventData = new JSONObject(c.getString(0));
-                    eventData.put("eventRowID", c.getInt(1));
-                    adapter.add(eventData);
+                    JSONObject data = new JSONObject(c.getString(0));
+                    data.put("rowID", c.getInt(1));
+                    adapter.add(data);
                 } catch (JSONException e) {
                     android.util.Log.e("JoindInApp", "Could not add item to list", e);
                 }

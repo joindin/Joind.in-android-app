@@ -288,7 +288,7 @@ public class Main extends JIActivity implements OnClickListener {
             if (event_type.length() > 0) {
                 urlPostfix += "?filter=" + event_type;
             }
-            Log.d("JoindInApp", "Event postfix url is " + urlPostfix);
+
             int error = rest.getJSON(urlPostfix);
 
 	        if (Thread.currentThread() != runner) {
@@ -424,7 +424,7 @@ public class Main extends JIActivity implements OnClickListener {
         int eventRowID = 0;
 
         try {
-            eventRowID = json.getInt("eventRowID");
+            eventRowID = json.getInt("rowID");
         } catch (JSONException e) {
             Log.d("JoindInApp", "Couldn't add event to favorites list: " + e.getMessage());
             Toast.makeText(getApplicationContext(), "Couldn't add to favorite list", Toast.LENGTH_SHORT).show();

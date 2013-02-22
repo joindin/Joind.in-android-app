@@ -52,9 +52,9 @@ public class EventTalks extends JIActivity implements OnClickListener {
             android.util.Log.e("JoindInApp", "No event passed to activity", e);
         }
         try {
-            eventRowID = this.eventJSON.getInt("eventRowID");
+            eventRowID = this.eventJSON.getInt("rowID");
         } catch (JSONException e) {
-            android.util.Log.e("JoindInApp", "No event row ID in event JSON");
+            android.util.Log.e("JoindInApp", "No row ID in event JSON");
         }
         if (eventRowID == 0) {
             // TODO alert and stop activity
