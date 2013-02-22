@@ -65,7 +65,7 @@ public class TalkDetail extends JIActivity implements OnClickListener {
             t.setText("");
         }
         t = (TextView) this.findViewById(R.id.TalkDetailDescription);
-        String s = this.talkJSON.optString("talk_desc");
+        String s = this.talkJSON.optString("talk_description");
         // Strip away newlines and additional spaces. Somehow these get added when
         // adding talks. It doesn't really look nice when viewing.
         s = s.replace("\n", "");
