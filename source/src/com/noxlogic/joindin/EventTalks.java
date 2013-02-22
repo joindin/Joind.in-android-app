@@ -139,6 +139,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
                 JSONObject metaObj = new JSONObject();
                 JIRest rest = new JIRest (EventTalks.this);
                 boolean isFirst = true;
+                DataHelper dh = DataHelper.getInstance();
 
                 try {
                     do {
@@ -151,7 +152,6 @@ public class EventTalks extends JIActivity implements OnClickListener {
                             fullResponse = rest.getJSONResult();
                             metaObj = fullResponse.getJSONObject("meta");
 
-                            DataHelper dh = DataHelper.getInstance();
                             if (isFirst) {
                                 dh.deleteTalksFromEvent(eventRowID);
                                 isFirst = false;
@@ -168,11 +168,18 @@ public class EventTalks extends JIActivity implements OnClickListener {
                         }
                     } while (metaObj.getInt("count") != 0);
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    displayProgressBar(false);
+                    // Something went wrong. Just display the current talks.
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            displayTalks (eventRowID, track_id);
+                        }
+                    });
                 }
 
                 // Remove progress bar
                 displayProgressBar (false);
+                runOnUiThread(new Runnable() { public void run() { displayTalks(eventRowID, track_id); }});
             }
         }.start();
     }
