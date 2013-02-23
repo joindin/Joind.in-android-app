@@ -51,14 +51,6 @@ public class EventComments extends JIActivity implements OnClickListener {
         t = (TextView) this.findViewById(R.id.EventDetailCaption);
         t.setText (this.eventJSON.optString("name"));
 
-        // Update caption bar
-        int commentCount = this.eventJSON.optInt("comment_count");
-        if (commentCount == 1){
-            setTitle (String.format(getString(R.string.generalCommentSingular), commentCount));
-        } else {
-            setTitle (String.format(getString(R.string.generalCommentPlural), commentCount));
-        }
-
         // Initialize comment list
         ArrayList<JSONObject> m_eventcomments = new ArrayList<JSONObject>();
         m_eventCommentAdapter = new JIEventCommentAdapter(this, R.layout.talkrow, m_eventcomments);
@@ -103,6 +95,13 @@ public class EventComments extends JIActivity implements OnClickListener {
         m_eventCommentAdapter.clear();
         int count = dh.populateEventComments(event_id, m_eventCommentAdapter);
         m_eventCommentAdapter.notifyDataSetChanged();
+
+        // Update caption bar
+        if (count == 1){
+            setTitle (String.format(getString(R.string.generalCommentSingular), count));
+        } else {
+            setTitle (String.format(getString(R.string.generalCommentPlural), count));
+        }
 
         // Return number of event comments.
         return count;
