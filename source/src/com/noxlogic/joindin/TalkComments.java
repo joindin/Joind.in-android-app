@@ -142,7 +142,7 @@ public class TalkComments extends JIActivity implements OnClickListener  {
                             }
                             uriToUse = metaObj.getString("next_page");
                         }
-                    } while (metaObj.getInt("count") != 0);
+                    } while (metaObj.getInt("count") > 0);
                 } catch (JSONException e) {
 
                     // Something when wrong. Just display the current comments
