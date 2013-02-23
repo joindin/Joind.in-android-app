@@ -146,10 +146,10 @@ public final class DataHelper {
     }
 
     // Insert a new talk comment
-    public long insertTalkComment (JSONObject talkComment) {
+    public long insertTalkComment (int talkID, JSONObject talkComment) {
         ContentValues values = new ContentValues();
-        values.put("talk_id", talkComment.optInt("talk_id"));
-        values.put("json", talkComment.toString());        
+        values.put("talk_id", talkID);
+        values.put("json", talkComment.toString());
         return db.insert("tcomments", "", values);
     }
 
@@ -283,7 +283,7 @@ public final class DataHelper {
 
     // Populates a talk comment adapter and returns the number of items populated
     public int populateTalkComments(int talk_id, JITalkCommentAdapter m_talkCommentAdapter) {
-        Cursor c = this.db.rawQuery("SELECT json FROM tcomments WHERE talk_id = "+talk_id, null);
+        Cursor c = this.db.rawQuery("SELECT json,_rowid_ FROM tcomments WHERE talk_id = "+talk_id, null);
         int count = c.getCount();
         populate (c, m_talkCommentAdapter);
         return count;

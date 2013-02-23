@@ -48,14 +48,6 @@ public class TalkComments extends JIActivity implements OnClickListener  {
         t = (TextView) this.findViewById(R.id.EventDetailCaption);
         t.setText (this.talkJSON.optString("talk_title"));
 
-        // Update caption bar
-        int commentCount = this.talkJSON.optInt("comment_count");
-        if (commentCount == 1){
-            setTitle (String.format(getString(R.string.generalCommentSingular), commentCount));
-        } else {
-            setTitle (String.format(getString(R.string.generalCommentPlural), commentCount));
-        }
-
         // Add handler to button
         Button button = (Button)findViewById(R.id.ButtonNewComment);
         button.setOnClickListener(this);
@@ -68,10 +60,21 @@ public class TalkComments extends JIActivity implements OnClickListener  {
 
         // Display the cached comments
         int talk_id = TalkComments.this.talkJSON.optInt("ID");
-        displayTalkComments (talk_id);
+        int commentCount = displayTalkComments (talk_id);
+
+        // Update caption bar
+        if (commentCount == 1){
+            setTitle (String.format(getString(R.string.generalCommentSingular), commentCount));
+        } else {
+            setTitle (String.format(getString(R.string.generalCommentPlural), commentCount));
+        }
 
         // Load new comments for this talk and display them
-        loadTalkComments (talk_id);
+        try {
+            loadTalkComments (talk_id, this.talkJSON.getString("comments_uri"));
+        } catch (JSONException e) {
+            android.util.Log.e("JoindInApp", "No comments URI available (talk comments)");
+        }
     }
 
 
@@ -101,42 +104,59 @@ public class TalkComments extends JIActivity implements OnClickListener  {
 
 
     // Load all talks from the joind.in API, populate database and display the new talks
-    public void loadTalkComments (final int talk_id) {
+    public void loadTalkComments (final int talk_id, final String commentsURI) {
         // Display progress bar
         displayProgressBar (true);
 
         // Do loading of talks in separate thread
         new Thread () {
             public void run() {
-                // Connect to joind.in API and fetch all comments for this talk
+                // Load event comments from joind.in API
+                String uriToUse = commentsURI;
+                JSONObject fullResponse;
+                JSONObject metaObj = new JSONObject();
                 JIRest rest = new JIRest (TalkComments.this);
-                int error = rest.postXML("talk", "<request>"+JIRest.getAuthXML(TalkComments.this)+"<action type=\"getcomments\" output=\"json\"><talk_id>"+talk_id+"</talk_id></action></request>");
+                boolean isFirst = true;
+                DataHelper dh = DataHelper.getInstance();
 
-                // @TODO I see we do not catch errors?
+                try {
+                    do {
+                        int error = rest.getJSONFullURI(uriToUse);
 
-                if (error == JIRest.OK) {
-                    // Remove all comments from this talk from the DB and insert all new loaded comments (except private comments)
-                    try {
-                        JSONArray json = new JSONArray(rest.getResult());
-                        DataHelper dh = DataHelper.getInstance();
-                        dh.deleteCommentsFromTalk(talk_id);
-                        for (int i=0; i!=json.length(); i++) {
-                            JSONObject json_talkcomment = json.getJSONObject(i);
-                            // If the comment is private, do not add it. We get them anyway from the joind.in API
-                            if (json_talkcomment.optInt("private") == 0)
-                                dh.insertTalkComment (json_talkcomment);
-                        }
-                    } catch (JSONException e) { }
-                        // Something went wrong, display the talk comments like nothing happened
-                        runOnUiThread(new Runnable() {
-                            public void run() {
-                                displayTalkComments (talk_id);
+                        if (error == JIRest.OK) {
+                            // Remove all event comments for this event and insert newly loaded comments
+                            fullResponse = rest.getJSONResult();
+                            metaObj = fullResponse.getJSONObject("meta");
+
+                            if (isFirst) {
+                                dh.deleteCommentsFromTalk(talk_id);
+                                isFirst = false;
                             }
+                            JSONArray json = fullResponse.getJSONArray("comments");
+
+                            for (int i=0; i!=json.length(); i++) {
+                                JSONObject json_eventComment = json.getJSONObject(i);
+
+                                // Private comments are not returned, so just insert anyway
+                                dh.insertTalkComment(talk_id, json_eventComment);
+                            }
+                            uriToUse = metaObj.getString("next_page");
+                        }
+                    } while (metaObj.getInt("count") != 0);
+                } catch (JSONException e) {
+
+                    // Something when wrong. Just display the current comments
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            displayTalkComments(talk_id);
+                        }
                     });
                 }
+
                 // Remove progress bar
                 displayProgressBar (false);
-            }
+                runOnUiThread(new Runnable() { public void run() { displayTalkComments(talk_id); }});
+           }
         }.start();
     }
 }
@@ -178,16 +198,15 @@ class JITalkCommentAdapter extends ArrayAdapter<JSONObject> {
         	  image_loader.displayImage("http://joind.in/inc/img/user_gravatar/", filename, (Activity)context, el);          
           }
 
-          
-
+          String commentDate = DateHelper.parseAndFormat(o.optString("created_date"), "d LLL yyyy");
           TextView t1 = (TextView) v.findViewById(R.id.CommentRowComment);
           TextView t2 = (TextView) v.findViewById(R.id.CommentRowUName);
           TextView t3 = (TextView) v.findViewById(R.id.CommentRowDate);
           if (t1 != null) t1.setText(o.optString("comment"));
-          if (t2 != null) t2.setText(o.isNull("uname") ? "("+this.context.getString(R.string.generalAnonymous)+") " : o.optString("uname")+" ");
-          if (t3 != null) t3.setText(DateFormat.getDateInstance().format(o.optLong("date_made")*1000));
+          if (t2 != null) t2.setText(o.isNull("user_display_name") ? "("+this.context.getString(R.string.generalAnonymous)+") " : o.optString("user_display_name")+" ");
+          if (t3 != null) t3.setText(commentDate);
           Linkify.addLinks(t1, Linkify.ALL);
-          
+
           ImageView r = (ImageView) v.findViewById(R.id.CommentRowRate);
           switch (o.optInt("rating")) {
             default :
