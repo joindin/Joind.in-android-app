@@ -52,41 +52,41 @@ public class Main extends JIActivity implements OnClickListener {
     private JIEventAdapter m_eventAdapter;       // Adapter for displaying all the events
 
     private String currentTab;                   // Current selected tab
-    
+
     // Constants for dynamically added menu items
-    private static final int MENU_SORT_DATE  	= 1;
-    private static final int MENU_SORT_TITLE 	= 2;
-    
+    private static final int MENU_SORT_DATE      = 1;
+    private static final int MENU_SORT_TITLE     = 2;
+
     private int event_sort_order = DataHelper.ORDER_DATE_ASC;
 
     JIRest rest;    // Our rest object to communicate with joind.in API
-    
+
     private EditText filterText;
-    
+
     EventLoaderThread event_loader_thread = null;
-    
+
     private TextWatcher filterTextWatcher = new TextWatcher() {
 
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
         }
 
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-        	m_eventAdapter.getFilter().filter(s);
+            m_eventAdapter.getFilter().filter(s);
         }
 
-		public void afterTextChanged(Editable s) {
-			
-		}	
-    };    
-    
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
+
     /** Called when the activity is first created. */
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-               
+
         // Set 'main' layout
         setContentView(R.layout.main);
 
-        // Create instance of the database singleton. This needs a context 
+        // Create instance of the database singleton. This needs a context
         DataHelper.createInstance (this.getApplicationContext());
 
         // Add listeners to the button. All buttons use the same listener
@@ -98,25 +98,25 @@ public class Main extends JIActivity implements OnClickListener {
         button = (Button)findViewById(R.id.ButtonMainEventUpcoming);
         button.setOnClickListener(this);
         button = (Button)findViewById(R.id.ButtonMainEventFavorites);
-        button.setOnClickListener(this);        
+        button.setOnClickListener(this);
 
         // Set default tab from preferences
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         currentTab = prefs.getString("defaultEventTab", "upcoming");
-        
+
         // Create array with all found events and add it to the event list
         ArrayList<JSONObject> m_events = new ArrayList<JSONObject>();
         m_eventAdapter = new JIEventAdapter(this, R.layout.eventrow, m_events);
-        
+
         ListView eventlist =(ListView)findViewById(R.id.ListViewMainEvents);
         eventlist.setAdapter(m_eventAdapter);
-        
+
         // Add contextmenu to event list itemsllo
         registerForContextMenu(eventlist);
-        
+
         filterText = (EditText) findViewById(R.id.FilterBar);
         filterText.addTextChangedListener(filterTextWatcher);
-        
+
 
         displayEvents(this.currentTab);
 
@@ -132,65 +132,65 @@ public class Main extends JIActivity implements OnClickListener {
             }
         });
     }
-    
-    
-    
+
+
+
     protected void onDestroy() {
         super.onDestroy();
         filterText.removeTextChangedListener(filterTextWatcher);
     }
-    
-    
-    
+
+
+
     void loadEvents(String type) {
-    	if (event_loader_thread != null) {
-    		// Stop event loading thread.. we are going to start a new one... 
-    		event_loader_thread.stopThread ();
-    	}
-    	
+        if (event_loader_thread != null) {
+            // Stop event loading thread.. we are going to start a new one...
+            event_loader_thread.stopThread ();
+        }
+
         // Create a event loader thread
         event_loader_thread = new EventLoaderThread ();
         event_loader_thread.setDaemon(true);
         event_loader_thread.setPriority(Thread.NORM_PRIORITY-1);
-        event_loader_thread.startThread(type);    	
+        event_loader_thread.startThread(type);
     }
 
 
     // Will reload events. Needed when we return to the screen.
     public void onResume () {
-    	loadEvents(this.currentTab);
+        loadEvents(this.currentTab);
         super.onResume();
     }
-    
-    
+
+
     // Overriding the JIActivity add sort-items
     public boolean onCreateOptionsMenu(Menu menu) {
-    	super.onCreateOptionsMenu(menu);
-    	
-    	MenuItem menu_date = menu.add(0, MENU_SORT_DATE, 0, R.string.OptionMenuSortDate);
-    	menu_date.setIcon(android.R.drawable.ic_menu_month);
-    	MenuItem menu_title = menu.add(0, MENU_SORT_TITLE, 0, R.string.OptionMenuSortTitle);
-    	menu_title.setIcon(android.R.drawable.ic_menu_sort_alphabetically);
+        super.onCreateOptionsMenu(menu);
 
-    	return true;
+        MenuItem menu_date = menu.add(0, MENU_SORT_DATE, 0, R.string.OptionMenuSortDate);
+        menu_date.setIcon(android.R.drawable.ic_menu_month);
+        MenuItem menu_title = menu.add(0, MENU_SORT_TITLE, 0, R.string.OptionMenuSortTitle);
+        menu_title.setIcon(android.R.drawable.ic_menu_sort_alphabetically);
+
+        return true;
     }
-    
-    
+
+
     // Overriding the JIActivity handler to handle the sorting
     public boolean onOptionsItemSelected (MenuItem item) {
         switch (item.getItemId()) {
-        	case MENU_SORT_DATE :
-        		// Toast.makeText(this, "Sorting by data", Toast.LENGTH_SHORT).show();
-        		this.event_sort_order = this.event_sort_order == DataHelper.ORDER_DATE_ASC ? DataHelper.ORDER_DATE_DESC : DataHelper.ORDER_DATE_ASC;
-        		displayEvents(this.currentTab);
-        		break;
-        	case MENU_SORT_TITLE :
-        		// Toast.makeText(this, "Sorting by title", Toast.LENGTH_SHORT).show();
-        		this.event_sort_order = this.event_sort_order == DataHelper.ORDER_TITLE_ASC ? DataHelper.ORDER_TITLE_DESC : DataHelper.ORDER_TITLE_ASC;
-        		displayEvents(this.currentTab);
-        		break;
+            case MENU_SORT_DATE :
+                // Toast.makeText(this, "Sorting by data", Toast.LENGTH_SHORT).show();
+                this.event_sort_order = this.event_sort_order == DataHelper.ORDER_DATE_ASC ? DataHelper.ORDER_DATE_DESC : DataHelper.ORDER_DATE_ASC;
+                displayEvents(this.currentTab);
+                break;
+            case MENU_SORT_TITLE :
+                // Toast.makeText(this, "Sorting by title", Toast.LENGTH_SHORT).show();
+                this.event_sort_order = this.event_sort_order == DataHelper.ORDER_TITLE_ASC ? DataHelper.ORDER_TITLE_DESC : DataHelper.ORDER_TITLE_ASC;
+                displayEvents(this.currentTab);
+                break;
         }
-        
+
         return super.onOptionsItemSelected (item);
     }
 
@@ -229,7 +229,7 @@ public class Main extends JIActivity implements OnClickListener {
 
         // Tell the adapter that our data set has changed so it can update it
         m_eventAdapter.notifyDataSetChanged();
-        
+
         String title = "";
         if (eventType.equals("hot")) title = this.getString(R.string.activityMainEventsHot);
         if (eventType.equals("past")) title = this.getString(R.string.activityMainEventsPast);
@@ -248,86 +248,72 @@ public class Main extends JIActivity implements OnClickListener {
 
 
     class EventLoaderThread extends Thread {
-    	private volatile Thread runner;
-    	
-    	private String event_type;
+        private volatile Thread runner;
 
-    	public synchronized void startThread(String type){
-    		event_type = type;
-    		
-    		displayProgressBar (true);
-    		
-    		if (runner == null){
-    			runner = new Thread(this);
-    			runner.start();
-    		}
-    	}
+        private String event_type;
 
-    	public synchronized void stopThread(){
-    		// Already stopped    			
-	        if (runner == null) return;
-	         	
-	        // We are done. So remove our progress-circle
-		    displayProgressBar (false); 
-	        	
-	        Thread moribund = runner;
-	        runner = null;
-	        moribund.interrupt();
-    	}
+        public synchronized void startThread(String type){
+            event_type = type;
 
-		public void run() {
-			// We do not need to reload favorite list from the server. It's not there :)
-			if (event_type.equals("favorites")) {
-				displayProgressBar (false);
-				return;
-			}
+            displayProgressBar (true);
 
-		    // Get some event data from the joind.in API
+            if (runner == null){
+                runner = new Thread(this);
+                runner.start();
+            }
+        }
+
+        public synchronized void stopThread(){
+            // Already stopped
+            if (runner == null) return;
+
+            // We are done. So remove our progress-circle
+            displayProgressBar (false);
+
+            Thread moribund = runner;
+            runner = null;
+            moribund.interrupt();
+        }
+
+        public void run() {
+            // We do not need to reload favorite list from the server. It's not there :)
+            if (event_type.equals("favorites")) {
+                displayProgressBar (false);
+                return;
+            }
+
+            // Get some event data from the joind.in API
             rest = new JIRest (Main.this);
             String urlPostfix = "events";
+            String uriToUse = "";
             if (event_type.length() > 0) {
                 urlPostfix += "?filter=" + event_type;
             }
+            uriToUse = rest.makeFullURI(urlPostfix);
 
-            int error = rest.getJSON(urlPostfix);
+            JSONObject fullResponse;
+            JSONObject metaObj = new JSONObject();
+            DataHelper dh = DataHelper.getInstance();
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            boolean isFirst = true;
+            int error = JIRest.OK; // default
 
-	        if (Thread.currentThread() != runner) {
-	        	displayProgressBar (false);
-	        	return;
-	        }
+            try {
+                do {
+                    error = rest.getJSONFullURI(uriToUse);
 
+                    if (error == JIRest.OK) {
 
-	        // Something bad happened :(
-	        if (error != JIRest.OK) {
-	        	// We can only modify the UI in a UIThread, so we create another thread
-	            runOnUiThread(new Runnable() {
-	            	public void run() {
-	            		// Display result from the rest to the user
-	                    Toast toast = Toast.makeText (getApplicationContext(), rest.getError(), Toast.LENGTH_LONG);
-	                    toast.show ();
-	            	}
-	            });
+                        // Remove all event comments for this event and insert newly loaded comments
+                        fullResponse = rest.getJSONResult();
+                        metaObj = fullResponse.getJSONObject("meta");
 
-	        } else {
-	        	/*
-	             * We just received new event data from joind.in API. Instead of modifying the current data
-	             * already present in our database, we just remove all data and insert the new data. Makes
-	             * life much easier :)
-	             */
-                JSONObject jsonObj;
-                JSONArray json;
-	            try {
-	            	// Get preferences
-	                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                        if (isFirst) {
+                            dh.deleteAllEventsFromType(event_type);
+                            isFirst = false;
+                        }
+                        JSONArray json = fullResponse.getJSONArray("events");
 
-                    DataHelper dh = DataHelper.getInstance();
-
-	                // Remove the specified type from any events
-	                dh.deleteAllEventsFromType(event_type);
-
-	                // Add new events
-                    if (rest.getJSONResult() != null) {
-                        json = rest.getJSONResult().getJSONArray("events");
                         for (int i=0; i!=json.length(); i++) {
                             JSONObject json_event = json.getJSONObject(i);
 
@@ -335,23 +321,51 @@ public class Main extends JIActivity implements OnClickListener {
                             if (event_type.compareTo("past") == 0 && prefs.getBoolean("attendonly", true) && ! json_event.optBoolean("user_attending")) continue;
                             dh.insertEvent (event_type, json_event);
                         }
+                        uriToUse = metaObj.getString("next_page");
+
+                        // If we're looking at "hot" events, this API call just
+                        // returns events, and more events, and more events....
+                        // so we'll just stop after the first round
+                        if (event_type == "hot") {
+                            break;
+                        }
                     }
-	            } catch (JSONException e) { }
-	            	if (Thread.currentThread() != runner) {
-	            		displayProgressBar (false); 
-	            		return;
-	            	}
-	            	
-	            	// Something when wrong. Just display the current events.
-	                runOnUiThread(new Runnable() {
-	                	public void run() {
-	                		displayEvents (event_type);
-	                	}
-	                });
-	            }
-	        	displayProgressBar (false);
-			}
-    	}
+                    else {
+                        break;
+                    }
+                } while (metaObj.getInt("count") > 0);
+            } catch (JSONException e) {
+                displayProgressBar (false);
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        displayEvents (event_type);
+                    }
+                });
+                e.printStackTrace();
+            }
+            Log.d("JoindInApp", "Event loading loop finished!");
+
+            // Something bad happened? :(
+            if (error != JIRest.OK) {
+                // We can only modify the UI in a UIThread, so we create another thread
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        // Display result from the rest to the user
+                        Toast toast = Toast.makeText (getApplicationContext(), rest.getError(), Toast.LENGTH_LONG);
+                        toast.show ();
+                    }
+                });
+            }
+
+            // Show the events
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    displayEvents (event_type);
+                }
+            });
+            displayProgressBar (false);
+        }
+    }
 
 
 
@@ -388,39 +402,39 @@ public class Main extends JIActivity implements OnClickListener {
             displayEvents(this.currentTab);
             loadEvents(this.currentTab);
         }
-        
-        
+
+
         if (v == findViewById(R.id.ButtonMainEventFavorites)) {
-        	// Load favorite list
-        	this.currentTab = "favorites";
-            displayEvents(this.currentTab);        	
+            // Load favorite list
+            this.currentTab = "favorites";
+            displayEvents(this.currentTab);
         }
     };
 
- 
+
     // Creates contextmenu for items
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-    	// Only register on the listview of the main events
-    	if (v.getId()==R.id.ListViewMainEvents) {
-    		AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+        // Only register on the listview of the main events
+        if (v.getId()==R.id.ListViewMainEvents) {
+            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
 
             JSONObject json = m_eventAdapter.getItem(info.position);
             menu.setHeaderTitle(json.optString("name"));
 
-        	MenuInflater inflater = getMenuInflater();
-        	inflater.inflate(R.menu.main_context_menu, menu);
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.main_context_menu, menu);
 
             // Are we on the Favourites tab? Hide 'Add to favourites' and show 'remove', otherwise do the reverse
             menu.findItem(R.id.context_main_addtofavorite).setVisible(this.currentTab != "favorites");
             menu.findItem(R.id.context_main_removefromfavorite).setVisible(this.currentTab == "favorites");
         }
-	}
+    }
 
 
     // Called when item is selected
     public boolean onContextItemSelected(MenuItem item) {
-    	AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-    	JSONObject json = m_eventAdapter.getItem(info.position);
+        AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+        JSONObject json = m_eventAdapter.getItem(info.position);
         int eventRowID = 0;
 
         try {
@@ -433,12 +447,12 @@ public class Main extends JIActivity implements OnClickListener {
 
         DataHelper dh = DataHelper.getInstance ();
 
-    	switch (item.getItemId()) {
-    		case R.id.context_main_addtofavorite:
-    	        dh.addToFavorites(eventRowID);
+        switch (item.getItemId()) {
+            case R.id.context_main_addtofavorite:
+                dh.addToFavorites(eventRowID);
                 Toast.makeText(getApplicationContext(), "Added to favorite list: "+json.optString("name"), Toast.LENGTH_SHORT).show();
-    			return true;
-    		case R.id.context_main_removefromfavorite:
+                return true;
+            case R.id.context_main_removefromfavorite:
                 // We are on the Favourites tab here, so we can remove and update
                 JSONObject eventItem = m_eventAdapter.getItem(info.position);
                 m_eventAdapter.remove(eventItem);
@@ -447,10 +461,10 @@ public class Main extends JIActivity implements OnClickListener {
 
                 dh.removeFromFavorites(eventRowID);
                 Toast.makeText(getApplicationContext(), "Removed from favorite list: "+json.optString("name"), Toast.LENGTH_SHORT).show();
-    			return true;
-    		default:
-    			return super.onContextItemSelected(item);
-    	}
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
     }
 
 }
@@ -467,15 +481,15 @@ class JIEventAdapter extends ArrayAdapter<JSONObject> {
       private ArrayList<JSONObject> filtered_items;   // The current currently viewed in the listview
       private Context context;
       LayoutInflater inflator;
-      public ImageLoader image_loader;			// eventlogo image loader      
+      public ImageLoader image_loader;            // eventlogo image loader
       private PTypeFilter filter;
 
       public int getCount () {
-    	  return filtered_items.size();
+          return filtered_items.size();
       }
-      
+
       public JSONObject getItem (int position) {
-    	  return filtered_items.get(position);
+          return filtered_items.get(position);
       }
 
 
@@ -485,7 +499,7 @@ class JIEventAdapter extends ArrayAdapter<JSONObject> {
           this.all_items = items;
           this.filtered_items = items;
           this.inflator = (LayoutInflater)this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-          
+
           this.image_loader = new ImageLoader(context.getApplicationContext(), "events");
       }
 
@@ -500,12 +514,12 @@ class JIEventAdapter extends ArrayAdapter<JSONObject> {
           if (o == null) return convertView;
 
           // Display (or load in the background if needed) the event logo
-          
+
           // Remove logo (this could be a recycled row)
           ImageView el = (ImageView) convertView.findViewById(R.id.EventDetailLogo);
           el.setTag("");
           el.setVisibility(View.GONE);
-          
+
           // Display (or load in the background if needed) the event logo
           if (! o.isNull("icon")) {
               String filename = o.optString("icon");
@@ -524,12 +538,12 @@ class JIEventAdapter extends ArrayAdapter<JSONObject> {
           }
           long cts = System.currentTimeMillis() / 1000;
           if (event_start <= cts && cts <= event_end) {
-        	  convertView.setBackgroundColor(Color.rgb(218, 218, 204));
+              convertView.setBackgroundColor(Color.rgb(218, 218, 204));
           } else {
-        	  // This isn't right. We shouldn't set a white color, but the default color	
-        	  convertView.setBackgroundColor(Color.rgb(255, 255, 255));
+              // This isn't right. We shouldn't set a white color, but the default color
+              convertView.setBackgroundColor(Color.rgb(255, 255, 255));
           }
-                              
+
           // Find our textviews we need to fill
           TextView tt = (TextView) convertView.findViewById(R.id.EventDetailCaption);
           TextView bt = (TextView) convertView.findViewById(R.id.EventDetailDate);
@@ -555,48 +569,48 @@ class JIEventAdapter extends ArrayAdapter<JSONObject> {
               d2 = DateHelper.parseAndFormat(o.optString("end_date"), "d LLL yyyy");
               bt.setText(d1.equals(d2) ? d1 : d1 + " - " + d2);
           }
-          
+
           return convertView;
       }
-      
-      
+
+
       public Filter getFilter() {
-    	  if (filter == null) {
-    		  filter  = new PTypeFilter();
-    	  }
-    	  return filter;
+          if (filter == null) {
+              filter  = new PTypeFilter();
+          }
+          return filter;
       }
-      
+
       private class PTypeFilter extends Filter {
-    	    @SuppressWarnings("unchecked")
-			protected void publishResults(CharSequence prefix, FilterResults results) {
-    	    	filtered_items =  (ArrayList<JSONObject>)results.values;
-    	    	notifyDataSetChanged();    	    	
-    	    }
+            @SuppressWarnings("unchecked")
+            protected void publishResults(CharSequence prefix, FilterResults results) {
+                filtered_items =  (ArrayList<JSONObject>)results.values;
+                notifyDataSetChanged();
+            }
 
-    	    protected FilterResults performFiltering(CharSequence prefix) {
-    	          FilterResults results = new FilterResults();
-    	          ArrayList<JSONObject> i = new ArrayList<JSONObject>();
+            protected FilterResults performFiltering(CharSequence prefix) {
+                  FilterResults results = new FilterResults();
+                  ArrayList<JSONObject> i = new ArrayList<JSONObject>();
 
-    	          if (prefix!= null && prefix.toString().length() > 0) {
-    	        	  
-    	              for (int index = 0; index < all_items.size(); index++) {
-    	                  JSONObject json = all_items.get(index);
-    	                  String title = json.optString("event_name");
-    	                  // Add to the filtered result list when our string is found in the event_name
-    	                  if (title.toUpperCase().indexOf(prefix.toString().toUpperCase()) >= 0) i.add(json);  
-    	              }
-    	              results.values = i;
-    	              results.count = i.size();                   
-    	          } else {
-    	        	  // No more filtering, display all items
-    	              synchronized (all_items){
-    	                  results.values = all_items;
-    	                  results.count = all_items.size();
-    	              }
-    	          }
+                  if (prefix!= null && prefix.toString().length() > 0) {
 
-    	          return results;
-    	    }    
-    	}
+                      for (int index = 0; index < all_items.size(); index++) {
+                          JSONObject json = all_items.get(index);
+                          String title = json.optString("event_name");
+                          // Add to the filtered result list when our string is found in the event_name
+                          if (title.toUpperCase().indexOf(prefix.toString().toUpperCase()) >= 0) i.add(json);
+                      }
+                      results.values = i;
+                      results.count = i.size();
+                  } else {
+                      // No more filtering, display all items
+                      synchronized (all_items){
+                          results.values = all_items;
+                          results.count = all_items.size();
+                      }
+                  }
+
+                  return results;
+            }
+        }
 }
