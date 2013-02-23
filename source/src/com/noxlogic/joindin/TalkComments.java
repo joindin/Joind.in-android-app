@@ -59,7 +59,7 @@ public class TalkComments extends JIActivity implements OnClickListener  {
         talkcommentlist.setAdapter(m_talkCommentAdapter);
 
         // Display the cached comments
-        int talk_id = TalkComments.this.talkJSON.optInt("ID");
+        int talk_id = TalkComments.this.talkJSON.optInt("rowID");
         int commentCount = displayTalkComments (talk_id);
 
         // Update caption bar
