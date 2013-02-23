@@ -4,8 +4,10 @@ package com.noxlogic.joindin;
  * Displays events comments
  */
 
-import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,6 +17,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +31,7 @@ import android.widget.TextView;
 public class EventComments extends JIActivity implements OnClickListener {
     private JIEventCommentAdapter m_eventCommentAdapter;    // adapter for listview
     private JSONObject eventJSON;
+    private JSONObject talkJSON;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,10 +49,10 @@ public class EventComments extends JIActivity implements OnClickListener {
         // Set correct text in layout
         TextView t;
         t = (TextView) this.findViewById(R.id.EventDetailCaption);
-        t.setText (this.eventJSON.optString("event_name"));
+        t.setText (this.eventJSON.optString("name"));
 
         // Update caption bar
-        int commentCount = this.eventJSON.optInt("num_comments");
+        int commentCount = this.eventJSON.optInt("comment_count");
         if (commentCount == 1){
             setTitle (String.format(getString(R.string.generalCommentSingular), commentCount));
         } else {
@@ -62,7 +66,7 @@ public class EventComments extends JIActivity implements OnClickListener {
         eventcommentlist.setAdapter(m_eventCommentAdapter);
 
         // Display the cached event comments
-        int event_id = EventComments.this.eventJSON.optInt("ID");
+        int event_id = EventComments.this.eventJSON.optInt("rowID");
         displayEventComments (event_id);
 
         // Add handler to button
@@ -70,7 +74,11 @@ public class EventComments extends JIActivity implements OnClickListener {
         button.setOnClickListener(this);
 
         // Load new comments from the joind.in API and display them
-        loadEventComments (event_id);
+        try {
+            loadEventComments (event_id, this.eventJSON.getString("comments_uri"));
+        } catch (JSONException e) {
+            android.util.Log.e("JoindInApp", "No comments URI available");
+        }
     }
 
     public void onClick(View v) {
@@ -102,41 +110,57 @@ public class EventComments extends JIActivity implements OnClickListener {
 
 
     // Load all event comments from joind.in API and display them
-    public void loadEventComments (final int event_id) {
+    public void loadEventComments (final int eventRowID, final String commentsURI) {
         // Display progress bar
         displayProgressBar (true);
 
         new Thread () {
             public void run() {
                 // Load event comments from joind.in API
-                JIRest rest = new JIRest(EventComments.this);
-                int error = rest.postXML("event", "<request>"+JIRest.getAuthXML(EventComments.this)+"<action type=\"getcomments\" output=\"json\"><event_id>"+event_id+"</event_id></action></request>");
-                // @TODO: Still no error handling
+                String uriToUse = commentsURI;
+                JSONObject fullResponse;
+                JSONObject metaObj = new JSONObject();
+                JIRest rest = new JIRest (EventComments.this);
+                boolean isFirst = true;
+                DataHelper dh = DataHelper.getInstance();
 
-                if (error == JIRest.OK) {
-                    // Remove all event comments for this event and insert newly loaded comments
-                    try {
-                        JSONArray json = new JSONArray(rest.getResult());
-                        DataHelper dh = DataHelper.getInstance();
-                        dh.deleteCommentsFromEvent(event_id);
-                        for (int i=0; i!=json.length(); i++) {
-                            JSONObject json_eventcomment = json.getJSONObject(i);
+                try {
+                    do {
+                        int error = rest.getJSONFullURI(uriToUse);
 
-                            // Don't add private events
-                            if (json_eventcomment.optInt("private") == 0)
-                                dh.insertEventComment (json_eventcomment);
-                        }
-                    } catch (JSONException e) { }
-                        // Something went wrong. Just act like nothing happened
-                        runOnUiThread(new Runnable() {
-                            public void run() {
-                                displayEventComments (event_id);
+                        if (error == JIRest.OK) {
+                            // Remove all event comments for this event and insert newly loaded comments
+                            fullResponse = rest.getJSONResult();
+                            metaObj = fullResponse.getJSONObject("meta");
+
+                            if (isFirst) {
+                                dh.deleteCommentsFromEvent(eventRowID);
+                                isFirst = false;
                             }
-                        });
+                            JSONArray json = fullResponse.getJSONArray("comments");
+
+                            for (int i=0; i!=json.length(); i++) {
+                                JSONObject json_eventComment = json.getJSONObject(i);
+
+                                // Private comments are not returned, so just insert anyway
+                                dh.insertEventComment (eventRowID, json_eventComment);
+                            }
+                            uriToUse = metaObj.getString("next_page");
+                        }
+                    } while (metaObj.getInt("count") != 0);
+                } catch (JSONException e) {
+
+                    // Something when wrong. Just display the current comments
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            displayEventComments (eventRowID);
+                        }
+                    });
                 }
 
                 // Remove progress bar
                 displayProgressBar (false);
+                runOnUiThread(new Runnable() { public void run() { displayEventComments(eventRowID); }});
             }
         }.start();
     }
@@ -170,24 +194,24 @@ class JIEventCommentAdapter extends ArrayAdapter<JSONObject> {
 
           JSONObject o = items.get(position);
           if (o == null) return v;
-          
+
           ImageView el = (ImageView) v.findViewById(R.id.CommentRowGravatar);
           el.setTag("");
           el.setVisibility(View.GONE);
-          
+
           if (o.optInt("user_id") > 0) {
         	  String filename = "user"+o.optString("user_id")+".jpg";
-        	  el.setTag(filename);        	  
-        	  image_loader.displayImage("http://joind.in/inc/img/user_gravatar/", filename, (Activity)context, el);          
+        	  el.setTag(filename);
+        	  image_loader.displayImage("http://joind.in/inc/img/user_gravatar/", filename, (Activity)context, el);
           }
-          
 
+          String commentDate = DateHelper.parseAndFormat(o.optString("created_date"), "d LLL yyyy");
           TextView t1 = (TextView) v.findViewById(R.id.CommentRowComment);
           TextView t2 = (TextView) v.findViewById(R.id.CommentRowUName);
           TextView t3 = (TextView) v.findViewById(R.id.CommentRowDate);
           if (t1 != null) t1.setText(o.optString("comment"));
-          if (t2 != null) t2.setText(o.isNull("cname") ? "("+this.context.getString(R.string.generalAnonymous)+") " : o.optString("cname")+" ");
-          if (t3 != null) t3.setText(DateFormat.getDateInstance().format(o.optLong("date_made")*1000));
+          if (t2 != null) t2.setText(o.isNull("user_display_name") ? "("+this.context.getString(R.string.generalAnonymous)+") " : o.optString("user_display_name")+" ");
+          if (t3 != null) t3.setText(commentDate);
 
           ImageView r = (ImageView) v.findViewById(R.id.CommentRowRate);
           r.setVisibility(View.GONE);

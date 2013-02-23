@@ -154,9 +154,9 @@ public final class DataHelper {
     }
 
     // Insert a new event comment
-    public long insertEventComment (JSONObject eventComment) {
+    public long insertEventComment (int eventRowID, JSONObject eventComment) {
         ContentValues values = new ContentValues();
-        values.put("event_id", eventComment.optInt("event_id"));
+        values.put("event_id", eventRowID);
         values.put("json", eventComment.toString());
         return db.insert("ecomments", "", values);
     }
@@ -291,7 +291,7 @@ public final class DataHelper {
 
     // Populates an event comment adapter and returns the number of items populated
     public int populateEventComments(int event_id, JIEventCommentAdapter m_eventCommentAdapter) {
-        Cursor c = this.db.rawQuery("SELECT json FROM ecomments WHERE event_id = "+event_id, null);
+        Cursor c = this.db.rawQuery("SELECT json,_rowid_ FROM ecomments WHERE event_id = "+event_id, null);
         int count = c.getCount();
         populate (c, m_eventCommentAdapter);
         return count;

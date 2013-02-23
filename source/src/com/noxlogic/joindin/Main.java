@@ -551,12 +551,8 @@ class JIEventAdapter extends ArrayAdapter<JSONObject> {
               String d1 = null;
               String d2 = null;
               SimpleDateFormat dfOutput = new SimpleDateFormat("d LLL yyyy"), dfInput = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
-              try {
-                  d1 = dfOutput.format(dfInput.parse(o.optString("start_date")));
-                  d2 = dfOutput.format(dfInput.parse(o.optString("end_date")));
-              } catch (ParseException e) {
-                  e.printStackTrace();
-              }
+              d1 = DateHelper.parseAndFormat(o.optString("start_date"), "d LLL yyyy");
+              d2 = DateHelper.parseAndFormat(o.optString("end_date"), "d LLL yyyy");
               bt.setText(d1.equals(d2) ? d1 : d1 + " - " + d2);
           }
           
