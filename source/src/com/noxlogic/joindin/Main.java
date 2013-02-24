@@ -596,7 +596,7 @@ class JIEventAdapter extends ArrayAdapter<JSONObject> {
 
                       for (int index = 0; index < all_items.size(); index++) {
                           JSONObject json = all_items.get(index);
-                          String title = json.optString("event_name");
+                          String title = json.optString("name");
                           // Add to the filtered result list when our string is found in the event_name
                           if (title.toUpperCase().indexOf(prefix.toString().toUpperCase()) >= 0) i.add(json);
                       }
