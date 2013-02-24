@@ -60,14 +60,7 @@ public class TalkComments extends JIActivity implements OnClickListener  {
 
         // Display the cached comments
         int talk_id = TalkComments.this.talkJSON.optInt("rowID");
-        int commentCount = displayTalkComments (talk_id);
-
-        // Update caption bar
-        if (commentCount == 1){
-            setTitle (String.format(getString(R.string.generalCommentSingular), commentCount));
-        } else {
-            setTitle (String.format(getString(R.string.generalCommentPlural), commentCount));
-        }
+        displayTalkComments (talk_id);
 
         // Load new comments for this talk and display them
         try {
@@ -97,6 +90,13 @@ public class TalkComments extends JIActivity implements OnClickListener  {
         m_talkCommentAdapter.clear();
         int count = dh.populateTalkComments(talk_id, m_talkCommentAdapter);
         m_talkCommentAdapter.notifyDataSetChanged();
+
+        // Update caption bar
+        if (count == 1){
+            setTitle (String.format(getString(R.string.generalCommentSingular), count));
+        } else {
+            setTitle (String.format(getString(R.string.generalCommentPlural), count));
+        }
 
         // Return the number of comments found
         return count;
