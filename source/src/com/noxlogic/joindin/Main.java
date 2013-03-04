@@ -97,8 +97,6 @@ public class Main extends JIActivity implements OnClickListener {
         button.setOnClickListener(this);
         button = (Button)findViewById(R.id.ButtonMainEventUpcoming);
         button.setOnClickListener(this);
-        button = (Button)findViewById(R.id.ButtonMainEventFavorites);
-        button.setOnClickListener(this);
 
         // Set default tab from preferences
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -234,7 +232,6 @@ public class Main extends JIActivity implements OnClickListener {
         if (eventType.equals("hot")) title = this.getString(R.string.activityMainEventsHot);
         if (eventType.equals("past")) title = this.getString(R.string.activityMainEventsPast);
         if (eventType.equals("upcoming")) title = this.getString(R.string.activityMainEventsUpcoming);
-        if (eventType.equals("favorites")) title = this.getString(R.string.activityMainEventsFavorites);
 
         // Set main title to event category plus the number of events found
         setTabTitle(title, count);
@@ -276,11 +273,6 @@ public class Main extends JIActivity implements OnClickListener {
         }
 
         public void run() {
-            // We do not need to reload favorite list from the server. It's not there :)
-            if (event_type.equals("favorites")) {
-                displayProgressBar (false);
-                return;
-            }
 
             // Get some event data from the joind.in API
             rest = new JIRest (Main.this);
@@ -402,71 +394,7 @@ public class Main extends JIActivity implements OnClickListener {
             displayEvents(this.currentTab);
             loadEvents(this.currentTab);
         }
-
-
-        if (v == findViewById(R.id.ButtonMainEventFavorites)) {
-            // Load favorite list
-            this.currentTab = "favorites";
-            displayEvents(this.currentTab);
-        }
     };
-
-
-    // Creates contextmenu for items
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-        // Only register on the listview of the main events
-        if (v.getId()==R.id.ListViewMainEvents) {
-            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
-
-            JSONObject json = m_eventAdapter.getItem(info.position);
-            menu.setHeaderTitle(json.optString("name"));
-
-            MenuInflater inflater = getMenuInflater();
-            inflater.inflate(R.menu.main_context_menu, menu);
-
-            // Are we on the Favourites tab? Hide 'Add to favourites' and show 'remove', otherwise do the reverse
-            menu.findItem(R.id.context_main_addtofavorite).setVisible(this.currentTab != "favorites");
-            menu.findItem(R.id.context_main_removefromfavorite).setVisible(this.currentTab == "favorites");
-        }
-    }
-
-
-    // Called when item is selected
-    public boolean onContextItemSelected(MenuItem item) {
-        AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-        JSONObject json = m_eventAdapter.getItem(info.position);
-        int eventRowID = 0;
-
-        try {
-            eventRowID = json.getInt("rowID");
-        } catch (JSONException e) {
-            Log.d("JoindInApp", "Couldn't add event to favorites list: " + e.getMessage());
-            Toast.makeText(getApplicationContext(), "Couldn't add to favorite list", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
-        DataHelper dh = DataHelper.getInstance ();
-
-        switch (item.getItemId()) {
-            case R.id.context_main_addtofavorite:
-                dh.addToFavorites(eventRowID);
-                Toast.makeText(getApplicationContext(), "Added to favorite list: "+json.optString("name"), Toast.LENGTH_SHORT).show();
-                return true;
-            case R.id.context_main_removefromfavorite:
-                // We are on the Favourites tab here, so we can remove and update
-                JSONObject eventItem = m_eventAdapter.getItem(info.position);
-                m_eventAdapter.remove(eventItem);
-                m_eventAdapter.notifyDataSetChanged();
-                setTabTitle(this.getString(R.string.activityMainEventsFavorites), m_eventAdapter.getCount());
-
-                dh.removeFromFavorites(eventRowID);
-                Toast.makeText(getApplicationContext(), "Removed from favorite list: "+json.optString("name"), Toast.LENGTH_SHORT).show();
-                return true;
-            default:
-                return super.onContextItemSelected(item);
-        }
-    }
-
 }
 
 

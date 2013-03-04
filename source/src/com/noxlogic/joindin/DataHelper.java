@@ -31,7 +31,7 @@ public final class DataHelper {
     private static DataHelper DHinstance = null;
 
     private static final String DATABASE_NAME = "joindin.db";
-    private static final int DATABASE_VERSION = 11;  // Increasing this version number will result in automatic call to onUpgrade()
+    private static final int DATABASE_VERSION = 12;  // Increasing this version number will result in automatic call to onUpgrade()
 
     public static final int ORDER_DATE_ASC 		= 1;
     public static final int ORDER_DATE_DESC 	= 2;
@@ -161,19 +161,6 @@ public final class DataHelper {
         return db.insert("ecomments", "", values);
     }
 
-    // Add event to favorite list
-    public long addToFavorites (int eventRowID) {
-        ContentValues values = new ContentValues();
-        values.put("event_id", eventRowID);
-        db.delete("favlist", "event_id=?", new String[] {Integer.toString(eventRowID)});
-        return db.insert("favlist", "", values);
-    }
-
-    // Remove from favorite list
-    public void removeFromFavorites (int eventRowID) {
-        db.delete("favlist", "event_id=?", new String[] {Integer.toString(eventRowID)});
-    }
-
     /**
      * Remove the specified type from the event.
      *
@@ -213,12 +200,12 @@ public final class DataHelper {
             Cursor c = this.db.rawQuery("SELECT json,events._rowid_ FROM events INNER JOIN favlist ON favlist.event_id = events._rowid_", null);
             int count = c.getCount();
             populate (c, m_eventAdapter);
-            return count;    		
+            return count;
     	}
-    	
-    	
+
+
     	String order_sql = "";
-    	
+
     	switch (order) {
     		case ORDER_DATE_ASC :
     			order_sql = "ORDER BY event_start ASC";
@@ -244,12 +231,12 @@ public final class DataHelper {
     public int populateTracks(int event_id, JITrackAdapter m_trackAdapter) {
     	int trackCount = 0;
         Cursor c = this.db.rawQuery("SELECT json FROM events WHERE event_id = "+event_id, null);
-        
+
         if (c.getCount() == 0) {
         	c.close();
         	return 0;
         }
-        
+
         c.moveToFirst();
         try {
             JSONObject json = new JSONObject(c.getString(0));
@@ -259,8 +246,8 @@ public final class DataHelper {
             for (int i=0; i!=json_tracks.length(); i++) {
                 m_trackAdapter.add(json_tracks.getJSONObject(i));
             }
-        } catch (JSONException e) { 
-            android.util.Log.e("JoindInApp", "Could not add item to list", e); 
+        } catch (JSONException e) {
+            android.util.Log.e("JoindInApp", "Could not add item to list", e);
         }
 
         c.close ();
@@ -332,7 +319,6 @@ public final class DataHelper {
             db.execSQL("CREATE TABLE [talks]     ([event_id] INTEGER, [uri] VARCHAR, [track_id] INTEGER, [json] VARCHAR)");
             db.execSQL("CREATE TABLE [ecomments] ([event_id] INTEGER, [json] VARCHAR)");
             db.execSQL("CREATE TABLE [tcomments] ([talk_id] INTEGER, [json] VARCHAR)");
-            db.execSQL("CREATE TABLE [favlist]   ([event_id] INTEGER)");
         }
 
         // Upgrade database. Drop everything and call onCreate.. We do not care for old data anyway
@@ -343,7 +329,6 @@ public final class DataHelper {
             db.execSQL("DROP TABLE IF EXISTS talks");
             db.execSQL("DROP TABLE IF EXISTS ecomments");
             db.execSQL("DROP TABLE IF EXISTS tcomments");
-            db.execSQL("DROP TABLE IF EXISTS favlist");
 
             // Create new database
             onCreate(db);
