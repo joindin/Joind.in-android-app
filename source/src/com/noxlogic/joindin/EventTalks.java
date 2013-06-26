@@ -5,10 +5,12 @@ package com.noxlogic.joindin;
  */
 
 import java.sql.Timestamp;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.TimeZone;
 
 import android.util.Log;
 import org.json.JSONArray;
@@ -78,7 +80,14 @@ public class EventTalks extends JIActivity implements OnClickListener {
 
         // Initialize talk list
         ArrayList<JSONObject> m_talks = new ArrayList<JSONObject>();
-        m_talkAdapter = new JITalkAdapter(this, R.layout.talkrow, m_talks);
+        try {
+        	String tz_string = this.eventJSON.getString("tz_continent") + '/' + this.eventJSON.getString("tz_place");
+        	TimeZone tz = TimeZone.getTimeZone(tz_string);
+            m_talkAdapter = new JITalkAdapter(this, R.layout.talkrow, m_talks, tz);
+
+        } catch (Exception e) {
+
+        }
         ListView talklist =(ListView)findViewById(R.id.ListViewEventTalks);
         talklist.setAdapter(m_talkAdapter);
 
@@ -202,11 +211,13 @@ public class EventTalks extends JIActivity implements OnClickListener {
 class JITalkAdapter extends ArrayAdapter<JSONObject> {
       private ArrayList<JSONObject> items;
       private Context context;
+      private TimeZone tz;
 
-      public JITalkAdapter(Context context, int textViewResourceId, ArrayList<JSONObject> mTalks) {
+      public JITalkAdapter(Context context, int textViewResourceId, ArrayList<JSONObject> mTalks, TimeZone tz) {
           super(context, textViewResourceId, mTalks);
           this.context = context;
           this.items = mTalks;
+          this.tz = tz;
       }
 
       public View getView(int position, View convertview, ViewGroup parent) {
@@ -221,8 +232,12 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> {
 
           // Convert the supplied date/time string into something we can use
           Date talkDate = null;
+          SimpleDateFormat outputTalkDateFormat = null;
           try {
-              talkDate = new SimpleDateFormat(context.getString(R.string.apiDateFormat)).parse(o.getString("start_date"));
+              SimpleDateFormat inputTalkDateFormat = new SimpleDateFormat(context.getString(R.string.apiDateFormat));
+              talkDate = inputTalkDateFormat.parse(o.getString("start_date"));
+              outputTalkDateFormat = new SimpleDateFormat("HH:mm");
+              outputTalkDateFormat.setTimeZone(tz);             
           } catch (Exception e) {
               e.printStackTrace();
               // Nothing here. Date is probably formatted badly
@@ -260,7 +275,7 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> {
           if (t1 != null) t1.setText(o.optString("talk_title"));
           if (t2 != null) t2.setText(t2Text);
           if (t3 != null) t3.setText(o.optString("speaker"));
-          if (t4 != null) t4.setText(String.format(this.context.getString(R.string.generalTime), talkDate.getHours(), talkDate.getMinutes()));
+          if (t4 != null) t4.setText(outputTalkDateFormat.format(talkDate));
           if (t5 != null) t5.setText(track);
 
           // Set specified talk category image
