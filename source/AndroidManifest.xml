@@ -3,15 +3,15 @@
       package="com.noxlogic.joindin"
       android:versionCode="15"
       android:versionName="1.7.1">
-      
+
     <uses-sdk android:minSdkVersion="4"  android:targetSdkVersion="4"/>
-    
+
 	<!--  We need to upgrade to SDK 1.6 and we can support larger screens -->
 	<supports-screens
 		android:largeScreens="true"
 		android:normalScreens="true"
 		android:smallScreens="true"
-		android:anyDensity="true" />       
+		android:anyDensity="true" />
 
     <!-- Application uses a light theme. I think it's much nicer than the standard
          dark android layout. -->
@@ -20,53 +20,63 @@
       android:label="@string/app_name"
       android:theme="@android:style/Theme.Light">
 
-    <!--  The splash screen is our main intent. It will activate the next activity -->
-    <activity android:name=".Splash"
-              android:label="@string/app_name">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-    </activity>
+        <!--  The splash screen is our main intent. It will activate the next activity -->
+        <activity android:name=".Splash"
+                  android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
-    <!-- Just a bunch of activities here. Needed otherwise android cannot launch them. -->
-    <activity android:name=".Main"
-        android:label="@string/app_name">
-    </activity>
-    <activity
-        android:name=".EventDetail"
-        android:label="@string/app_name">
-    </activity>
-    <activity
-        android:name=".EventTalks"
-        android:label="@string/app_name">
-    </activity>
-    <activity
-        android:name=".EventComments"
-        android:label="@string/app_name">
-    </activity>
-    <activity
-        android:name=".EventTracks"
-        android:label="@string/app_name">
-    </activity>
-    <activity
-        android:name=".TalkDetail"
-        android:label="@string/app_name">
-    </activity>
+        <!-- Just a bunch of activities here. Needed otherwise android cannot launch them. -->
+        <activity android:name=".Main"
+            android:label="@string/app_name">
+        </activity>
         <activity
-        android:name=".TalkComments"
-        android:label="@string/app_name">
-    </activity>
-    <activity
-        android:name=".AddComment"
-        android:label="@string/app_name">
-    </activity>
-    <activity
-        android:name=".Preferences"
-        android:label="@string/app_name">
-    </activity>
+            android:name=".EventDetail"
+            android:label="@string/app_name">
+        </activity>
+        <activity
+            android:name=".EventTalks"
+            android:label="@string/app_name">
+        </activity>
+        <activity
+            android:name=".EventComments"
+            android:label="@string/app_name">
+        </activity>
+        <activity
+            android:name=".EventTracks"
+            android:label="@string/app_name">
+        </activity>
+        <activity
+            android:name=".TalkDetail"
+            android:label="@string/app_name">
+        </activity>
+            <activity
+            android:name=".TalkComments"
+            android:label="@string/app_name">
+        </activity>
+        <activity
+            android:name=".AddComment"
+            android:label="@string/app_name">
+        </activity>
+        <activity
+            android:name=".Preferences"
+            android:label="@string/app_name">
+        </activity>
+        <activity
+            android:name=".authenticator.AuthenticatorActivity"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="joindin" />
+            </intent-filter>
+        </activity>
+
     </application>
 
     <!-- Since we make requests over the Internet, we need the users permission for it. -->
-    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+    <uses-permission android:name="android.permission.INTERNET" />
 </manifest>
