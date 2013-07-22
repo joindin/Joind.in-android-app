@@ -75,8 +75,23 @@
             </intent-filter>
         </activity>
 
+        <service
+            android:name=".authenticator.AuthenticationService"
+            android:exported="false">
+            <intent-filter>
+                <action
+                    android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
+
     </application>
 
     <!-- Since we make requests over the Internet, we need the users permission for it. -->
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <uses-permission android:name="android.permission.ACCOUNT_MANAGER" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
 </manifest>
