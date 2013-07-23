@@ -71,6 +71,8 @@
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.LAUNCHER" />
                 <data android:scheme="joindin" />
             </intent-filter>
         </activity>
@@ -92,6 +94,10 @@
     <!-- Since we make requests over the Internet, we need the users permission for it. -->
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- Account management. Used to store access tokens -->
     <uses-permission android:name="android.permission.ACCOUNT_MANAGER" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
 </manifest>
