@@ -20,6 +20,8 @@ import java.io.IOException;
 
 public class Preferences extends PreferenceActivity {
 
+    protected final static int RESULT_OAUTH = 1;
+
     AccountManager am;
     Account thisAccount;
     Preference authButton;
@@ -36,7 +38,7 @@ public class Preferences extends PreferenceActivity {
 
     @Override
     protected void onResume() {
-        super.onResume();
+        super.onResume();    //To change body of overridden methods use File | Settings | File Templates.
         configureAccounts();
     }
 
