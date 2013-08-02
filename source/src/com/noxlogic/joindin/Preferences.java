@@ -73,6 +73,18 @@ public class Preferences extends PreferenceActivity {
         });
     }
 
+    protected void onPause () {
+        super.onPause();
+
+        /* When we are paused (also called when we quit the preference activity), we check
+         * to see if our credentials are valid. If so, we set an additional flag so we can
+         * let the user send registered comments instead of anonymous ones */
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("validated", false);//thisAccount != null);
+        editor.commit();
+    }
+
     private class OnAccountAddComplete implements AccountManagerCallback<Bundle> {
 
         @Override
