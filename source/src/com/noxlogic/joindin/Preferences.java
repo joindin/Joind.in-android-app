@@ -81,7 +81,7 @@ public class Preferences extends PreferenceActivity {
          * let the user send registered comments instead of anonymous ones */
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean("validated", false);//thisAccount != null);
+        editor.putBoolean("validated", thisAccount != null);
         editor.commit();
     }
 
