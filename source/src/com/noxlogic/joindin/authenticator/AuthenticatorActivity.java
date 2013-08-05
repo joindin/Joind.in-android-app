@@ -73,9 +73,13 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
                 String thisURL = thisUri.toString().replace("?" + thisUri.getQuery(), "");
 
                 if (thisURL.equals(getString(R.string.oauthCallback))) {
-                    // We currently only end up here if the authentication was successful
-                    // Extract access token
-                    String accessToken = thisUri.getQueryParameter("access_token");
+                    // Successful?
+                    String denied = thisUri.getQueryParameter("denied");
+                    String accessToken = null;
+                    if (denied == null || !denied.equals("1")) {
+                        // Extract access token
+                        accessToken = thisUri.getQueryParameter("access_token");
+                    }
                     onAuthenticationResult(accessToken);
                     view.setVisibility(View.GONE);
 
@@ -131,6 +135,10 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
             finishLogin(authToken);
         } else {
             Log.e("JoindInApp", "onAuthenticationResult: failed to authenticate");
+
+            Toast toast = Toast.makeText(this, getString(R.string.oauthDeniedMessage), Toast.LENGTH_LONG);
+            toast.show();
+            finish();
         }
     }
 }

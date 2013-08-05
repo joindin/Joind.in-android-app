@@ -13,6 +13,7 @@
     <!-- OAuth URL to use, and the callback -->
     <string name="oauthURL">http://joind.in/user/oauth_allow</string>
     <string name="oauthCallback">joindin://oauth-response/</string>
+    <string name="oauthDeniedMessage">Couldn\'t authenticate with joind.in</string>
 
     <!-- Option menu strings -->
     <string name="OptionMenuSettings">Settings</string>
