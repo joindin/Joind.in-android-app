@@ -36,7 +36,7 @@ public class Preferences extends PreferenceActivity {
 
     @Override
     protected void onResume() {
-        super.onResume();    //To change body of overridden methods use File | Settings | File Templates.
+        super.onResume();
         configureAccounts();
     }
 
