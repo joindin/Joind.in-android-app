@@ -31,10 +31,6 @@
     <string name="prefAuthLoginTitle">Log me into joind.in</string>
     <string name="prefAuthLogoutTitle">You\'re logged in!</string>
     <string name="prefAuthLogoutSummary">Touch to log out</string>
-    <string name="prefUserNameTitle">Username</string>
-    <string name="prefUserNameSummary">Your joind.in username</string>
-    <string name="prefPasswordTitle">Password</string>
-    <string name="prefPasswordSummary">Your joind.in password</string>
     <string name="prefAttendOnlyTitle">Attended only</string>
     <string name="prefAttendOnlySummary">Only display past attended events</string>
     <string name="prefShowSplashTitle">Display splash screen</string>
@@ -59,9 +55,6 @@
     <string name="activityMainEventsPast">Past events</string>
     <string name="activityMainEventsUpcoming">Upcoming events</string>
     <string name="activityMainEventsFavorites">Favorite events</string>
-
-    <string name="JIActivityCorrectCredentials">Correct credentials supplied</string>
-    <string name="JIActivityIncorrectCredentials">Incorrect login credentials. Change credentials in the Settings menu.</string>
 
     <string name="JIRestProtocolError">There was a protocol based error: %s</string>
     <string name="JIRestSocketTimeout">Timeout while connecting to joind.in website.</string>
