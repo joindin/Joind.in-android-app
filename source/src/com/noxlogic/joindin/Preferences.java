@@ -20,8 +20,6 @@ import java.io.IOException;
 
 public class Preferences extends PreferenceActivity {
 
-    protected final static int RESULT_OAUTH = 1;
-
     AccountManager am;
     Account thisAccount;
     Preference authButton;
