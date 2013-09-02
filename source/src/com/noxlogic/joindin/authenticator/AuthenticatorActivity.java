@@ -73,13 +73,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
                 String thisURL = thisUri.toString().replace("?" + thisUri.getQuery(), "");
 
                 if (thisURL.equals(getString(R.string.oauthCallback))) {
-                    // Successful?
-                    String denied = thisUri.getQueryParameter("denied");
-                    String accessToken = null;
-                    if (denied == null || !denied.equals("1")) {
-                        // Extract access token
-                        accessToken = thisUri.getQueryParameter("access_token");
-                    }
+                    // Successful? We should have an access token (null if not found)
+                    String accessToken = thisUri.getQueryParameter("access_token");
                     onAuthenticationResult(accessToken);
                     view.setVisibility(View.GONE);
 
