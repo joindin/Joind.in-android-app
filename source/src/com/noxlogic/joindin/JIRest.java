@@ -12,9 +12,12 @@ import java.net.SocketTimeoutException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.util.Log;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -44,13 +47,13 @@ class JIRest {
 
     private Context context;
 
-    public JIRest(Context context) {
+    public JIRest (Context context) {
         this.context = context;
         JOINDIN_URL = context.getResources().getString(R.string.apiURL);
     }
 
     // Return the last communication result
-    public String getResult() {
+    public String getResult () {
         return this.result;
     }
 
@@ -59,7 +62,7 @@ class JIRest {
     }
 
     // Return last communication error
-    public String getError() {
+    public String getError () {
         return this.error;
     }
 
@@ -86,7 +89,7 @@ class JIRest {
 
             try {
                 // Post stuff
-                HttpResponse response = httpclient.execute(httpget);
+                HttpResponse response = httpclient.execute (httpget);
 
                 // Get response
                 HttpEntity entity = response.getEntity();
@@ -105,7 +108,7 @@ class JIRest {
                 }
             } catch (ClientProtocolException e) {
                 // Error during communication
-                this.error = String.format(this.context.getString(R.string.JIRestProtocolError), e.getMessage());
+                this.error = String.format (this.context.getString(R.string.JIRestProtocolError), e.getMessage());
                 return ERROR;
             } catch (SocketTimeoutException e) {
                 // Socket has timed out
@@ -113,18 +116,18 @@ class JIRest {
                 return TIMEOUT;
             } catch (IOException e) {
                 // IO exception occurred
-                this.error = String.format(this.context.getString(R.string.JIRestIOError), e.getMessage());
+                this.error = String.format (this.context.getString(R.string.JIRestIOError), e.getMessage());
                 return ERROR;
             }
         } catch (Exception e) {
             // Something else happened
-            this.error = String.format(this.context.getString(R.string.JIRestUnknownError), e.getMessage());
+            this.error  = String.format (this.context.getString(R.string.JIRestUnknownError), e.getMessage());
             return ERROR;
         }
         return OK;
     }
 
-    public int postJSON(String urlPostfix, JSONObject json) {
+    public int postJSONFullURI(String fullURI, JSONObject json, boolean addAuthDetails) {
 
         try {
             // Create http client with timeouts so we don't have to wait
@@ -135,7 +138,7 @@ class JIRest {
             HttpConnectionParams.setSoTimeout(params, 15000);
 
             // We POST our data.
-            HttpPost httppost = new HttpPost(JOINDIN_URL + urlPostfix);
+            HttpPost httppost = new HttpPost(fullURI);
 
             StringEntity jsonentity = null;
             try {
@@ -148,12 +151,24 @@ class JIRest {
             httppost.setEntity(jsonentity);
             httppost.addHeader("Content-type", "application/json");
 
+            if (addAuthDetails) {
+                AccountManager am = AccountManager.get(context);
+                Account[] accounts = am.getAccountsByType(context.getString(R.string.authenticatorAccountType));
+                Account thisAccount = (accounts.length > 0 ? accounts[0] : null);
+                if (thisAccount != null) {
+                    String authToken = am.peekAuthToken(thisAccount, context.getString(R.string.authTokenType));
+
+                    // Add authentication details
+                    httppost.addHeader("Authorization", "OAuth " + authToken);
+                }
+            }
+
             // Do not add the "expect: 100-continue" headerline. It will mess up some proxy systems
             httppost.getParams().setBooleanParameter(CoreProtocolPNames.USE_EXPECT_CONTINUE, false);
 
             try {
                 // Post stuff
-                HttpResponse response = httpclient.execute(httppost);
+                HttpResponse response = httpclient.execute (httppost);
 
                 // Get response
                 HttpEntity entity = response.getEntity();
@@ -168,11 +183,19 @@ class JIRest {
                         // Couldn't parse JSON result; leave as null
                     }
                     instream.close();
-                    return OK;
+                    int statusCode = response.getStatusLine().getStatusCode();
+                    switch (statusCode) {
+                        case HttpStatus.SC_OK:
+                        case HttpStatus.SC_CREATED:
+                            return OK;
+                        default:
+                            this.error = String.format (this.context.getString(R.string.JIRestUnknownError), statusCode);
+                            return ERROR;
+                    }
                 }
             } catch (ClientProtocolException e) {
                 // Error during communication
-                this.error = String.format(this.context.getString(R.string.JIRestProtocolError), e.getMessage());
+                this.error = String.format (this.context.getString(R.string.JIRestProtocolError), e.getMessage());
                 return ERROR;
             } catch (SocketTimeoutException e) {
                 // Socket has timed out
@@ -180,105 +203,14 @@ class JIRest {
                 return TIMEOUT;
             } catch (IOException e) {
                 // IO exception occurred
-                this.error = String.format(this.context.getString(R.string.JIRestIOError), e.getMessage());
+                this.error = String.format (this.context.getString(R.string.JIRestIOError), e.getMessage());
                 return ERROR;
             }
         } catch (Exception e) {
             // Something else happened
-            this.error = String.format(this.context.getString(R.string.JIRestUnknownError), e.getMessage());
+            this.error  = String.format (this.context.getString(R.string.JIRestUnknownError), e.getMessage());
             return ERROR;
         }
         return OK;
-    }
-
-    // Post XML.. funny.. we post XML and we receive JSON.
-    public int postXML(String urlPostfix, String xml) {
-
-        try {
-            // Create http client with timeouts so we don't have to wait
-            // indefinitely when the internet is kaput
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpParams params = httpclient.getParams();
-            HttpConnectionParams.setConnectionTimeout(params, 30000);
-            HttpConnectionParams.setSoTimeout(params, 15000);
-
-            // We POST our data.
-            HttpPost httppost = new HttpPost(JOINDIN_URL + urlPostfix);
-
-            // Attention: MUST be text/xml. Took a while to figure this one out!
-            StringEntity xmlentity = null;
-            try {
-                xmlentity = new StringEntity(xml);
-                xmlentity.setContentType("text/xml");
-            } catch (UnsupportedEncodingException e) {
-                // Ignore exception
-            }
-
-            // Log.d("joindin", JOINDIN_URL+urlPostfix + " --> " + xml);
-            httppost.setEntity(xmlentity);
-            httppost.addHeader("Content-type", "text/xml");
-
-            // Do not add the "expect: 100-continue" headerline. It will mess up some proxy systems
-            httppost.getParams().setBooleanParameter(CoreProtocolPNames.USE_EXPECT_CONTINUE, false);
-
-            try {
-                // Post stuff
-                HttpResponse response = httpclient.execute(httppost);
-
-                // Get response
-                HttpEntity entity = response.getEntity();
-                if (entity != null) {
-                    // If we receive some data, place it in our result string
-                    InputStream instream = entity.getContent();
-                    this.result = Main.convertStreamToString(instream);
-                    instream.close();
-                    // Log.d("joindin", this.result);
-                    return OK;
-                }
-            } catch (ClientProtocolException e) {
-                // Error during communication
-                this.error = String.format(this.context.getString(R.string.JIRestProtocolError), e.getMessage());
-                return ERROR;
-            } catch (SocketTimeoutException e) {
-                // Socket has timed out
-                this.error = this.context.getString(R.string.JIRestSocketTimeout);
-                return TIMEOUT;
-            } catch (IOException e) {
-                // IO exception occurred
-                this.error = String.format(this.context.getString(R.string.JIRestIOError), e.getMessage());
-                return ERROR;
-            }
-        } catch (Exception e) {
-            // Something else happened
-            this.error = String.format(this.context.getString(R.string.JIRestUnknownError), e.getMessage());
-            return ERROR;
-        }
-        return OK;
-    }
-
-    // This will return either a empty string, or a xml auth string <auth><user><pass></auth> that can be used in messages.
-    // We need an activity because we need to fetch the preference manager which is only fetchable from a context.
-    // ( @TODO: find another way to fetch basecontext)
-    public static String getAuthXML(Context context) {
-        // Make authentication string from the preferences
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        if (prefs.getString("username", "").compareTo("") == 0 &&
-                prefs.getString("password", "").compareTo("") == 0) return "";
-        return "<auth><user>" + prefs.getString("username", "") + "</user><pass>" + JIRest.md5(prefs.getString("password", "")) + "</pass></auth>";
-    }
-
-    // Will return an md5 for specified input
-    public static String md5(String input) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            byte[] messageDigest = md.digest(input.getBytes());
-            BigInteger number = new BigInteger(1, messageDigest);
-            String md5 = number.toString(16);
-            while (md5.length() < 32) md5 = "0" + md5;
-            return md5;
-        } catch (NoSuchAlgorithmException e) {
-            // MD5 not found, return NULL
-            return null;
-        }
     }
 }
