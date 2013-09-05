@@ -4,6 +4,8 @@ package com.noxlogic.joindin;
  * Comment activity. This activity will handle both Events comments and talk comments.
  */
 
+import android.app.Activity;
+import android.content.Intent;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -26,6 +28,7 @@ public class AddComment extends JIActivity implements OnClickListener {
     private String commentType;
     private JSONObject talkJSON;
     private JSONObject eventJSON;
+    private String lastError = "";
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,7 +41,7 @@ public class AddComment extends JIActivity implements OnClickListener {
         setTitle(String.format(getString(R.string.activityAddCommentTitle), this.commentType));
 
         EditText te = (EditText) findViewById(R.id.CommentText);
-        te.setText(JIActivity.getCommentHistory());
+        te.setText("");
         te.addTextChangedListener(new TextWatcher() {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 JIActivity.setCommentHistory(s.toString());
@@ -116,7 +119,7 @@ public class AddComment extends JIActivity implements OnClickListener {
             new Thread() {
                 public void run() {
                     // Send comment and fetch result
-                    final String result = sendComment();
+                    final boolean result = sendComment();
 
                     // Dismiss the dialog
                     saveDialog.dismiss();
@@ -125,11 +128,15 @@ public class AddComment extends JIActivity implements OnClickListener {
                     runOnUiThread(new Runnable() {
                         public void run() {
                             // Display result from sendcomment()
-                            Toast toast = Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG);
+                            Toast toast = Toast.makeText(getApplicationContext(), result ? getString(R.string.generalSuccessPostComment) : lastError, Toast.LENGTH_LONG);
                             toast.show();
 
-                            // After displaying, close this activity and return
-                            AddComment.this.finish();
+                            // If successful, close this activity and return
+                            if (result) {
+                                Intent resultIntent = new Intent();
+                                setResult(Activity.RESULT_OK, resultIntent);
+                                finish();
+                            }
                         }
                     });
                 }
@@ -140,11 +147,13 @@ public class AddComment extends JIActivity implements OnClickListener {
 
     // Sendcomment() will do 2 things. Sending comments for talks AND sending comments
     // for events.
-    public String sendComment() {
-        String url, xml, result;
+    public boolean sendComment() {
+        String url;
 
         // Display progress bar
         displayProgressBar(true);
+
+        lastError = "";
 
         // Get information from the layout
         RatingBar ratingbar = (RatingBar) findViewById(R.id.CommentRatingBar);
@@ -154,6 +163,14 @@ public class AddComment extends JIActivity implements OnClickListener {
         CheckBox tmp2 = (CheckBox) findViewById(R.id.CommentPrivate);
         int priv = tmp2.isChecked() ? 1 : 0;
 
+        JSONObject data = new JSONObject();
+
+        try {
+            data.put("comment", comment);
+        } catch (JSONException e) {
+            // do nothing
+        }
+
         // Are we sending a talk comment?
         if (this.commentType.compareTo("talk") == 0) {
             try {
@@ -162,9 +179,15 @@ public class AddComment extends JIActivity implements OnClickListener {
                 android.util.Log.e("JoindInApp", "No talk passed to activity", e);
             }
 
-            int talk_id = this.talkJSON.optInt("ID");
-            url = "talk";
-            xml = "<request>" + JIRest.getAuthXML(this) + "<action type=\"addcomment\" output=\"json\"><talk_id>" + talk_id + "</talk_id><rating>" + rating + "</rating><comment>" + comment + "</comment><private>" + priv + "</private></action></request>";
+            // Talk comments have ratings
+            try {
+                data.put("rating", rating);
+            } catch (JSONException e) {
+                // do nothing
+            }
+
+            url = this.talkJSON.optString("comments_uri");
+
         } else {
             // We are sending an event comment
             try {
@@ -173,34 +196,20 @@ public class AddComment extends JIActivity implements OnClickListener {
                 android.util.Log.e("JoindInApp", "No event passed to activity", e);
             }
 
-            int event_id = this.eventJSON.optInt("ID");
-            url = "event";
-            xml = "<request>" + JIRest.getAuthXML(this) + "<action type=\"addcomment\" output=\"json\"><event_id>" + event_id + "</event_id><comment>" + comment + "</comment></action></request>";
+            url = this.eventJSON.optString("comments_uri");
         }
 
         // Send data to joind.in API
         JIRest rest = new JIRest(AddComment.this);
-        int error = rest.postXML(url, xml);
-        if (error == JIRest.OK) {
-            try {
-                // When the API returns something, check if it's JSON. If so
-                // we parse the MSG key from it since it will be our value.
-                JSONObject json = new JSONObject(rest.getResult());
-                result = json.optString("msg");
-            } catch (Exception e) {
-                // Incorrect JSON, just return plain result from http
-                result = rest.getResult();
-            }
-        } else {
-            // Incorrect result, return error
-            result = rest.getError();
+        int result = rest.postJSONFullURI(url, data, true);
+        if (result != JIRest.OK) {
+            lastError = rest.getError();
         }
 
         // Remove progress bar
         displayProgressBar(false);
 
-        // Return
-        return result;
+        return result == JIRest.OK;
     }
 
 }
