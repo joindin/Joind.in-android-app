@@ -82,6 +82,7 @@
     <string name="generalCommentSingular">%d comment</string>
     <string name="generalCommentPlural">%d comments</string>
     <string name="generalAnonymous">Anonymous</string>
+    <string name="generalSuccessPostComment">Comment posted successfully</string>
 
     <string name="generalSuccessFullyAttended">Successfully attended</string>
     <string name="generalSuccessFullyUnAttended">Successfully unattended</string>
