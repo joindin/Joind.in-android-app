@@ -94,8 +94,7 @@ public class AddComment extends JIActivity implements OnClickListener {
         // text that the user is commenting anonymously..
 
         View v = (View) findViewById(R.id.AnonymousPost);
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        if (prefs.getBoolean("validated", false)) {
+        if (isAuthenticated()) {
             v.setVisibility(View.GONE);
         } else {
             v.setVisibility(View.VISIBLE);
