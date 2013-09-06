@@ -75,6 +75,13 @@ public class EventDetail extends JIActivity implements OnClickListener {
         }
     }
 
+    public void onResume() {
+        super.onResume();
+
+        CheckBox checkbox = (CheckBox)findViewById(R.id.CheckBoxEventDetailsAttending);
+        checkbox.setEnabled(isAuthenticated());
+    }
+
     public void displayDetails (int event_row_ID) {
         DataHelper dh = DataHelper.getInstance();
         JSONObject event = dh.getEvent (event_row_ID);
@@ -251,4 +258,3 @@ public class EventDetail extends JIActivity implements OnClickListener {
         }
      }
 }
-
