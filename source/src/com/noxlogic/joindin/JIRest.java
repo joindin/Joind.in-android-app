@@ -7,21 +7,16 @@ package com.noxlogic.joindin;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
 import java.net.SocketTimeoutException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.util.Log;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.*;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.CoreProtocolPNames;
@@ -87,6 +82,8 @@ class JIRest {
             // Do not add the "expect: 100-continue" headerline. It will mess up some proxy systems
             httpget.getParams().setBooleanParameter(CoreProtocolPNames.USE_EXPECT_CONTINUE, false);
 
+            httpget = (HttpGet) addAuthDetailsToRequest(httpget);
+
             try {
                 // Post stuff
                 HttpResponse response = httpclient.execute (httpget);
@@ -151,17 +148,7 @@ class JIRest {
             httppost.setEntity(jsonentity);
             httppost.addHeader("Content-type", "application/json");
 
-            if (addAuthDetails) {
-                AccountManager am = AccountManager.get(context);
-                Account[] accounts = am.getAccountsByType(context.getString(R.string.authenticatorAccountType));
-                Account thisAccount = (accounts.length > 0 ? accounts[0] : null);
-                if (thisAccount != null) {
-                    String authToken = am.peekAuthToken(thisAccount, context.getString(R.string.authTokenType));
-
-                    // Add authentication details
-                    httppost.addHeader("Authorization", "OAuth " + authToken);
-                }
-            }
+            httppost = (HttpPost) addAuthDetailsToRequest(httppost);
 
             // Do not add the "expect: 100-continue" headerline. It will mess up some proxy systems
             httppost.getParams().setBooleanParameter(CoreProtocolPNames.USE_EXPECT_CONTINUE, false);
@@ -212,5 +199,19 @@ class JIRest {
             return ERROR;
         }
         return OK;
+    }
+
+    protected HttpUriRequest addAuthDetailsToRequest(HttpUriRequest request) {
+        AccountManager am = AccountManager.get(context);
+        Account[] accounts = am.getAccountsByType(context.getString(R.string.authenticatorAccountType));
+        Account thisAccount = (accounts.length > 0 ? accounts[0] : null);
+        if (thisAccount != null) {
+            String authToken = am.peekAuthToken(thisAccount, context.getString(R.string.authTokenType));
+
+            // Add authentication details
+            request.addHeader("Authorization", "OAuth " + authToken);
+        }
+
+        return request;
     }
 }
