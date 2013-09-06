@@ -200,7 +200,7 @@ public class AddComment extends JIActivity implements OnClickListener {
 
         // Send data to joind.in API
         JIRest rest = new JIRest(AddComment.this);
-        int result = rest.postJSONFullURI(url, data, true);
+        int result = rest.requestToFullURI(url, data, JIRest.METHOD_POST);
         if (result != JIRest.OK) {
             lastError = rest.getError();
         }
