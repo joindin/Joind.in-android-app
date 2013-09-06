@@ -10,9 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.ProgressDialog;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -29,6 +27,8 @@ public class AddComment extends JIActivity implements OnClickListener {
     private JSONObject talkJSON;
     private JSONObject eventJSON;
     private String lastError = "";
+
+    final public static int CODE_COMMENT = 1;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,24 +83,6 @@ public class AddComment extends JIActivity implements OnClickListener {
         button.setOnClickListener(this);
     }
 
-
-    // This must be done in onStart instead of onCreate. For instance, we could have started writing a comment,
-    // the user sees he's sending anonymous comments, starts the preferences activity from the menu and returns
-    // back to this activity. In that case, the onCreate is not called, but onStart is..
-    public void onStart() {
-        super.onStart();
-
-        // Check if we have entered correct credentials in the preferences. If not, we display the
-        // text that the user is commenting anonymously..
-
-        View v = (View) findViewById(R.id.AnonymousPost);
-        if (isAuthenticated()) {
-            v.setVisibility(View.GONE);
-        } else {
-            v.setVisibility(View.VISIBLE);
-        }
-    }
-
     // Called when button is clicked
     public void onClick(View v) {
         // Did we click cancel button?
@@ -142,7 +124,6 @@ public class AddComment extends JIActivity implements OnClickListener {
             }.start();
         }
     }
-
 
     // Sendcomment() will do 2 things. Sending comments for talks AND sending comments
     // for events.
