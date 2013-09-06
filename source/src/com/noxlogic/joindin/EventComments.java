@@ -77,6 +77,20 @@ public class EventComments extends JIActivity implements OnClickListener {
         }
     }
 
+    public void onResume() {
+        super.onResume();
+
+        Button button = (Button)findViewById(R.id.ButtonNewComment);
+
+        // Button is only present if we're authenticated
+        if (!isAuthenticated()) {
+            button.setVisibility(View.GONE);
+        }
+        else {
+            button.setVisibility(View.VISIBLE);
+        }
+    }
+
     public void onClick(View v) {
         if (v == findViewById(R.id.ButtonNewComment)) {
             // Start activity to add new comment
