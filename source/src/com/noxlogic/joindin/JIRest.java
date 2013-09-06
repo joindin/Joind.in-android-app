@@ -36,6 +36,9 @@ class JIRest {
 
     public static String JOINDIN_URL = "";
 
+    public static final String METHOD_POST = "POST";
+    public static final String METHOD_DELETE = "DELETE";
+
     private String error = "";
     private String result = "";
     private JSONObject jsonResult = null;
@@ -124,7 +127,32 @@ class JIRest {
         return OK;
     }
 
-    public int postJSONFullURI(String fullURI, JSONObject json, boolean addAuthDetails) {
+    public int requestToFullURI(String fullURI, JSONObject json, String method)
+    {
+        if (method == METHOD_POST) {
+            HttpPost obj = new HttpPost(fullURI);
+            StringEntity jsonEntity = null;
+            if (json != null) {
+                try {
+                    jsonEntity = new StringEntity(json.toString());
+                    jsonEntity.setContentType("application/json");
+                } catch (UnsupportedEncodingException e) {
+                    // Ignore exception
+                }
+            }
+            obj.setEntity(jsonEntity);
+
+            return doMethodRequest(obj);
+        }
+        if (method == METHOD_DELETE) {
+            HttpDelete obj = new HttpDelete(fullURI);
+            return doMethodRequest(obj);
+        }
+
+        return ERROR;
+    }
+
+    protected int doMethodRequest(HttpUriRequest requestObj) {
 
         try {
             // Create http client with timeouts so we don't have to wait
@@ -134,28 +162,16 @@ class JIRest {
             HttpConnectionParams.setConnectionTimeout(params, 30000);
             HttpConnectionParams.setSoTimeout(params, 15000);
 
-            // We POST our data.
-            HttpPost httppost = new HttpPost(fullURI);
+            requestObj.addHeader("Content-type", "application/json");
 
-            StringEntity jsonentity = null;
-            try {
-                jsonentity = new StringEntity(json.toString());
-                jsonentity.setContentType("application/json");
-            } catch (UnsupportedEncodingException e) {
-                // Ignore exception
-            }
-
-            httppost.setEntity(jsonentity);
-            httppost.addHeader("Content-type", "application/json");
-
-            httppost = (HttpPost) addAuthDetailsToRequest(httppost);
+            requestObj = addAuthDetailsToRequest(requestObj);
 
             // Do not add the "expect: 100-continue" headerline. It will mess up some proxy systems
-            httppost.getParams().setBooleanParameter(CoreProtocolPNames.USE_EXPECT_CONTINUE, false);
+            requestObj.getParams().setBooleanParameter(CoreProtocolPNames.USE_EXPECT_CONTINUE, false);
 
             try {
                 // Post stuff
-                HttpResponse response = httpclient.execute (httppost);
+                HttpResponse response = httpclient.execute (requestObj);
 
                 // Get response
                 HttpEntity entity = response.getEntity();
