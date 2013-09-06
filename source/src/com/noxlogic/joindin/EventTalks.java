@@ -86,7 +86,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
             m_talkAdapter = new JITalkAdapter(this, R.layout.talkrow, m_talks, tz);
 
         } catch (Exception e) {
-
+            Log.d("JoindInApp", e.getMessage());
         }
         ListView talklist = (ListView) findViewById(R.id.ListViewEventTalks);
         talklist.setAdapter(m_talkAdapter);
