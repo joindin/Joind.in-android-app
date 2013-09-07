@@ -24,20 +24,22 @@ import android.view.Window;
 import android.widget.Toast;
 
 public class JIActivity extends Activity {
-	
-	static String _comment_history;	
-	static public String getCommentHistory () {
-		return _comment_history;
-	}
-	public static void setCommentHistory(String comment) {
-		_comment_history = comment;
-	}
+
+    static String _comment_history;
+
+    static public String getCommentHistory() {
+        return _comment_history;
+    }
+
+    public static void setCommentHistory(String comment) {
+        _comment_history = comment;
+    }
 
     // Returns boolean if the user has entered valid credentials in the preferences
     // screen to login into the joind.in API. Needed to send registered comments and
     // to attend events.
-    static public boolean hasValidCredentials (Context context) {
-        String ret = validateCredentials (context);
+    static public boolean hasValidCredentials(Context context) {
+        String ret = validateCredentials(context);
         return ret.startsWith("T|");
     }
 
@@ -45,13 +47,13 @@ public class JIActivity extends Activity {
     // Returns a string in the following format:
     // T|<message>   credentials are valid
     // F|<message>   credentials are not valid
-    static public String validateCredentials (Context context) {
+    static public String validateCredentials(Context context) {
         String result;
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
         // Check credentials in the joind.in API
-        JIRest rest = new JIRest (context);
-        int error = rest.postXML ("user", "<request><action type=\"validate\" output=\"json\"><uid>"+prefs.getString("username", "")+"</uid><pass>"+JIRest.md5(prefs.getString("password", ""))+"</pass></action></request>");
+        JIRest rest = new JIRest(context);
+        int error = rest.postXML("user", "<request><action type=\"validate\" output=\"json\"><uid>" + prefs.getString("username", "") + "</uid><pass>" + JIRest.md5(prefs.getString("password", "")) + "</pass></action></request>");
         if (error == JIRest.OK) {
             try {
                 JSONObject json = new JSONObject(rest.getResult());
@@ -66,12 +68,12 @@ public class JIActivity extends Activity {
         }
 
         // Result ok?
-        if (result.compareTo ("success") == 0) {
-            return "T|"+context.getString(R.string.JIActivityCorrectCredentials);
+        if (result.compareTo("success") == 0) {
+            return "T|" + context.getString(R.string.JIActivityCorrectCredentials);
         }
         // Something went wrong
-        if (result.compareTo ("Invalid user") == 0) result = context.getString(R.string.JIActivityIncorrectCredentials);
-        return "F|"+result;
+        if (result.compareTo("Invalid user") == 0) result = context.getString(R.string.JIActivityIncorrectCredentials);
+        return "F|" + result;
     }
 
     // Automatically called by all activities.
@@ -82,7 +84,7 @@ public class JIActivity extends Activity {
     }
 
     // Displays (or hides) the circular progress animation in the top left corner
-    public void displayProgressBar (final boolean state) {
+    public void displayProgressBar(final boolean state) {
         runOnUiThread(new Runnable() {
             public void run() {
                 setProgressBarIndeterminateVisibility(state);
@@ -98,31 +100,31 @@ public class JIActivity extends Activity {
     }
 
     // Handler for options menu
-    public boolean onOptionsItemSelected (MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.about_menu_item :
-                        // Display about box
-                        Dialog about = new AlertDialog.Builder(this)
-                            .setTitle(R.string.generalAboutTitle)
-                            .setPositiveButton(R.string.generalAboutButtonCaption, null)
-                            .setMessage(R.string.generalAboutMessage)
-                            .create();
-                        about.show();
-                        break;
+            case R.id.about_menu_item:
+                // Display about box
+                Dialog about = new AlertDialog.Builder(this)
+                        .setTitle(R.string.generalAboutTitle)
+                        .setPositiveButton(R.string.generalAboutButtonCaption, null)
+                        .setMessage(R.string.generalAboutMessage)
+                        .create();
+                about.show();
+                break;
 
-            case R.id.clear_menu_item :
-                        // Removes all items from the database
-                        DataHelper dh = DataHelper.getInstance ();
-                        dh.deleteAll ();
-                        Toast toast = Toast.makeText (getApplicationContext(), R.string.generalCacheCleared, Toast.LENGTH_LONG);
-                        toast.show ();
-                        break;
+            case R.id.clear_menu_item:
+                // Removes all items from the database
+                DataHelper dh = DataHelper.getInstance();
+                dh.deleteAll();
+                Toast toast = Toast.makeText(getApplicationContext(), R.string.generalCacheCleared, Toast.LENGTH_LONG);
+                toast.show();
+                break;
 
-            case R.id.settings_menu_item :
-                        // Displays preferences
-                        Intent settingsActivity = new Intent(getApplicationContext(), Preferences.class);
-                        startActivity(settingsActivity);
-                        break;
+            case R.id.settings_menu_item:
+                // Displays preferences
+                Intent settingsActivity = new Intent(getApplicationContext(), Preferences.class);
+                startActivity(settingsActivity);
+                break;
         }
         return true;
     }

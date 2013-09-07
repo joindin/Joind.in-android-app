@@ -41,7 +41,7 @@ public class TalkDetail extends JIActivity implements OnClickListener {
         // Set correct text in layout
         TextView t;
         t = (TextView) this.findViewById(R.id.TalkDetailCaption);
-        t.setText (this.talkJSON.optString("talk_title"));
+        t.setText(this.talkJSON.optString("talk_title"));
         t = (TextView) this.findViewById(R.id.TalkDetailSpeaker);
 
         ArrayList<String> speakerNames = new ArrayList<String>();
@@ -56,12 +56,10 @@ public class TalkDetail extends JIActivity implements OnClickListener {
         }
         if (speakerNames.size() == 1) {
             t.setText("Speaker: " + speakerNames.get(0));
-        }
-        else if (speakerNames.size() > 1) {
+        } else if (speakerNames.size() > 1) {
             String allSpeakers = TextUtils.join(", ", speakerNames);
             t.setText("Speakers: " + allSpeakers);
-        }
-        else {
+        } else {
             t.setText("");
         }
         t = (TextView) this.findViewById(R.id.TalkDetailDescription);
@@ -70,22 +68,22 @@ public class TalkDetail extends JIActivity implements OnClickListener {
         // adding talks. It doesn't really look nice when viewing.
         s = s.replace("\n", "");
         s = s.replace("  ", "");
-        t.setText (s);
+        t.setText(s);
         Linkify.addLinks(t, Linkify.ALL);
 
         // Update view X comments button
         Button b = (Button) this.findViewById(R.id.ButtonViewComment);
         int commentCount = this.talkJSON.optInt("comment_count");
-        if (commentCount == 1){
+        if (commentCount == 1) {
             b.setText(String.format(getString(R.string.generalViewCommentSingular), commentCount));
         } else {
             b.setText(String.format(getString(R.string.generalViewCommentPlural), commentCount));
         }
 
         // Add handlers to button
-        Button button = (Button)findViewById(R.id.ButtonNewComment);
+        Button button = (Button) findViewById(R.id.ButtonNewComment);
         button.setOnClickListener(this);
-        button = (Button)findViewById(R.id.ButtonViewComment);
+        button = (Button) findViewById(R.id.ButtonViewComment);
         button.setOnClickListener(this);
     }
 
@@ -93,7 +91,7 @@ public class TalkDetail extends JIActivity implements OnClickListener {
     public void onClick(View v) {
         if (v == findViewById(R.id.ButtonNewComment)) {
             // Goto comment activity and add new comment to this talk
-            Intent myIntent = new Intent ();
+            Intent myIntent = new Intent();
             myIntent.setClass(getApplicationContext(), AddComment.class);
 
             myIntent.putExtra("commentType", "talk");
@@ -102,11 +100,13 @@ public class TalkDetail extends JIActivity implements OnClickListener {
         }
         if (v == findViewById(R.id.ButtonViewComment)) {
             // Goto talk comments activity and display all comments about this talk
-            Intent myIntent = new Intent ();
+            Intent myIntent = new Intent();
             myIntent.setClass(getApplicationContext(), TalkComments.class);
 
             myIntent.putExtra("talkJSON", getIntent().getStringExtra("talkJSON"));
             startActivity(myIntent);
         }
-    };
+    }
+
+    ;
 }

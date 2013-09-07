@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<string-array name="eventTabs">
-   <item>Hot events</item>
-   <item>Upcoming events</item>
-   <item>Past events</item>
-   <item>Favorite list</item>
-</string-array>
- 
-<string-array name="eventTabValues">
-   <item>hot</item>
-   <item>upcoming</item>
-   <item>past</item>
-   <item>favorites</item>
-</string-array>
+    <string-array name="eventTabs">
+        <item>Hot events</item>
+        <item>Upcoming events</item>
+        <item>Past events</item>
+        <item>Favorite list</item>
+    </string-array>
+
+    <string-array name="eventTabValues">
+        <item>hot</item>
+        <item>upcoming</item>
+        <item>past</item>
+        <item>favorites</item>
+    </string-array>
 </resources>

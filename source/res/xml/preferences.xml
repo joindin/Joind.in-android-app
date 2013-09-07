@@ -12,8 +12,8 @@
             android:title="@string/prefPasswordTitle"
             android:summary="@string/prefPasswordSummary"
             android:password="True"></EditTextPreference>
-	</PreferenceCategory>
-	<PreferenceCategory android:title="Application Settings">
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Application Settings">
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="showsplashscreen"
@@ -23,18 +23,18 @@
             android:defaultValue="true"
             android:key="loadimages"
             android:title="@string/prefLoadImagesTitle"
-            android:summary="@string/prefLoadImagesSummary"/>  
-       <CheckBoxPreference
-             android:defaultValue="false"
-             android:key="attendonly"
-             android:title="@string/prefAttendOnlyTitle"
-             android:summary="@string/prefAttendOnlySummary"/>
- 		<ListPreference
-			android:title="@string/prefDefaultTabTitle"
-			android:summary="@string/prefDefaultTabSummary"
-			android:key="defaultEventTab"
-			android:defaultValue="upcoming"
-			android:entries="@array/eventTabs"
-			android:entryValues="@array/eventTabValues" />            
-	</PreferenceCategory>
+            android:summary="@string/prefLoadImagesSummary"/>
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="attendonly"
+            android:title="@string/prefAttendOnlyTitle"
+            android:summary="@string/prefAttendOnlySummary"/>
+        <ListPreference
+            android:title="@string/prefDefaultTabTitle"
+            android:summary="@string/prefDefaultTabSummary"
+            android:key="defaultEventTab"
+            android:defaultValue="upcoming"
+            android:entries="@array/eventTabs"
+            android:entryValues="@array/eventTabValues"/>
+    </PreferenceCategory>
 </PreferenceScreen>

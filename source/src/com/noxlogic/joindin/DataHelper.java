@@ -33,25 +33,25 @@ public final class DataHelper {
     private static final String DATABASE_NAME = "joindin.db";
     private static final int DATABASE_VERSION = 12;  // Increasing this version number will result in automatic call to onUpgrade()
 
-    public static final int ORDER_DATE_ASC 		= 1;
-    public static final int ORDER_DATE_DESC 	= 2;
-    public static final int ORDER_TITLE_ASC 	= 3;
-    public static final int ORDER_TITLE_DESC 	= 4;
+    public static final int ORDER_DATE_ASC = 1;
+    public static final int ORDER_DATE_DESC = 2;
+    public static final int ORDER_TITLE_ASC = 3;
+    public static final int ORDER_TITLE_DESC = 4;
 
     private SQLiteDatabase db = null;
 
     private DataHelper(Context context) {
-        OpenHelper openHelper = new OpenHelper (context);
+        OpenHelper openHelper = new OpenHelper(context);
         this.db = openHelper.getWritableDatabase();
     }
 
-    public static DataHelper createInstance (Context context) {
-        if (DHinstance == null) DHinstance = new DataHelper (context);
+    public static DataHelper createInstance(Context context) {
+        if (DHinstance == null) DHinstance = new DataHelper(context);
 
         return DHinstance;
     }
 
-    public static DataHelper getInstance () {
+    public static DataHelper getInstance() {
         if (DHinstance == null) return null;
         return DHinstance;
     }
@@ -60,7 +60,7 @@ public final class DataHelper {
     public long updateEvent(int eventRowID, JSONObject event) {
         ContentValues values = new ContentValues();
         values.put("json", event.toString());
-        return db.update("events", values, "_rowid_=?", new String[] {Integer.toString(eventRowID)});
+        return db.update("events", values, "_rowid_=?", new String[]{Integer.toString(eventRowID)});
     }
 
     // insert a new event to specified event_type (hot, pending, past etc)
@@ -74,8 +74,7 @@ public final class DataHelper {
         long eventID = getEventIDByURI(event.optString("uri"));
         if (eventID > 0) {
             db.delete("event_types", "event_id=? AND event_type=?", new String[]{String.valueOf(eventID), event_type});
-        }
-        else {
+        } else {
             eventID = db.insert("events", "", values);
         }
 
@@ -94,7 +93,7 @@ public final class DataHelper {
         JSONObject json;
         try {
             c.moveToFirst();
-            json = new JSONObject (c.getString (0));
+            json = new JSONObject(c.getString(0));
         } catch (Exception e) {
             json = new JSONObject();
         }
@@ -117,22 +116,22 @@ public final class DataHelper {
     }
 
     // Insert a new talk
-    public long insertTalk (int eventRowID, JSONObject talk) {
+    public long insertTalk(int eventRowID, JSONObject talk) {
         ContentValues values = new ContentValues();
         String uri = "";
         values.put("event_id", eventRowID);
 
-        int track_id = -1;	// Defaul track id (none)
+        int track_id = -1;    // Defaul track id (none)
 
         try {
             uri = talk.getString("uri");
-			if (talk.getJSONArray("tracks").length() > 0) {
-				// There are tracks. This talk is inside the 1st track (could there be more tracks??)
-				track_id = talk.getJSONArray("tracks").getJSONObject(0).optInt("ID");
-			}
-		} catch (JSONException e) {
-			// Ignore
-		}
+            if (talk.getJSONArray("tracks").length() > 0) {
+                // There are tracks. This talk is inside the 1st track (could there be more tracks??)
+                track_id = talk.getJSONArray("tracks").getJSONObject(0).optInt("ID");
+            }
+        } catch (JSONException e) {
+            // Ignore
+        }
         if (uri.length() == 0) {
             Log.d("JoindInApp", "Talk URI is empty");
         }
@@ -141,12 +140,12 @@ public final class DataHelper {
         values.put("track_id", track_id);
         values.put("json", talk.toString());
 
-        db.delete("talks", "uri=?", new String[] {uri});
+        db.delete("talks", "uri=?", new String[]{uri});
         return db.insert("talks", "", values);
     }
 
     // Insert a new talk comment
-    public long insertTalkComment (int talkID, JSONObject talkComment) {
+    public long insertTalkComment(int talkID, JSONObject talkComment) {
         ContentValues values = new ContentValues();
         values.put("talk_id", talkID);
         values.put("json", talkComment.toString());
@@ -154,7 +153,7 @@ public final class DataHelper {
     }
 
     // Insert a new event comment
-    public long insertEventComment (int eventRowID, JSONObject eventComment) {
+    public long insertEventComment(int eventRowID, JSONObject eventComment) {
         ContentValues values = new ContentValues();
         values.put("event_id", eventRowID);
         values.put("json", eventComment.toString());
@@ -167,26 +166,26 @@ public final class DataHelper {
      * @param event_type
      */
     public void deleteAllEventsFromType(String event_type) {
-        db.execSQL("DELETE FROM event_types WHERE event_type=?", new String[] {event_type});
+        db.execSQL("DELETE FROM event_types WHERE event_type=?", new String[]{event_type});
     }
 
     // Removes all talks from specified event
     public void deleteTalksFromEvent(int event_id) {
-        db.delete("talks", "event_id=?", new String[] {Integer.toString(event_id)});
+        db.delete("talks", "event_id=?", new String[]{Integer.toString(event_id)});
     }
 
     // Removes all comments from specified event
     public void deleteCommentsFromEvent(int event_id) {
-        db.delete("ecomments", "event_id=?", new String[] {Integer.toString(event_id)});
+        db.delete("ecomments", "event_id=?", new String[]{Integer.toString(event_id)});
     }
 
     // Removes all comments from specified talk
     public void deleteCommentsFromTalk(int talk_id) {
-        db.delete("tcomments", "talk_id=?", new String[] {Integer.toString(talk_id)});
+        db.delete("tcomments", "talk_id=?", new String[]{Integer.toString(talk_id)});
     }
 
     // Removes EVERYTHING
-    public void deleteAll () {
+    public void deleteAll() {
         db.delete("events", null, null);
         db.delete("talks", null, null);
         db.delete("ecomments", null, null);
@@ -195,62 +194,62 @@ public final class DataHelper {
 
     // Populates an event adapter and return the number of items populated
     public int populateEvents(String event_type, JIEventAdapter m_eventAdapter, int order) {
-    	// Different handling for favorite list
-    	if (event_type.equals("favorites")) {
+        // Different handling for favorite list
+        if (event_type.equals("favorites")) {
             Cursor c = this.db.rawQuery("SELECT json,events._rowid_ FROM events INNER JOIN favlist ON favlist.event_id = events._rowid_", null);
             int count = c.getCount();
-            populate (c, m_eventAdapter);
+            populate(c, m_eventAdapter);
             return count;
-    	}
+        }
 
 
-    	String order_sql = "";
+        String order_sql = "";
 
-    	switch (order) {
-    		case ORDER_DATE_ASC :
-    			order_sql = "ORDER BY event_start ASC";
-    			break;
-    		case ORDER_DATE_DESC :
-    			order_sql = "ORDER BY event_start DESC";
-    			break;
-    		case ORDER_TITLE_ASC :
-    			order_sql = "ORDER BY event_title ASC";
-    			break;
-    		case ORDER_TITLE_DESC :
-    			order_sql = "ORDER BY event_title DESC";
-    			break;
-    	}
+        switch (order) {
+            case ORDER_DATE_ASC:
+                order_sql = "ORDER BY event_start ASC";
+                break;
+            case ORDER_DATE_DESC:
+                order_sql = "ORDER BY event_start DESC";
+                break;
+            case ORDER_TITLE_ASC:
+                order_sql = "ORDER BY event_title ASC";
+                break;
+            case ORDER_TITLE_DESC:
+                order_sql = "ORDER BY event_title DESC";
+                break;
+        }
 
-        Cursor c = this.db.rawQuery("SELECT json,events._rowid_ FROM events INNER JOIN event_types ON event_id = events._rowid_ WHERE event_types.event_type = '"+event_type+"' "+order_sql, null);
+        Cursor c = this.db.rawQuery("SELECT json,events._rowid_ FROM events INNER JOIN event_types ON event_id = events._rowid_ WHERE event_types.event_type = '" + event_type + "' " + order_sql, null);
 
         int count = c.getCount();
-        populate (c, m_eventAdapter);
+        populate(c, m_eventAdapter);
         return count;
     }
 
     public int populateTracks(int event_id, JITrackAdapter m_trackAdapter) {
-    	int trackCount = 0;
-        Cursor c = this.db.rawQuery("SELECT json FROM events WHERE event_id = "+event_id, null);
+        int trackCount = 0;
+        Cursor c = this.db.rawQuery("SELECT json FROM events WHERE event_id = " + event_id, null);
 
         if (c.getCount() == 0) {
-        	c.close();
-        	return 0;
+            c.close();
+            return 0;
         }
 
         c.moveToFirst();
         try {
             JSONObject json = new JSONObject(c.getString(0));
-            JSONArray json_tracks = json.getJSONArray ("tracks");
+            JSONArray json_tracks = json.getJSONArray("tracks");
             trackCount = json_tracks.length();
 
-            for (int i=0; i!=json_tracks.length(); i++) {
+            for (int i = 0; i != json_tracks.length(); i++) {
                 m_trackAdapter.add(json_tracks.getJSONObject(i));
             }
         } catch (JSONException e) {
             android.util.Log.e("JoindInApp", "Could not add item to list", e);
         }
 
-        c.close ();
+        c.close();
         return trackCount;
     }
 
@@ -259,33 +258,33 @@ public final class DataHelper {
         Cursor c;
 
         if (track_id == -1) {
-            c = this.db.rawQuery("SELECT json,_rowid_ FROM talks WHERE event_id = "+event_id, null);
+            c = this.db.rawQuery("SELECT json,_rowid_ FROM talks WHERE event_id = " + event_id, null);
         } else {
-            c = this.db.rawQuery("SELECT json,_rowid_ FROM talks WHERE event_id = "+event_id+" and track_id = "+track_id, null);
+            c = this.db.rawQuery("SELECT json,_rowid_ FROM talks WHERE event_id = " + event_id + " and track_id = " + track_id, null);
         }
         int count = c.getCount();
-        populate (c, m_talkAdapter);
+        populate(c, m_talkAdapter);
         return count;
     }
 
     // Populates a talk comment adapter and returns the number of items populated
     public int populateTalkComments(int talk_id, JITalkCommentAdapter m_talkCommentAdapter) {
-        Cursor c = this.db.rawQuery("SELECT json,_rowid_ FROM tcomments WHERE talk_id = "+talk_id, null);
+        Cursor c = this.db.rawQuery("SELECT json,_rowid_ FROM tcomments WHERE talk_id = " + talk_id, null);
         int count = c.getCount();
-        populate (c, m_talkCommentAdapter);
+        populate(c, m_talkCommentAdapter);
         return count;
     }
 
     // Populates an event comment adapter and returns the number of items populated
     public int populateEventComments(int event_id, JIEventCommentAdapter m_eventCommentAdapter) {
-        Cursor c = this.db.rawQuery("SELECT json,_rowid_ FROM ecomments WHERE event_id = "+event_id, null);
+        Cursor c = this.db.rawQuery("SELECT json,_rowid_ FROM ecomments WHERE event_id = " + event_id, null);
         int count = c.getCount();
-        populate (c, m_eventCommentAdapter);
+        populate(c, m_eventCommentAdapter);
         return count;
     }
 
     // Populates specified adapter with a query (should be JSON data column)
-    private void populate (Cursor c, ArrayAdapter<JSONObject> adapter) {
+    private void populate(Cursor c, ArrayAdapter<JSONObject> adapter) {
         // No cursor given, do not do anything
         if (c == null) return;
 

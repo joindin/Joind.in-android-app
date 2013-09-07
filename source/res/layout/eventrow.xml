@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- A single event row, used in the event listview -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:padding="6dip">
-    <ImageView 
-    	android:id="@+id/EventDetailLogo" 
-    	android:layout_height="50dip" 
-    	android:layout_width="50dip" 
-    	android:visibility="gone" 
-    	android:layout_marginRight="5px"></ImageView>
+              android:layout_width="fill_parent"
+              android:padding="6dip">
+
+    <ImageView
+        android:id="@+id/EventDetailLogo"
+        android:layout_height="50dip"
+        android:layout_width="50dip"
+        android:visibility="gone"
+        android:layout_marginRight="5px"></ImageView>
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="0dip"
         android:layout_weight="1"
         android:layout_height="fill_parent">
+
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="0dip"
@@ -24,32 +27,37 @@
             android:singleLine="true"
             android:id="@+id/EventDetailCaption"
             android:textSize="16dip"/>
+
         <TableLayout
             android:id="@+id/TableLayout01"
             android:layout_height="wrap_content"
             android:layout_width="fill_parent">
+
             <TableRow
                 android:id="@+id/TableRow01"
                 android:layout_height="wrap_content"
                 android:layout_width="fill_parent"
                 android:gravity="center_vertical|center_horizontal">
+
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/EventDetailAttendingImg"
                     android:background="@drawable/rating_full_orange"
                     android:layout_margin="2px"></ImageView>
+
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_weight="1"
                     android:singleLine="true"
                     android:ellipsize="end"
                     android:id="@+id/EventDetailDate"/>
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/EventDetailAttending"></TextView>
             </TableRow>
         </TableLayout>
-	</LinearLayout>
+    </LinearLayout>
 </LinearLayout>

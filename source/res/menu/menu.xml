@@ -2,16 +2,19 @@
 <!-- Global menu that can be called (almost) everywhere. We should probably change
      this into different menu's depending on activity but this is sufficient for now. -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/settings_menu_item"
-          android:title="@string/OptionMenuSettings"
-          android:alphabeticShortcut="S"
-          android:icon="@android:drawable/ic_menu_preferences" />
-    <item android:id="@+id/clear_menu_item"
-          android:title="@string/OptionMenuClearCache"
-          android:alphabeticShortcut="C"
-          android:icon="@android:drawable/ic_menu_close_clear_cancel" />
-    <item android:id="@+id/about_menu_item"
-          android:title="@string/OptionMenuAbout"
-          android:alphabeticShortcut="A"
-          android:icon="@android:drawable/ic_menu_info_details" />
+    <item
+        android:id="@+id/settings_menu_item"
+        android:title="@string/OptionMenuSettings"
+        android:alphabeticShortcut="S"
+        android:icon="@android:drawable/ic_menu_preferences"/>
+    <item
+        android:id="@+id/clear_menu_item"
+        android:title="@string/OptionMenuClearCache"
+        android:alphabeticShortcut="C"
+        android:icon="@android:drawable/ic_menu_close_clear_cancel"/>
+    <item
+        android:id="@+id/about_menu_item"
+        android:title="@string/OptionMenuAbout"
+        android:alphabeticShortcut="A"
+        android:icon="@android:drawable/ic_menu_info_details"/>
 </menu>

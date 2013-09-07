@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<style name="joindinRatingBar" parent="@android:style/Widget.RatingBar">
-		<item name="android:progressDrawable">@drawable/joindin_ratingbar_full</item>
-		<item name="android:minHeight">30dip</item>
-  		<item name="android:maxHeight">30dip</item>
-	</style>
+
+    <style name="joindinRatingBar" parent="@android:style/Widget.RatingBar">
+        <item name="android:progressDrawable">@drawable/joindin_ratingbar_full</item>
+        <item name="android:minHeight">30dip</item>
+        <item name="android:maxHeight">30dip</item>
+    </style>
 </resources>

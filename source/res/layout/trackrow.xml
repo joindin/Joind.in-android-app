@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- A single row with track information. Used in the listviews -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:padding="6dip" 
-    android:orientation="vertical" 
-    android:layout_width="fill_parent" 
-    android:layout_height="wrap_content">
+              android:padding="6dip"
+              android:orientation="vertical"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content">
+
     <TextView
         android:layout_height="wrap_content"
         android:textStyle="bold"
@@ -12,17 +13,19 @@
         android:textSize="18dip"
         android:ellipsize="end"
         android:singleLine="true"
-        android:layout_width="fill_parent" 
+        android:layout_width="fill_parent"
         android:text=""></TextView>
-    <TextView 
-    	android:layout_width="wrap_content" 
-    	android:id="@+id/TrackRowDescription" 
-    	android:layout_height="fill_parent" 
-    	android:text=""></TextView>
-	<TextView 
-		android:layout_height="wrap_content" 
-		android:id="@+id/TrackRowTalkCount" 
-		android:layout_width="fill_parent" 
-		android:gravity="right" 
-		android:text=""></TextView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:id="@+id/TrackRowDescription"
+        android:layout_height="fill_parent"
+        android:text=""></TextView>
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:id="@+id/TrackRowTalkCount"
+        android:layout_width="fill_parent"
+        android:gravity="right"
+        android:text=""></TextView>
 </LinearLayout>
