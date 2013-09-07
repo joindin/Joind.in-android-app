@@ -1,22 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- This is the layout for adding a new comment. This could either be a event or talk comment -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="fill_parent"
-              android:layout_height="fill_parent">
-
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
     <LinearLayout
         android:id="@+id/LinearLayout02"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_width="fill_parent">
-
         <TextView
             android:layout_height="wrap_content"
             android:text="Your rating:"
             android:layout_width="fill_parent"
             android:id="@+id/TextViewRating"></TextView>
-
         <RatingBar
             android:id="@+id/CommentRatingBar"
             android:layout_width="wrap_content"
@@ -25,7 +22,6 @@
             android:rating="3"
             android:stepSize="1"></RatingBar>
     </LinearLayout>
-
     <TextView
         android:id="@+id/TextView01"
         android:layout_width="wrap_content"
@@ -50,13 +46,6 @@
             android:maxLines="4"
             android:minLines="4"></EditText>
     </TableRow>
-
-    <TextView
-        android:layout_height="wrap_content"
-        android:layout_width="fill_parent"
-        android:id="@+id/AnonymousPost"
-        android:text="You are posting as an anonymous user. Set your credentials in the Settings menu to post as a registered user. "></TextView>
-
     <CheckBox
         android:id="@+id/CommentPrivate"
         android:layout_height="wrap_content"
@@ -65,25 +54,26 @@
         android:text="This is a private comment "></CheckBox>
 
     <LinearLayout
-        android:id="@+id/LinearLayout01"
-        android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:layout_marginTop="5px">
+        android:layout_height="fill_parent"
+        android:weightSum="2">
 
         <Button
             android:text="Send"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_width="75px"
-            android:id="@+id/ButtonAddCommentSend"></Button>
+            android:layout_gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:id="@+id/ButtonAddCommentSend"
+            android:layout_weight="1"></Button>
 
         <Button
             android:layout_height="wrap_content"
             android:text="Cancel"
-            android:layout_gravity="center"
-            android:layout_width="75px"
-            android:id="@+id/ButtonAddCommentCancel"></Button>
+            android:layout_gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:id="@+id/ButtonAddCommentCancel"
+            android:layout_weight="1"></Button>
     </LinearLayout>
+
 </LinearLayout>

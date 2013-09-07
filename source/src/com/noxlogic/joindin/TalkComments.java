@@ -79,7 +79,7 @@ public class TalkComments extends JIActivity implements OnClickListener {
 
             myIntent.putExtra("commentType", "talk");
             myIntent.putExtra("talkJSON", getIntent().getStringExtra("talkJSON"));
-            startActivity(myIntent);
+            startActivityForResult(myIntent, AddComment.CODE_COMMENT);
         }
     }
 
@@ -103,7 +103,6 @@ public class TalkComments extends JIActivity implements OnClickListener {
         // Return the number of comments found
         return count;
     }
-
 
     // Load all talks from the joind.in API, populate database and display the new talks
     public void loadTalkComments(final int talk_id, final String commentsURI) {
@@ -164,6 +163,21 @@ public class TalkComments extends JIActivity implements OnClickListener {
                 });
             }
         }.start();
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case AddComment.CODE_COMMENT:
+                if (resultCode == Activity.RESULT_OK) {
+                    // reload the comments
+                    try {
+                        loadTalkComments(this.talkJSON.getInt("rowID"), this.talkJSON.getString("comments_uri"));
+                    } catch (JSONException e) {
+                        // nothing
+                    }
+                }
+        }
     }
 }
 

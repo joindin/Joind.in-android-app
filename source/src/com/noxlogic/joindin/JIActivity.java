@@ -7,6 +7,9 @@ package com.noxlogic.joindin;
  * the menu)
  */
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.util.Log;
 import org.json.JSONObject;
 
 import android.app.Activity;
@@ -25,7 +28,9 @@ import android.widget.Toast;
 
 public class JIActivity extends Activity {
 
-	static String _comment_history;
+    protected boolean isAuthenticated;
+    static String _comment_history;
+
 	static public String getCommentHistory () {
 		return _comment_history;
 	}
@@ -38,6 +43,21 @@ public class JIActivity extends Activity {
         super.onCreate(savedInstanceState);
         // Needed to show the circular progress animation in the top right corner.
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+    }
+
+    public void onResume()
+    {
+        super.onResume();
+
+        // Get account details
+        AccountManager am = AccountManager.get(this);
+        Account[] accounts = am.getAccountsByType(this.getString(R.string.authenticatorAccountType));
+        Account thisAccount = (accounts.length > 0 ? accounts[0] : null);
+        isAuthenticated = (thisAccount != null);
+    }
+
+    public boolean isAuthenticated() {
+        return isAuthenticated;
     }
 
     // Displays (or hides) the circular progress animation in the top left corner
