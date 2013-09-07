@@ -65,6 +65,10 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         CookieManager cookieManager = CookieManager.getInstance();
         cookieManager.removeAllCookie();
 
+        // Don't remember passwords or form submission data
+        webView.getSettings().setSaveFormData(false);
+        webView.getSettings().setSavePassword(false);
+
         webView.setWebViewClient(new WebViewClient() {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
 
