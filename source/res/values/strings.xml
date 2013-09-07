@@ -10,23 +10,27 @@
     <!-- API URL to use -->
     <string name="apiURL">http://api.joind.in/v2.1/</string>
 
+    <!-- OAuth URL to use, and the callback -->
+    <string name="oauthURL">http://joind.in/user/oauth_allow</string>
+    <string name="oauthCallback">joindin://oauth-response/</string>
+    <string name="oauthDeniedMessage">Couldn\'t authenticate with joind.in</string>
+
     <!-- Option menu strings -->
     <string name="OptionMenuSettings">Settings</string>
     <string name="OptionMenuClearCache">Clear cache</string>
     <string name="OptionMenuAbout">About</string>
-    
+
     <string name="OptionMenuSortDate">Sort by date</string>
     <string name="OptionMenuSortTitle">Sort by name</string>
-    
+
     <!--  Context menu strings -->
     <string name="ContextMainAddToFavorite">Add to favorite list</string>
     <string name="ContextMainRemoveFromFavorite">Remove from favorite list</string>
-    
+
     <!-- Preference activity strings -->
-    <string name="prefUserNameTitle">Username</string>
-    <string name="prefUserNameSummary">Your joind.in username</string>
-    <string name="prefPasswordTitle">Password</string>
-    <string name="prefPasswordSummary">Your joind.in password</string>
+    <string name="prefAuthLoginTitle">Log me into joind.in</string>
+    <string name="prefAuthLogoutTitle">You\'re logged in!</string>
+    <string name="prefAuthLogoutSummary">Touch to log out</string>
     <string name="prefAttendOnlyTitle">Attended only</string>
     <string name="prefAttendOnlySummary">Only display past attended events</string>
     <string name="prefShowSplashTitle">Display splash screen</string>
@@ -51,9 +55,6 @@
     <string name="activityMainEventsPast">Past events</string>
     <string name="activityMainEventsUpcoming">Upcoming events</string>
     <string name="activityMainEventsFavorites">Favorite events</string>
-
-    <string name="JIActivityCorrectCredentials">Correct credentials supplied</string>
-    <string name="JIActivityIncorrectCredentials">Incorrect login credentials. Change credentials in the Settings menu.</string>
 
     <string name="JIRestProtocolError">There was a protocol based error: %s</string>
     <string name="JIRestSocketTimeout">Timeout while connecting to joind.in website.</string>
@@ -91,5 +92,8 @@
     <string name="generalAboutMessage">Joind.In Android application created by Joshua Thijssen. Please send bugreports, feature requests etc to jthijssen@noxlogic.nl \n\nLogos and images are copyright Joind.in</string>
 
     <string name="generalCacheCleared">The cache is cleared</string>
+
+    <string name="authenticatorAccountType">com.noxlogic.joindin</string>
+    <string name="authTokenType">oauth2</string>
 
 </resources>

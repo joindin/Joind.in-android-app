@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:title="Joind.in Settings">
-        <EditTextPreference
-            android:singleLine="true"
-            android:key="username"
-            android:title="@string/prefUserNameTitle"
-            android:summary="@string/prefUserNameSummary"></EditTextPreference>
-        <EditTextPreference
-            android:singleLine="true"
-            android:key="password"
-            android:title="@string/prefPasswordTitle"
-            android:summary="@string/prefPasswordSummary"
-            android:password="True"></EditTextPreference>
-    </PreferenceCategory>
-    <PreferenceCategory android:title="Application Settings">
+        <PreferenceScreen
+            android:title="Log me into joind.in"
+            android:key="auth_button"
+            >
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:targetPackage="com.noxlogic.joindin"
+                android:targetClass="com.noxlogic.joindin.authenticator.AuthenticatorActivity"
+                />
+        </PreferenceScreen>
+	</PreferenceCategory>
+	<PreferenceCategory android:title="Application Settings">
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="showsplashscreen"
