@@ -63,7 +63,6 @@ public class EventTalks extends JIActivity implements OnClickListener {
             android.util.Log.e("JoindInApp", "Event row ID is invalid");
         }
 
-
         // Set all the event information
         TextView t;
         t = (TextView) this.findViewById(R.id.EventTalksCaption);
@@ -80,14 +79,14 @@ public class EventTalks extends JIActivity implements OnClickListener {
 
         // Initialize talk list
         ArrayList<JSONObject> m_talks = new ArrayList<JSONObject>();
+        TimeZone tz;
         try {
             String tz_string = this.eventJSON.getString("tz_continent") + '/' + this.eventJSON.getString("tz_place");
-            TimeZone tz = TimeZone.getTimeZone(tz_string);
-            m_talkAdapter = new JITalkAdapter(this, R.layout.talkrow, m_talks, tz);
-
-        } catch (Exception e) {
-            Log.d("JoindInApp", e.getMessage());
+            tz = TimeZone.getTimeZone(tz_string);
+        } catch (JSONException e) {
+            tz = TimeZone.getDefault();
         }
+        m_talkAdapter = new JITalkAdapter(this, R.layout.talkrow, m_talks, tz);
         ListView talklist = (ListView) findViewById(R.id.ListViewEventTalks);
         talklist.setAdapter(m_talkAdapter);
 
