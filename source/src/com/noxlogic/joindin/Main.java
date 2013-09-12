@@ -315,6 +315,13 @@ public class Main extends JIActivity implements OnClickListener {
                         }
                         uriToUse = metaObj.getString("next_page");
 
+                        // Yield to the view, so some display
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                displayEvents(event_type);
+                            }
+                        });
+
                         // If we're looking at "hot" events, this API call just
                         // returns events, and more events, and more events....
                         // so we'll just stop after the first round
