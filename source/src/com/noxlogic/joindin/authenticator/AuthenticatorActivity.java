@@ -89,7 +89,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
             }
         });
 
-        String apiKey = OAuthHelper.getApiKey();
+        String apiKey = OAuthHelper.getApiKey(this);
         if (apiKey == null) {
             runOnUiThread(new Runnable() {
                 public void run() {
