@@ -7,7 +7,11 @@ supply a callback URL. Use the following:
 
 **joindin://oauth-response/**
 
-Copy the file ``oauth.dist`` from ``res/raw/oauth.dist`` to ``res/values/oauth.xml`` and open
-it up.  You'll see where your API key should go.
+Next, you'll need to create a file called ``oauth.properties`` and place it in ``res/raw``.
+The content should be similar to the following (a single line):
+
+    api_key=ABCDE12345
+
+except inserting your API key as appropriate.
 
 Once you've placed this in, authentication via the app's settings page should work.
