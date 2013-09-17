@@ -36,6 +36,7 @@ import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.noxlogic.joindin.OAuthHelper;
 import com.noxlogic.joindin.R;
 
 import java.io.IOException;
@@ -88,8 +89,22 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
             }
         });
 
+        String apiKey = OAuthHelper.getApiKey();
+        if (apiKey == null) {
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    Toast toast = Toast.makeText(getApplicationContext(), "OAuth properties file not found; cannot continue", Toast.LENGTH_LONG);
+                    toast.show();
+
+                    Intent resultIntent = new Intent();
+                    setResult(RESULT_CANCELED, resultIntent);
+                    finish();
+                }
+            });
+        }
+
         Uri.Builder builder = Uri.parse(getString(R.string.oauthURL)).buildUpon();
-        builder.appendQueryParameter("api_key", getString(R.string.oauthKey));
+        builder.appendQueryParameter("api_key", apiKey);
         builder.appendQueryParameter("callback", getString(R.string.oauthCallback));
         webView.loadUrl(builder.toString());
     }
