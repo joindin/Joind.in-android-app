@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="custom_rules">
+    <target name="-pre-build">
+        <echo message="Generating res/raw/oauth.properties, key is ${oauth.api_key}, callback is ${oauth.callback}" />
+        <propertyfile file="res/raw/oauth.properties" comment="OAuth properties">
+            <entry key="api_key" value="${oauth.api_key}"/>
+            <entry key="callback" value="${oauth.callback}"/>
+        </propertyfile>
+    </target>
+</project>
