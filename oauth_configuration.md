@@ -3,8 +3,8 @@
 If you're building the Joind.In Android app, you'll need to set up the OAuth2 configuration.
 
 First, you'll need an API key from the Joind.In website. When you set this up, you'll need to
-supply a callback URL. This can be anything you want, but it must be a valid URL.  Make a note
-of this, as you'll need it in the next step. An example might be:
+supply a callback URL. This can be anything you want, but it must be a well-formed URL.  Make a
+note of this, as you'll need it in the next step. An example might be:
 
 **http://yourjoindin.dev/oauth-callback**
 
