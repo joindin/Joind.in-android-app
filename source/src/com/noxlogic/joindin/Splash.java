@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.view.Window;
+import com.crashlytics.android.Crashlytics;
 
 public class Splash extends JIActivity {
     int SPLASH_DISPLAY_LENGHT = 5000;           // milliseconds the splash screen stays visible
@@ -19,6 +20,8 @@ public class Splash extends JIActivity {
      */
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Crashlytics.start(this);
+
 
         // Do not display title bar, this makes the splash screen really full screen
         requestWindowFeature(Window.FEATURE_NO_TITLE);
