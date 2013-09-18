@@ -11,6 +11,24 @@ public class OAuthHelper {
     private static boolean haveTriedLoading = false;
 
     public static String getApiKey(Context context) {
+
+        if (!loadResources(context)) {
+            return null;
+        }
+
+        return prop.getProperty("api_key", null);
+    }
+
+    public static String getCallback(Context context) {
+
+        if (!loadResources(context)) {
+            return null;
+        }
+
+        return prop.getProperty("callback", null);
+    }
+
+    private static boolean loadResources(Context context) {
         if (!haveTriedLoading) {
             try {
                 Resources resources = context.getResources();
@@ -18,10 +36,10 @@ public class OAuthHelper {
                 prop.load(inputStream);
                 haveTriedLoading = true;
             } catch (Exception e) {
-                return null;
+                return false;
             }
         }
 
-        return prop.getProperty("api_key", null);
+        return true;
     }
 }

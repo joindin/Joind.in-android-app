@@ -51,6 +51,9 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
 
     private AccountManager mAccountManager;
 
+    private String oauthAPIKey;
+    private String oauthCallback;
+
     /**
      * {@inheritDoc}
      */
@@ -77,7 +80,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
                 Uri thisUri = Uri.parse(url);
                 String thisURL = thisUri.toString().replace("?" + thisUri.getQuery(), "");
 
-                if (thisURL.equals(getString(R.string.oauthCallback))) {
+                if (thisURL.equals(oauthCallback)) {
                     // Successful? We should have an access token (null if not found)
                     String accessToken = thisUri.getQueryParameter("access_token");
                     onAuthenticationResult(accessToken);
@@ -89,8 +92,9 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
             }
         });
 
-        String apiKey = OAuthHelper.getApiKey(this);
-        if (apiKey == null) {
+        // API key first - if we can't get this, no use continuing
+        oauthAPIKey = OAuthHelper.getApiKey(this);
+        if (oauthAPIKey == null) {
             runOnUiThread(new Runnable() {
                 public void run() {
                     Toast toast = Toast.makeText(getApplicationContext(), "OAuth properties file not found; cannot continue", Toast.LENGTH_LONG);
@@ -102,10 +106,11 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
                 }
             });
         }
+        oauthCallback = OAuthHelper.getCallback(this);
 
         Uri.Builder builder = Uri.parse(getString(R.string.oauthURL)).buildUpon();
-        builder.appendQueryParameter("api_key", apiKey);
-        builder.appendQueryParameter("callback", getString(R.string.oauthCallback));
+        builder.appendQueryParameter("api_key", oauthAPIKey);
+        builder.appendQueryParameter("callback", oauthCallback);
         webView.loadUrl(builder.toString());
     }
 
