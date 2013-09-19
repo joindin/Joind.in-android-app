@@ -297,6 +297,9 @@ public class Main extends JIActivity implements OnClickListener {
 
                         // Remove all event comments for this event and insert newly loaded comments
                         fullResponse = rest.getJSONResult();
+                        if (fullResponse == null) {
+                            break;
+                        }
                         metaObj = fullResponse.getJSONObject("meta");
 
                         if (isFirst) {
