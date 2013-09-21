@@ -10,8 +10,8 @@ package in.joind;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import in.joind.R;
-
-import android.app.Activity;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.ActionBarActivity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
@@ -22,14 +22,11 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.widget.Toast;
 
-public class JIActivity extends Activity {
+public class JIActivity extends ActionBarActivity {
 
     protected boolean isAuthenticated;
     static String _comment_history;
 
-	static public String getCommentHistory () {
-		return _comment_history;
-	}
 	public static void setCommentHistory(String comment) {
 		_comment_history = comment;
 	}
@@ -102,4 +99,8 @@ public class JIActivity extends Activity {
         return true;
     }
 
+    @Override
+    public FragmentManager getSupportFragmentManager() {
+        return null;
+    }
 }
