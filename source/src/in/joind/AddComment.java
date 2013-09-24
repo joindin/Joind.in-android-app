@@ -7,6 +7,7 @@ package in.joind;
 import android.app.Activity;
 import android.content.Intent;
 import in.joind.R;
+import android.view.MenuItem;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -32,6 +33,9 @@ public class AddComment extends JIActivity implements OnClickListener {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Allow ActionBar 'up' navigation
+        getActionBar().setDisplayHomeAsUpEnabled(true);
 
         // Set layout
         setContentView(R.layout.addcomment);
@@ -188,4 +192,14 @@ public class AddComment extends JIActivity implements OnClickListener {
         return result == JIRest.OK;
     }
 
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 }

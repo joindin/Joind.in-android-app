@@ -33,6 +33,9 @@ public class TalkComments extends JIActivity implements OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Allow ActionBar 'up' navigation
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+
         // Set comment layout
         setContentView(R.layout.comments);
 

@@ -28,6 +28,9 @@ public class TalkDetail extends JIActivity implements OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Allow ActionBar 'up' navigation
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+
         // Set talk detail layout
         setContentView(R.layout.talkdetails);
 

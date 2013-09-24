@@ -29,6 +29,9 @@ public class EventDetail extends JIActivity implements OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Allow ActionBar 'up' navigation
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+
         // Set layout
         setContentView(R.layout.eventdetail);
 

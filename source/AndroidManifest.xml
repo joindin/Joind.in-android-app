@@ -18,7 +18,7 @@
     <application
       android:icon="@drawable/icon"
       android:label="@string/app_name"
-      android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
+      android:theme="@style/Theme.AppCompat.Light">
 
         <!-- Just a bunch of activities here. Needed otherwise android cannot launch them. -->
         <activity android:name="in.joind.Main"
@@ -29,31 +29,56 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="in.joind.EventDetail"
+            android:name=".EventDetail"
+            android:launchMode="singleTop"
             android:label="@string/app_name">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.noxlogic.joindin.Main" />
         </activity>
         <activity
-            android:name="in.joind.EventTalks"
+            android:name=".EventTalks"
+            android:launchMode="singleTop"
             android:label="@string/app_name">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.noxlogic.joindin.EventDetail" />
         </activity>
         <activity
-            android:name="in.joind.EventComments"
+            android:name=".EventComments"
+            android:launchMode="singleTop"
             android:label="@string/app_name">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.noxlogic.joindin.EventDetail" />
         </activity>
         <activity
-            android:name="in.joind.EventTracks"
+            android:name=".EventTracks"
+            android:launchMode="singleTop"
             android:label="@string/app_name">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.noxlogic.joindin.EventDetail" />
         </activity>
         <activity
-            android:name="in.joind.TalkDetail"
+            android:name=".TalkDetail"
+            android:launchMode="singleTop"
             android:label="@string/app_name">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.noxlogic.joindin.EventTalks" />
         </activity>
             <activity
-            android:name="in.joind.TalkComments"
+            android:name=".TalkComments"
+            android:launchMode="singleTop"
             android:label="@string/app_name">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.noxlogic.joindin.TalkDetail" />
         </activity>
         <activity
-            android:name="in.joind.AddComment"
+            android:name=".AddComment"
+            android:launchMode="singleTop"
             android:label="@string/app_name">
         </activity>
         <activity

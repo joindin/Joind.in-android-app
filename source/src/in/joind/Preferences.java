@@ -12,6 +12,8 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.util.Log;
 import in.joind.R;
+import android.view.MenuItem;
+import in.joind.authenticator.AuthenticatorActivity;
 
 import java.io.IOException;
 
@@ -26,6 +28,10 @@ public class Preferences extends PreferenceActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Allow ActionBar 'up' navigation
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+
         ctx = this;
         addPreferencesFromResource(R.xml.preferences);
 
@@ -68,6 +74,16 @@ public class Preferences extends PreferenceActivity {
                 return true;
             }
         });
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private class OnAccountAddComplete implements AccountManagerCallback<Bundle> {
