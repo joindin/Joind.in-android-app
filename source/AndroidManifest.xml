@@ -4,7 +4,7 @@
       android:versionCode="15"
       android:versionName="1.7.1">
 
-    <uses-sdk android:minSdkVersion="4"  android:targetSdkVersion="4"/>
+    <uses-sdk android:minSdkVersion="4"  android:targetSdkVersion="14"/>
 
 	<!--  We need to upgrade to SDK 1.6 and we can support larger screens -->
 	<supports-screens
