@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- the theme applied to the application or activity -->
+    <style name="JoindInActionBarTheme"
+           parent="@style/Theme.AppCompat.Light">
+        <item name="android:actionBarStyle">@style/JoindInActionBar</item>
+
+        <!-- Support library compatibility -->
+        <item name="actionBarStyle">@style/JoindInActionBar</item>
+    </style>
+
+    <!-- ActionBar styles -->
+    <style name="JoindInActionBar"
+           parent="@style/Widget.AppCompat.Light.ActionBar">
+        <item name="android:background">@color/joindin_lightblue</item>
+
+        <!-- Support library compatibility -->
+        <item name="background">@color/joindin_lightblue</item>
+    </style>
+</resources>
