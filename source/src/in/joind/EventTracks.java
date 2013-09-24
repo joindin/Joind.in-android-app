@@ -30,7 +30,7 @@ public class EventTracks extends JIActivity {
         super.onCreate(savedInstanceState);
 
         // Allow ActionBar 'up' navigation
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // Set layout
         setContentView(R.layout.eventtracks);

@@ -7,6 +7,9 @@ package in.joind;
 import android.accounts.*;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -30,7 +33,10 @@ public class Preferences extends PreferenceActivity {
         super.onCreate(savedInstanceState);
 
         // Allow ActionBar 'up' navigation
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        // Only in later builds though (no action bar support in preference activities in lower versions)
+        if (Build.VERSION.SDK_INT >= 11) {
+            getActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         ctx = this;
         addPreferencesFromResource(R.xml.preferences);
@@ -41,7 +47,7 @@ public class Preferences extends PreferenceActivity {
 
     @Override
     protected void onResume() {
-        super.onResume();    //To change body of overridden methods use File | Settings | File Templates.
+        super.onResume();
         configureAccounts();
     }
 

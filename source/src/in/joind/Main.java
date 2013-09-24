@@ -235,10 +235,9 @@ public class Main extends JIActivity implements OnClickListener {
     }
 
     protected void setTabTitle(String title, int eventCount) {
-        setTitle(title);
-        getActionBar().setSubtitle(eventCount + " event" + (eventCount == 1 ? "" : "s"));
+        getSupportActionBar().setTitle(title);
+        getSupportActionBar().setSubtitle(eventCount + " event" + (eventCount == 1 ? "" : "s"));
     }
-
 
     class EventLoaderThread extends Thread {
         private volatile Thread runner;
