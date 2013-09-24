@@ -15,11 +15,6 @@
 	<PreferenceCategory android:title="Application Settings">
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="showsplashscreen"
-            android:title="@string/prefShowSplashTitle"
-            android:summary="@string/prefShowSplashSummary"/>
-        <CheckBoxPreference
-            android:defaultValue="true"
             android:key="loadimages"
             android:title="@string/prefLoadImagesTitle"
             android:summary="@string/prefLoadImagesSummary"/>

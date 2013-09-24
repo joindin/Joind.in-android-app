@@ -20,18 +20,13 @@
       android:label="@string/app_name"
       android:theme="@android:style/Theme.Light">
 
-        <!--  The splash screen is our main intent. It will activate the next activity -->
-        <activity android:name=".Splash"
-                  android:label="@string/app_name">
+        <!-- Just a bunch of activities here. Needed otherwise android cannot launch them. -->
+        <activity android:name=".Main"
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <!-- Just a bunch of activities here. Needed otherwise android cannot launch them. -->
-        <activity android:name=".Main"
-            android:label="@string/app_name">
         </activity>
         <activity
             android:name=".EventDetail"
