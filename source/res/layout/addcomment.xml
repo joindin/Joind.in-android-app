@@ -20,7 +20,10 @@
             android:layout_height="wrap_content"
             android:numStars="5"
             android:rating="0"
-            android:stepSize="1"></RatingBar>
+            android:stepSize="1"
+            style="@style/joindinRatingBar"
+            android:layout_margin="5dp"
+            ></RatingBar>
     </LinearLayout>
     <TextView
         android:id="@+id/TextView01"

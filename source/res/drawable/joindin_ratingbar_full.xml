@@ -2,11 +2,11 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+android:id/background"
-        android:drawable="@drawable/rating_empty"/>
+        android:drawable="@drawable/rating_empty_large"/>
     <item
         android:id="@+android:id/secondaryProgress"
-        android:drawable="@drawable/rating_empty"/>
+        android:drawable="@drawable/rating_empty_large"/>
     <item
         android:id="@+android:id/progress"
-        android:drawable="@drawable/rating_full_orange"/>
+        android:drawable="@drawable/rating_orange_hand_large"/>
 </layer-list>
