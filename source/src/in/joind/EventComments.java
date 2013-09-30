@@ -50,9 +50,7 @@ public class EventComments extends JIActivity implements OnClickListener {
         }
 
         // Set correct text in layout
-        TextView t;
-        t = (TextView) this.findViewById(R.id.EventDetailCaption);
-        t.setText (this.eventJSON.optString("name"));
+        getSupportActionBar().setTitle(this.eventJSON.optString("name"));
 
         // Initialize comment list
         ArrayList<JSONObject> m_eventcomments = new ArrayList<JSONObject>();
@@ -129,9 +127,9 @@ public class EventComments extends JIActivity implements OnClickListener {
 
         // Update caption bar
         if (count == 1){
-            setTitle (String.format(getString(R.string.generalCommentSingular), count));
+            getSupportActionBar().setSubtitle(String.format(getString(R.string.generalCommentSingular), count));
         } else {
-            setTitle (String.format(getString(R.string.generalCommentPlural), count));
+            getSupportActionBar().setSubtitle(String.format(getString(R.string.generalCommentPlural), count));
         }
 
         // Return number of event comments.

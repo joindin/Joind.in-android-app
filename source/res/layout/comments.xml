@@ -12,15 +12,6 @@
         android:orientation="vertical"
         android:layout_weight="1">
 
-        <TextView
-            android:layout_width="fill_parent"
-            android:textSize="18dip"
-            android:gravity="center_vertical|center_horizontal"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:id="@+id/EventDetailCaption"
-            android:textStyle="bold"></TextView>
-
         <ListView
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
