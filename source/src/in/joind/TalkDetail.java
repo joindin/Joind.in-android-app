@@ -90,6 +90,19 @@ public class TalkDetail extends JIActivity implements OnClickListener {
         button.setOnClickListener(this);
     }
 
+    public void onResume() {
+        super.onResume();
+
+        Button button = (Button)findViewById(R.id.ButtonNewComment);
+
+        // Button is only present if we're authenticated
+        if (!isAuthenticated()) {
+            button.setVisibility(View.GONE);
+        }
+        else {
+            button.setVisibility(View.VISIBLE);
+        }
+    }
 
     public void onClick(View v) {
         if (v == findViewById(R.id.ButtonNewComment)) {
@@ -98,7 +111,8 @@ public class TalkDetail extends JIActivity implements OnClickListener {
             myIntent.setClass(getApplicationContext(), AddComment.class);
 
             myIntent.putExtra("commentType", "talk");
-            myIntent.putExtra("talkJSON", getIntent().getStringExtra("talkJSON"));
+            myIntent.putExtra("talkJSON", this.talkJSON.toString());
+            myIntent.putExtra("eventJSON", this.eventJSON.toString());
             startActivityForResult(myIntent, AddComment.CODE_COMMENT);
         }
         if (v == findViewById(R.id.ButtonViewComment)) {

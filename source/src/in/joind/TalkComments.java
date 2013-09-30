@@ -73,6 +73,19 @@ public class TalkComments extends JIActivity implements OnClickListener {
         }
     }
 
+    public void onResume() {
+        super.onResume();
+
+        Button button = (Button)findViewById(R.id.ButtonNewComment);
+
+        // Button is only present if we're authenticated
+        if (!isAuthenticated()) {
+            button.setVisibility(View.GONE);
+        }
+        else {
+            button.setVisibility(View.VISIBLE);
+        }
+    }
 
     public void onClick(View v) {
         if (v == findViewById(R.id.ButtonNewComment)) {
@@ -85,8 +98,6 @@ public class TalkComments extends JIActivity implements OnClickListener {
             startActivityForResult(myIntent, AddComment.CODE_COMMENT);
         }
     }
-
-    ;
 
     // This will add all comments for specified talk in the talkcomment listview / adapter
     public int displayTalkComments(int talk_id) {
