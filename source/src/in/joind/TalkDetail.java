@@ -23,7 +23,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 public class TalkDetail extends JIActivity implements OnClickListener {
-    private JSONObject talkJSON;
+    private JSONObject talkJSON, eventJSON;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,11 +37,15 @@ public class TalkDetail extends JIActivity implements OnClickListener {
         // Get info from the intent scratch board
         try {
             this.talkJSON = new JSONObject(getIntent().getStringExtra("talkJSON"));
+            this.eventJSON = new JSONObject(getIntent().getStringExtra("eventJSON"));
         } catch (JSONException e) {
-            android.util.Log.e("JoindInApp", "No talk passed to activity", e);
+            android.util.Log.e("JoindInApp", "No talk and/or event passed to activity", e);
         }
 
         // Set correct text in layout
+        getSupportActionBar().setTitle(eventJSON.optString("name"));
+        getSupportActionBar().setSubtitle(R.string.TalkDetailSubtitle);
+
         TextView t;
         t = (TextView) this.findViewById(R.id.TalkDetailCaption);
         t.setText (this.talkJSON.optString("talk_title"));

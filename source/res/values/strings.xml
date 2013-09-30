@@ -30,6 +30,9 @@
     <string name="EventDetailsEventLocLabel">Venue:</string>
     <string name="EventDetailsEventHashtagsLabel">Hashtags:</string>
 
+    <!-- Talk details strings -->
+    <string name="TalkDetailSubtitle">Talk details</string>
+
     <!-- Preference activity strings -->
     <string name="prefAuthLoginTitle">Log me into joind.in</string>
     <string name="prefAuthLogoutTitle">You\'re logged in!</string>
