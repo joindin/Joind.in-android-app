@@ -101,6 +101,7 @@
     <string name="generalCacheCleared">The cache is cleared</string>
 
     <string name="authenticatorAccountType">in.joind</string>
+    <string name="authenticatorTitle">Log in to joind.in</string>
     <string name="authTokenType">oauth2</string>
 
 </resources>

@@ -82,12 +82,17 @@
             android:label="@string/app_name">
         </activity>
         <activity
-            android:name="in.joind.Preferences"
+            android:name=".Preferences"
+            android:launchMode="singleTop"
             android:label="@string/app_name">
         </activity>
         <activity
             android:name="in.joind.authenticator.AuthenticatorActivity"
+            android:launchMode="singleTop"
             android:label="@string/app_name">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.noxlogic.joindin.Preferences" />
         </activity>
 
         <service

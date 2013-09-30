@@ -19,7 +19,11 @@ package in.joind.authenticator;
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
+import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -36,7 +40,7 @@ import in.joind.R;
 /**
  * Activity which displays login screen to the user.
  */
-public class AuthenticatorActivity extends AccountAuthenticatorActivity {
+public class AuthenticatorActivity extends JoindInAuthenticatorActivity {
 
     final static public String USERNAME = "joind.in";
 
@@ -51,8 +55,16 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
+
+        final Activity activity = this;
+
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+
+        // Allow ActionBar 'up' navigation
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(R.string.authenticatorTitle);
+
         mAccountManager = AccountManager.get(this);
-        requestWindowFeature(Window.FEATURE_LEFT_ICON);
         setContentView(R.layout.authenticator);
 
         WebView webView = (WebView) findViewById(R.id.webview);
@@ -80,6 +92,18 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
                     return true;
                 }
                 return false;
+            }
+
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+
+                activity.setProgressBarIndeterminateVisibility(true);
+            }
+
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+
+                activity.setProgressBarIndeterminateVisibility(false);
             }
         });
 
