@@ -63,19 +63,8 @@ public class EventTalks extends JIActivity implements OnClickListener {
             android.util.Log.e("JoindInApp", "Event row ID is invalid");
         }
 
-        // Set all the event information
-        TextView t;
-        t = (TextView) this.findViewById(R.id.EventTalksCaption);
-        t.setText(this.eventJSON.optString("name"));
-
-        if (this.trackJSON == null) {
-            t = (TextView) this.findViewById(R.id.EventTalksTrackName);
-            t.setVisibility(View.INVISIBLE);
-        } else {
-            t = (TextView) this.findViewById(R.id.EventTalksTrackName);
-            t.setVisibility(View.VISIBLE);
-            t.setText("(" + this.trackJSON.optString("track_name") + ")");
-        }
+        // Set titlebar
+        getSupportActionBar().setTitle(this.eventJSON.optString("name"));
 
         // Initialize talk list
         ArrayList<JSONObject> m_talks = new ArrayList<JSONObject>();
@@ -124,11 +113,17 @@ public class EventTalks extends JIActivity implements OnClickListener {
         m_talkAdapter.notifyDataSetChanged();
 
         // Set title bar with number of talks found
-        if (talkCount == 1) {
-            setTitle(String.format(getString(R.string.generalEventTalksSingular), talkCount));
-        } else {
-            setTitle(String.format(getString(R.string.generalEventTalksPlural), talkCount));
+        String talksFound = "";
+        if (this.trackJSON != null) {
+            talksFound = this.trackJSON.optString("track_name") + ": ";
         }
+
+        if (talkCount == 1) {
+            talksFound += String.format(getString(R.string.generalEventTalksSingular), talkCount);
+        } else {
+            talksFound += String.format(getString(R.string.generalEventTalksPlural), talkCount);
+        }
+        getSupportActionBar().setSubtitle(talksFound);
         return talkCount;
     }
 

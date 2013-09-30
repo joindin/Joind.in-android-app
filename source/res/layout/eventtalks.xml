@@ -6,34 +6,10 @@
     android:layout_height="fill_parent"
     android:layout_width="fill_parent">
 
-    <TextView
+    <ListView
         android:layout_width="fill_parent"
-        android:text=""
-        android:textSize="18dip"
-        android:gravity="center_vertical|center_horizontal"
-        android:layout_height="wrap_content"
-        android:id="@+id/EventTalksCaption"
-        android:textStyle="bold"></TextView>
-
-    <TextView
-        android:layout_width="fill_parent"
-        android:text=""
-        android:gravity="center_vertical|center_horizontal"
-        android:layout_height="wrap_content"
-        android:id="@+id/EventTalksTrackName"></TextView>
-
-    <LinearLayout
-        android:id="@+id/LinearLayout01"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_weight="1">
-
-        <ListView
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:scrollbarAlwaysDrawVerticalTrack="true"
-            android:scrollbars="vertical"
-            android:id="@+id/ListViewEventTalks"></ListView>
-    </LinearLayout>
+        android:layout_height="fill_parent"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
+        android:scrollbars="vertical"
+        android:id="@+id/ListViewEventTalks"></ListView>
 </LinearLayout>
