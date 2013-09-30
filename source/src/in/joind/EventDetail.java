@@ -51,9 +51,6 @@ public class EventDetail extends JIActivity implements OnClickListener {
             android.util.Log.e("JoindInApp", "Event row ID is invalid");
         }
 
-        // Set title
-        setTitle (R.string.activityEventDetailTitle);
-
         // Add handler to buttons
         Button button = (Button)findViewById(R.id.ButtonEventDetailsViewComments);
         button.setOnClickListener(this);
@@ -90,26 +87,29 @@ public class EventDetail extends JIActivity implements OnClickListener {
         if (event == null) return;
 
         // Set all the event information
+        getSupportActionBar().setTitle(event.optString("name"));
+
         TextView t;
-        t = (TextView) this.findViewById(R.id.EventDetailsEventCaption);
-        t.setText (event.optString("name"));
         t = (TextView) this.findViewById(R.id.EventDetailsEventLoc);
         t.setText (event.optString("location"));
 
-        t = (TextView) this.findViewById(R.id.EventDetailsDate);
         String d1 = null;
         String d2 = null;
         SimpleDateFormat dfOutput = new SimpleDateFormat("d LLL yyyy"), dfInput = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
         try {
             d1 = dfOutput.format(dfInput.parse(event.optString("start_date")));
             d2 = dfOutput.format(dfInput.parse(event.optString("end_date")));
+            getSupportActionBar().setSubtitle(d1.equals(d2) ? d1 : d1 + " - " + d2);
         } catch (ParseException e) {
             e.printStackTrace();
+            getSupportActionBar().setSubtitle("");
         }
-        t.setText(d1.equals(d2) ? d1 : d1 + " - " + d2);
 
+        String hashtag = event.optString("hashtag");
+        this.findViewById(R.id.EventDetailsHashtagsRow).setVisibility(hashtag.length() > 0 && !hashtag.equalsIgnoreCase("null") ? View.VISIBLE : View.GONE);
         t = (TextView) this.findViewById(R.id.EventDetailsStub);
         t.setText (event.optString("hashtag"));
+
         t = (TextView) this.findViewById(R.id.EventDetailsDescription);
         t.setText (event.optString("description"));
         Linkify.addLinks(t, Linkify.ALL);

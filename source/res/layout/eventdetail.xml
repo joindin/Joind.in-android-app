@@ -5,50 +5,53 @@
               android:layout_width="fill_parent"
               android:layout_height="fill_parent">
 
-    <LinearLayout
-        android:id="@+id/LinearLayout01"
-        android:layout_width="wrap_content"
+    <TableLayout
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <TextView
+        android:stretchColumns="0,1"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="5dp">
+        <TableRow
             android:layout_width="fill_parent"
-            android:textSize="18dip"
-            android:gravity="center_vertical|center_horizontal"
             android:layout_height="wrap_content"
-            android:id="@+id/EventDetailsEventCaption"
-            android:textStyle="bold"></TextView>
+            android:layout_marginBottom="5dp">
 
-        <TextView
-            android:layout_height="wrap_content"
-            android:layout_width="fill_parent"
-            android:id="@+id/EventDetailsEventLoc"></TextView>
-
-        <TableLayout
-            android:id="@+id/TableLayout01"
-            android:layout_height="wrap_content"
-            android:layout_width="fill_parent"
-            android:stretchColumns="0,1"
-            android:layout_marginBottom="5px">
-
-            <TableRow
-                android:id="@+id/TableRow03"
+            <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:text="@string/EventDetailsEventLocLabel"
+                android:id="@+id/EventDetailsEventLocLabel"/>
 
-                <TextView
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:id="@+id/EventDetailsDate"></TextView>
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="fill_parent"
+                android:id="@+id/EventDetailsEventLoc"
+                android:layout_gravity="left"></TextView>
 
-                <TextView
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="right"
-                    android:id="@+id/EventDetailsStub"></TextView>
-            </TableRow>
-        </TableLayout>
-    </LinearLayout>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:id="@+id/EventDetailsHashtagsRow">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/EventDetailsEventHashtagsLabel"
+                android:id="@+id/EventDetailsStubLabel"/>
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_gravity="left"
+                android:id="@+id/EventDetailsStub"></TextView>
+
+        </TableRow>
+
+    </TableLayout>
 
     <ScrollView
         android:id="@+id/ScrollView01"
@@ -56,7 +59,8 @@
         android:minHeight="80px"
         android:layout_height="80px"
         android:layout_weight="2"
-        android:background="#eeeeee">
+        android:background="#ffffff"
+        android:layout_marginBottom="5dp">
 
         <TextView
             android:text=""
@@ -65,13 +69,16 @@
             android:textSize="14dip"
             android:layout_height="fill_parent"
             android:layout_width="fill_parent"
-            android:background="#eeeeee"></TextView>
+            android:background="#ffffff"
+            android:paddingRight="5dp"
+            android:paddingLeft="5dp"></TextView>
     </ScrollView>
 
     <TableLayout
         android:id="@+id/TableLayout02"
         android:layout_height="wrap_content"
-        android:layout_width="fill_parent">
+        android:layout_width="fill_parent"
+        android:background="#eeeeee">
 
         <TableRow
             android:id="@+id/TableRow01"

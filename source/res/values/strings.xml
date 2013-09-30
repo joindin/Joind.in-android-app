@@ -26,6 +26,10 @@
     <string name="ContextMainAddToFavorite">Add to favorite list</string>
     <string name="ContextMainRemoveFromFavorite">Remove from favorite list</string>
 
+    <!-- Event details strings -->
+    <string name="EventDetailsEventLocLabel">Venue:</string>
+    <string name="EventDetailsEventHashtagsLabel">Hashtags:</string>
+
     <!-- Preference activity strings -->
     <string name="prefAuthLoginTitle">Log me into joind.in</string>
     <string name="prefAuthLogoutTitle">You\'re logged in!</string>
