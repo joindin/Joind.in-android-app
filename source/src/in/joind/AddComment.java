@@ -18,6 +18,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.Toast;
@@ -143,6 +144,9 @@ public class AddComment extends JIActivity implements OnClickListener {
         EditText tmp1 = (EditText) findViewById(R.id.CommentText);
         String comment = tmp1.getText().toString();
 
+//        CheckBox tmp2 = (CheckBox) findViewById(R.id.CommentPrivate);
+//        int privateComment = tmp2.isChecked() ? 1 : 0;
+//
         JSONObject data = new JSONObject();
 
         try {
@@ -164,6 +168,12 @@ public class AddComment extends JIActivity implements OnClickListener {
                 data.put("rating", rating);
             } catch (JSONException e) {
                 // do nothing
+            }
+
+            // and a private status
+            try {
+                data.put("private", privateComment);
+            } catch (JSONException e) {
             }
 
             url = this.talkJSON.optString("comments_uri");
