@@ -106,7 +106,8 @@ public class TalkDetail extends JIActivity implements OnClickListener {
             Intent myIntent = new Intent ();
             myIntent.setClass(getApplicationContext(), TalkComments.class);
 
-            myIntent.putExtra("talkJSON", getIntent().getStringExtra("talkJSON"));
+            myIntent.putExtra("talkJSON", this.talkJSON.toString());
+            myIntent.putExtra("eventJSON", this.eventJSON.toString());
             startActivity(myIntent);
         }
     };
