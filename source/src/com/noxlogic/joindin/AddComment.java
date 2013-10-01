@@ -64,14 +64,12 @@ public class AddComment extends JIActivity implements OnClickListener {
                 android.util.Log.e("JoindInApp", "No event passed to activity", e);
             }
 
-            // Set rating bar and checkbox to invisible since they are not used while
+            // Set rating bar to invisible since it is not used while
             // commenting on events
             View v;
             v = (View) findViewById(R.id.CommentRatingBar);
             v.setVisibility(View.GONE);
             v = (View) findViewById(R.id.TextViewRating);
-            v.setVisibility(View.GONE);
-            v = (View) findViewById(R.id.CommentPrivate);
             v.setVisibility(View.GONE);
         }
 
@@ -140,8 +138,6 @@ public class AddComment extends JIActivity implements OnClickListener {
         int rating = (int) ratingbar.getRating();
         EditText tmp1 = (EditText) findViewById(R.id.CommentText);
         String comment = tmp1.getText().toString();
-        CheckBox tmp2 = (CheckBox) findViewById(R.id.CommentPrivate);
-        int priv = tmp2.isChecked() ? 1 : 0;
 
         JSONObject data = new JSONObject();
 
