@@ -1,12 +1,12 @@
-package com.noxlogic.joindin;
+package in.joind;
 
 /*
  * Displays detailed information about a talk (info, comments etc)
  */
 
-import java.text.DateFormat;
 import java.util.ArrayList;
 
+import in.joind.R;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -169,7 +169,7 @@ public class TalkComments extends JIActivity implements OnClickListener {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case AddComment.CODE_COMMENT:
-                if (resultCode == Activity.RESULT_OK) {
+                if (resultCode == RESULT_OK) {
                     // reload the comments
                     try {
                         loadTalkComments(this.talkJSON.getInt("rowID"), this.talkJSON.getString("comments_uri"));

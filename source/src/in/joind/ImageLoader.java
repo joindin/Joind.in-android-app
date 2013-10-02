@@ -1,4 +1,4 @@
-package com.noxlogic.joindin;
+package in.joind;
 
 /**
  * Taken from fedorvlasov.lazylist
@@ -36,7 +36,7 @@ public class ImageLoader {
         if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED)) {
             _cacheDir = new File(context.getCacheDir(), cacheDir);
             // @TODO: Somehow the external cache dir is not writeable on the 1.6 emulator?
-            //_cacheDir=new File(android.os.Environment.getExternalStorageDirectory(),"/Android/data/com.noxlogic.joindin/cache/"+cacheDir);
+            //_cacheDir=new File(android.os.Environment.getExternalStorageDirectory(),"/Android/data/in.joind/cache/"+cacheDir);
         } else {
             _cacheDir = new File(context.getCacheDir(), cacheDir);
         }

@@ -1,7 +1,8 @@
-package com.noxlogic.joindin;
+package in.joind;
 
 import java.util.ArrayList;
 
+import in.joind.R;
 import org.json.JSONException;
 import org.json.JSONObject;
 

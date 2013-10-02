@@ -1,4 +1,4 @@
-package com.noxlogic.joindin;
+package in.joind;
 
 /*
  * Preferences activity. We use the android own preference Activity for easy handling
@@ -7,14 +7,11 @@ package com.noxlogic.joindin;
 import android.accounts.*;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceManager;
 import android.util.Log;
-import com.noxlogic.joindin.authenticator.AuthenticatorActivity;
+import in.joind.R;
 
 import java.io.IOException;
 

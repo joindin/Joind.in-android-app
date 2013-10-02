@@ -14,18 +14,14 @@
  * the License.
  */
 
-package com.noxlogic.joindin.authenticator;
+package in.joind.authenticator;
 
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
-import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -33,14 +29,9 @@ import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
-import com.noxlogic.joindin.OAuthHelper;
-import com.noxlogic.joindin.R;
-
-import java.io.IOException;
-import java.net.URLConnection;
+import in.joind.OAuthHelper;
+import in.joind.R;
 
 /**
  * Activity which displays login screen to the user.

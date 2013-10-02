@@ -7,8 +7,8 @@
             >
             <intent
                 android:action="android.intent.action.VIEW"
-                android:targetPackage="com.noxlogic.joindin"
-                android:targetClass="com.noxlogic.joindin.authenticator.AuthenticatorActivity"
+                android:targetPackage="in.joind"
+                android:targetClass="in.joind.authenticator.AuthenticatorActivity"
                 />
         </PreferenceScreen>
 	</PreferenceCategory>

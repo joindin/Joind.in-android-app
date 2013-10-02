@@ -93,7 +93,7 @@
 
     <string name="generalCacheCleared">The cache is cleared</string>
 
-    <string name="authenticatorAccountType">com.noxlogic.joindin</string>
+    <string name="authenticatorAccountType">in.joind</string>
     <string name="authTokenType">oauth2</string>
 
 </resources>

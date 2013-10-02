@@ -1,14 +1,13 @@
-package com.noxlogic.joindin;
+package in.joind;
 
 /*
  * Displays event details (info, talk list)
  */
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-import android.util.Log;
+import in.joind.R;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

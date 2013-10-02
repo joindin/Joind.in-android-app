@@ -1,4 +1,4 @@
-package com.noxlogic.joindin;
+package in.joind;
 
 
 import java.text.ParseException;

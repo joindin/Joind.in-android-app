@@ -1,18 +1,15 @@
-package com.noxlogic.joindin;
+package in.joind;
 
 /*
  * Displays all talks from specified event.
  */
 
-import java.sql.Timestamp;
-
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimeZone;
 
-import android.util.Log;
+import in.joind.R;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

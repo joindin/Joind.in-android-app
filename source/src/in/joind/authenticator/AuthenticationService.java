@@ -14,12 +14,11 @@
  * the License.
  */
 
-package com.noxlogic.joindin.authenticator;
+package in.joind.authenticator;
 
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import android.util.Log;
 
 /**
  * Service to handle Account authentication. It instantiates the authenticator

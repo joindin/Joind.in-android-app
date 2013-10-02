@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="com.noxlogic.joindin"
+      package="in.joind"
       android:versionCode="15"
       android:versionName="1.7.1">
 
@@ -21,7 +21,7 @@
       android:theme="@android:style/Theme.Light">
 
         <!-- Just a bunch of activities here. Needed otherwise android cannot launch them. -->
-        <activity android:name=".Main"
+        <activity android:name="in.joind.Main"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,44 +29,44 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".EventDetail"
+            android:name="in.joind.EventDetail"
             android:label="@string/app_name">
         </activity>
         <activity
-            android:name=".EventTalks"
+            android:name="in.joind.EventTalks"
             android:label="@string/app_name">
         </activity>
         <activity
-            android:name=".EventComments"
+            android:name="in.joind.EventComments"
             android:label="@string/app_name">
         </activity>
         <activity
-            android:name=".EventTracks"
+            android:name="in.joind.EventTracks"
             android:label="@string/app_name">
         </activity>
         <activity
-            android:name=".TalkDetail"
+            android:name="in.joind.TalkDetail"
             android:label="@string/app_name">
         </activity>
             <activity
-            android:name=".TalkComments"
+            android:name="in.joind.TalkComments"
             android:label="@string/app_name">
         </activity>
         <activity
-            android:name=".AddComment"
+            android:name="in.joind.AddComment"
             android:label="@string/app_name">
         </activity>
         <activity
-            android:name=".Preferences"
+            android:name="in.joind.Preferences"
             android:label="@string/app_name">
         </activity>
         <activity
-            android:name=".authenticator.AuthenticatorActivity"
+            android:name="in.joind.authenticator.AuthenticatorActivity"
             android:label="@string/app_name">
         </activity>
 
         <service
-            android:name=".authenticator.AuthenticationService"
+            android:name="in.joind.authenticator.AuthenticationService"
             android:exported="false">
             <intent-filter>
                 <action

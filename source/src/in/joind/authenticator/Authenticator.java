@@ -1,12 +1,10 @@
-package com.noxlogic.joindin.authenticator;
+package in.joind.authenticator;
 
 import android.accounts.*;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import com.noxlogic.joindin.R;
-import com.noxlogic.joindin.authenticator.AuthenticatorActivity;
+import in.joind.R;
 
 public class Authenticator extends AbstractAccountAuthenticator {
 

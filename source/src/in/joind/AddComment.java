@@ -1,4 +1,4 @@
-package com.noxlogic.joindin;
+package in.joind;
 
 /*
  * Comment activity. This activity will handle both Events comments and talk comments.
@@ -6,6 +6,7 @@ package com.noxlogic.joindin;
 
 import android.app.Activity;
 import android.content.Intent;
+import in.joind.R;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -16,7 +17,6 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.Toast;

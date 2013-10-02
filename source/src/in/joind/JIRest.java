@@ -1,4 +1,4 @@
-package com.noxlogic.joindin;
+package in.joind;
 
 /*
  * Communication with joind.in API
@@ -11,6 +11,7 @@ import java.net.SocketTimeoutException;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import in.joind.R;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -24,8 +25,6 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import org.json.JSONException;
 import org.json.JSONObject;
 

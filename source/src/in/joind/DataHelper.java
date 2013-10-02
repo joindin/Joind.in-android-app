@@ -1,4 +1,4 @@
-package com.noxlogic.joindin;
+package in.joind;
 
 /*
  * Data helper for the SQLite database.
@@ -23,8 +23,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.widget.ArrayAdapter;
-
-import java.util.ArrayList;
 
 
 public final class DataHelper {

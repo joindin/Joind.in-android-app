@@ -1,13 +1,13 @@
-package com.noxlogic.joindin;
+package in.joind;
 
 /*
  * Displays detailed information about a talk (info, comments etc)
  */
 
 
-import android.app.Activity;
 import android.text.TextUtils;
 import android.util.Log;
+import in.joind.R;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -108,7 +108,7 @@ public class TalkDetail extends JIActivity implements OnClickListener {
         super.onActivityResult(requestCode, resultCode, data);
         switch(requestCode) {
             case AddComment.CODE_COMMENT:
-                if (resultCode == Activity.RESULT_OK) {
+                if (resultCode == RESULT_OK) {
                     // reload the comments
                     try {
                         updateCommentCount(this.talkJSON.getInt("rowID"), this.talkJSON.getString("uri"));

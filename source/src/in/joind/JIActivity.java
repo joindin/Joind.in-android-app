@@ -1,4 +1,4 @@
-package com.noxlogic.joindin;
+package in.joind;
 
 /*
  * This is the main activity class. All activities in our application will extend
@@ -9,17 +9,13 @@ package com.noxlogic.joindin;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.util.Log;
-import org.json.JSONObject;
+import in.joind.R;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
