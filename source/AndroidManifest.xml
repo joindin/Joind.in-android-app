@@ -106,6 +106,7 @@
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator" />
         </service>
+        <meta-data android:name="com.crashlytics.ApiKey" android:value="2d4ca2fb1f0233b099fd8045815bbbe56496ef5a"/>
 
     </application>
 

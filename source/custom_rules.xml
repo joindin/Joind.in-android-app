@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="custom_rules">
+
+    <import file="vendor/crashlytics-devtools/crashlytics_build.xml"/>
+
     <target name="-pre-build">
         <echo message="Generating res/raw/oauth.properties, key is ${oauth.api_key}, callback is ${oauth.callback}" />
         <propertyfile file="res/raw/oauth.properties" comment="OAuth properties">
