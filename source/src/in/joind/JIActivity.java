@@ -9,6 +9,7 @@ package in.joind;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import com.crashlytics.android.Crashlytics;
 import in.joind.R;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
@@ -39,6 +40,8 @@ public class JIActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         // Needed to show the circular progress animation in the top right corner.
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+
+        Crashlytics.start(this);
     }
 
     public void onResume()
