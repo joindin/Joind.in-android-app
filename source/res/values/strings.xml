@@ -2,7 +2,7 @@
 <!-- @TODO We should move all static strings into here. Most of them are still
      hardcoded, which makes it very hard to translate to other languages. -->
 <resources>
-    <string name="app_name">Joind.in</string>
+    <string name="app_name">joind.in</string>
 
     <!-- Format of date/time strings from the API -->
     <string name="apiDateFormat">yyyy-MM-dd\'T\'HH:mm:ssZ</string>
