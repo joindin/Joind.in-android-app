@@ -340,7 +340,7 @@ public class Main extends JIActivity implements OnClickListener {
                 });
                 e.printStackTrace();
             }
-            Log.d("JoindInApp", "Event loading loop finished!");
+            Log.d(JIActivity.LOG_JOINDIN_APP, "Event loading loop finished!");
 
             // Something bad happened? :(
             if (error != JIRest.OK) {

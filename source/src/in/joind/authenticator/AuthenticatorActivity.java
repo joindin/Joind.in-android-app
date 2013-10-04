@@ -34,6 +34,7 @@ import android.webkit.CookieSyncManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
+import in.joind.JIActivity;
 import in.joind.OAuthHelper;
 import in.joind.R;
 
@@ -168,7 +169,7 @@ public class AuthenticatorActivity extends JoindInAuthenticatorActivity {
         if (success) {
             finishLogin(authToken);
         } else {
-            Log.e("JoindInApp", "onAuthenticationResult: failed to authenticate");
+            Log.e(JIActivity.LOG_JOINDIN_APP, "onAuthenticationResult: failed to authenticate");
 
             Toast toast = Toast.makeText(this, getString(R.string.oauthDeniedMessage), Toast.LENGTH_LONG);
             toast.show();

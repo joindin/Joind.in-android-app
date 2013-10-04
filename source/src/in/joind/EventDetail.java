@@ -39,16 +39,16 @@ public class EventDetail extends JIActivity implements OnClickListener {
         try {
             this.eventJSON = new JSONObject(getIntent().getStringExtra("eventJSON"));
         } catch (JSONException e) {
-            android.util.Log.e("JoindInApp", "No event passed to activity", e);
+            android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No event passed to activity", e);
         }
         try {
             eventRowID = this.eventJSON.getInt("rowID");
         } catch (JSONException e) {
-            android.util.Log.e("JoindInApp", "No row ID in event JSON");
+            android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No row ID in event JSON");
         }
         if (eventRowID == 0) {
             // TODO alert and stop activity
-            android.util.Log.e("JoindInApp", "Event row ID is invalid");
+            android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "Event row ID is invalid");
         }
 
         // Add handler to buttons
@@ -70,7 +70,7 @@ public class EventDetail extends JIActivity implements OnClickListener {
         try {
             loadDetails(eventRowID, eventJSON.getString("verbose_uri"));
         } catch (JSONException e) {
-            android.util.Log.e("JoindInApp", "No verbose URI available");
+            android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No verbose URI available");
         }
     }
 
@@ -158,7 +158,7 @@ public class EventDetail extends JIActivity implements OnClickListener {
                     try {
                         jsonEvent = fullResponse.getJSONArray("events").getJSONObject(0);
                     } catch (JSONException e) {
-                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                        e.printStackTrace();
                     }
 
 
@@ -249,7 +249,7 @@ public class EventDetail extends JIActivity implements OnClickListener {
             try {
                 loadDetails(eventRowID, eventJSON.getString("verbose_uri"));
             } catch (JSONException e) {
-                android.util.Log.e("JoindInApp", "No verbose URI available");
+                android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No verbose URI available");
             }
 
             if (initialState) {

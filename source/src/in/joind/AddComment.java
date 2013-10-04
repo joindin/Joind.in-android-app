@@ -65,7 +65,7 @@ public class AddComment extends JIActivity implements OnClickListener {
             try {
                 this.eventJSON = new JSONObject(getIntent().getStringExtra("eventJSON"));
             } catch (JSONException e) {
-                android.util.Log.e("JoindInApp", "No event passed to activity", e);
+                android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No event passed to activity", e);
             }
 
             // Set rating bar to invisible since it is not used while
@@ -156,7 +156,7 @@ public class AddComment extends JIActivity implements OnClickListener {
             try {
                 this.talkJSON = new JSONObject(getIntent().getStringExtra("talkJSON"));
             } catch (JSONException e) {
-                android.util.Log.e("JoindInApp", "No talk passed to activity", e);
+                android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No talk passed to activity", e);
             }
 
             // Talk comments have ratings
@@ -173,7 +173,7 @@ public class AddComment extends JIActivity implements OnClickListener {
             try {
                 this.eventJSON = new JSONObject(getIntent().getStringExtra("eventJSON"));
             } catch (JSONException e) {
-                android.util.Log.e("JoindInApp", "No event passed to activity", e);
+                android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No event passed to activity", e);
             }
 
             url = this.eventJSON.optString("comments_uri");

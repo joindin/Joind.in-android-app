@@ -113,7 +113,7 @@ public class Preferences extends PreferenceActivity {
                     bundle.getString(AccountManager.KEY_ACCOUNT_NAME),
                     bundle.getString(AccountManager.KEY_ACCOUNT_TYPE)
             );
-            Log.d("JoindInApp", "Added account " + thisAccount.name);
+            Log.d(JIActivity.LOG_JOINDIN_APP, "Added account " + thisAccount.name);
         }
     }
 }

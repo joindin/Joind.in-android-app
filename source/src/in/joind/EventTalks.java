@@ -51,16 +51,16 @@ public class EventTalks extends JIActivity implements OnClickListener {
                 this.trackJSON = new JSONObject(getIntent().getStringExtra("eventTrack"));
             }
         } catch (JSONException e) {
-            android.util.Log.e("JoindInApp", "No event passed to activity", e);
+            android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No event passed to activity", e);
         }
         try {
             eventRowID = this.eventJSON.getInt("rowID");
         } catch (JSONException e) {
-            android.util.Log.e("JoindInApp", "No row ID in event JSON");
+            android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No row ID in event JSON");
         }
         if (eventRowID == 0) {
             // TODO alert and stop activity
-            android.util.Log.e("JoindInApp", "Event row ID is invalid");
+            android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "Event row ID is invalid");
         }
 
         // Set titlebar
@@ -99,7 +99,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
         try {
             loadTalks(eventRowID, track_id, eventJSON.getString("talks_uri"));
         } catch (JSONException e) {
-            android.util.Log.e("JoindInApp", "No talks URI available");
+            android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No talks URI available");
         }
     }
 

@@ -46,7 +46,7 @@ public class EventComments extends JIActivity implements OnClickListener {
         try {
             this.eventJSON = new JSONObject(getIntent().getStringExtra("eventJSON"));
         } catch (JSONException e) {
-            android.util.Log.e("JoindInApp", "No event passed to activity", e);
+            android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No event passed to activity", e);
         }
 
         // Set correct text in layout
@@ -70,7 +70,7 @@ public class EventComments extends JIActivity implements OnClickListener {
         try {
             loadEventComments (event_id, this.eventJSON.getString("comments_uri"));
         } catch (JSONException e) {
-            android.util.Log.e("JoindInApp", "No comments URI available");
+            android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No comments URI available");
         }
     }
 

@@ -39,7 +39,7 @@ public class EventTracks extends JIActivity {
         try {
             this.eventJSON = new JSONObject(getIntent().getStringExtra("eventJSON"));
         } catch (JSONException e) {
-            android.util.Log.e("JoindInApp", "No event passed to activity", e);
+            android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No event passed to activity", e);
         }
 
         // Set all the event information

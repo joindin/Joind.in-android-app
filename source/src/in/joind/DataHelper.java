@@ -131,7 +131,7 @@ public final class DataHelper {
             // Ignore
         }
         if (uri.length() == 0) {
-            Log.d("JoindInApp", "Talk URI is empty");
+            Log.d(JIActivity.LOG_JOINDIN_APP, "Talk URI is empty");
         }
 
         values.put("uri", uri);
@@ -244,7 +244,7 @@ public final class DataHelper {
                 m_trackAdapter.add(json_tracks.getJSONObject(i));
             }
         } catch (JSONException e) {
-            android.util.Log.e("JoindInApp", "Could not add item to list", e);
+            android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "Could not add item to list", e);
         }
 
         c.close();
@@ -295,7 +295,7 @@ public final class DataHelper {
                     data.put("rowID", c.getInt(1));
                     adapter.add(data);
                 } catch (JSONException e) {
-                    android.util.Log.e("JoindInApp", "Could not add item to list", e);
+                    android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "Could not add item to list", e);
                 }
             } while (c.moveToNext());
         }
