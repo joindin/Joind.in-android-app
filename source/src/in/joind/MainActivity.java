@@ -107,7 +107,6 @@ public class MainActivity extends JIActivity {
 
     // Will reload events. Needed when we return to the screen.
     public void onResume() {
-        //loadEvents(this.currentTab);
         super.onResume();
     }
 

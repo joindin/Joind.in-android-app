@@ -122,9 +122,4 @@ public class JIActivity extends ActionBarActivity {
         }
         return true;
     }
-
-    @Override
-    public FragmentManager getSupportFragmentManager() {
-        return null;
-    }
 }

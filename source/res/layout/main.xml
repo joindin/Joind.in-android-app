@@ -1,60 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Main layout with all events -->
+<!-- MainActivity layout with all events -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
-    <TableLayout
-        android:id="@+id/TableLayout01"
+
+    <android.support.v4.app.FragmentTabHost
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="30">
-        <TableRow
-            android:id="@+id/TableRow01"
+        android:layout_height="fill_parent"
+        android:id="@+id/tabHost"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true">
+
+        <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_gravity="center_vertical|center_horizontal"
-            android:gravity="center_vertical|center_horizontal"
-            android:layout_marginTop="5px">
-            <Button
-                android:text="Hot"
-                android:layout_height="fill_parent"
-                android:layout_width="fill_parent"
-                android:height="30dip"
-                android:id="@+id/ButtonMainEventHot"
-                android:textStyle="bold"
-                android:textSize="11dip"
-                android:layout_weight=".25"
-                android:width="0dip"></Button>
-            <Button
-                android:text="Upcoming"
-                android:layout_height="fill_parent"
-                android:layout_width="fill_parent"
-                android:height="30dip"
-                android:id="@+id/ButtonMainEventUpcoming"
-                android:textStyle="bold"
-                android:textSize="11dip"
-                android:layout_weight=".25"
-                android:width="0dip"></Button>
-            <Button
-                android:text="Past"
-                android:layout_height="fill_parent"
-                android:layout_width="fill_parent"
-                android:height="30dip"
-                android:id="@+id/ButtonMainEventPast"
-                android:textStyle="bold"
-                android:textSize="11dip"
-                android:layout_weight=".25"
-                android:width="0dip"></Button>
-        </TableRow>
-    </TableLayout>
-    <ListView
-        android:layout_width="fill_parent"
-        android:id="@+id/ListViewMainEvents"
-        android:scrollbars="vertical"
-        android:layout_height="0px"
-        android:layout_weight="10000">
-	</ListView>
+            android:orientation="vertical">
+
+            <TabWidget
+                android:id="@android:id/tabs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"></TabWidget>
+
+            <FrameLayout
+                android:id="@+id/tabcontent"
+                android:orientation="horizontal"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="0"></FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/realtabcontent"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"></FrameLayout>
+
+        </LinearLayout>
+    </android.support.v4.app.FragmentTabHost>
+
 	<LinearLayout
 		android:id="@+id/LinearLayout01"
 		android:layout_height="wrap_content"
