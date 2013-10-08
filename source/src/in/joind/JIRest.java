@@ -96,7 +96,7 @@ class JIRest {
                     // If we receive some data, place it in our result string
                     // and try and convert it to JSON
                     InputStream instream = entity.getContent();
-                    this.result = Main.convertStreamToString(instream);
+                    this.result = MainActivity.convertStreamToString(instream);
                     try {
                         this.jsonResult = new JSONObject(this.result);
                     } catch (JSONException e) {
@@ -178,7 +178,7 @@ class JIRest {
                     // If we receive some data, place it in our result string
                     // and try and convert to JSON
                     InputStream instream = entity.getContent();
-                    this.result = Main.convertStreamToString(instream);
+                    this.result = MainActivity.convertStreamToString(instream);
                     try {
                         this.jsonResult = new JSONObject(this.result);
                     } catch (JSONException e) {
