@@ -51,6 +51,7 @@
     <string name="activityAddCommentSpinnerFourStars">Four stars</string>
     <string name="activityAddCommentSpinnerFiveStars">Five stars</string>
     <string name="activityAddCommentSendingComment">Sending comment...</string>
+    <string name="activityAddCommentPrivateCommentLabel">Mark this comment as private</string>
 
     <string name="activityEventDetailTitle">Event details</string>
 
