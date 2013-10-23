@@ -101,6 +101,9 @@
     <string name="authenticatorAccountType">in.joind</string>
     <string name="authenticatorTitle">Log in to joind.in</string>
     <string name="authTokenType">oauth2</string>
+
+    <!-- some error messages -->
     <string name="activityEventDetailFailedJSON">Couldn\'t retrieve event details</string>
+    <string name="activityTalkCommentsFailedJSON">Couldn\'t retrieve talk details</string>
 
 </resources>

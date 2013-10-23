@@ -25,6 +25,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.crashlytics.android.Crashlytics;
 
 public class TalkComments extends JIActivity implements OnClickListener {
     private JITalkCommentAdapter m_talkCommentAdapter;  // adapter for listview
@@ -45,6 +48,13 @@ public class TalkComments extends JIActivity implements OnClickListener {
             this.eventJSON = new JSONObject(getIntent().getStringExtra("eventJSON"));
         } catch (JSONException e) {
             android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No talk passed to activity", e);
+            Crashlytics.setString("talkComments_talkJSON", getIntent().getStringExtra("talkJSON"));
+            Crashlytics.setString("talkComments_eventJSON", getIntent().getStringExtra("eventJSON"));
+
+            // Tell the user
+            showToast(getString(R.string.activityTalkCommentsFailedJSON), Toast.LENGTH_LONG);
+            finish();
+            return;
         }
 
         // Set correct text in the layout
