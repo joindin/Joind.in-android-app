@@ -12,6 +12,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import android.os.Build;
 import android.util.Log;
 import in.joind.R;
 import org.json.JSONArray;
@@ -496,11 +497,10 @@ class JIEventAdapter extends ArrayAdapter<JSONObject> {
         if (tt != null) tt.setText(o.optString("name"));
         if (bt != null) {
             // Display start date. Only display end date when it differs (ie: it's multiple day event)
-            String d1 = null;
-            String d2 = null;
-            SimpleDateFormat dfOutput = new SimpleDateFormat("d LLL yyyy"), dfInput = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
-            d1 = DateHelper.parseAndFormat(o.optString("start_date"), "d LLL yyyy");
-            d2 = DateHelper.parseAndFormat(o.optString("end_date"), "d LLL yyyy");
+            // Android 2.2 and below don't support the "L" pattern character
+            String fmt = Build.VERSION.SDK_INT <= 8 ? "d MMM yyyy" : "d LLL yyyy";
+            String d1 = DateHelper.parseAndFormat(o.optString("start_date"), fmt);
+            String d2 = DateHelper.parseAndFormat(o.optString("end_date"), fmt);
             bt.setText(d1.equals(d2) ? d1 : d1 + " - " + d2);
         }
 

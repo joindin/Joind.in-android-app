@@ -13,6 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.util.Linkify;
 import android.view.View;
@@ -99,7 +100,10 @@ public class EventDetail extends JIActivity implements OnClickListener {
 
         String d1 = null;
         String d2 = null;
-        SimpleDateFormat dfOutput = new SimpleDateFormat("d LLL yyyy"), dfInput = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+
+        // Android 2.2 and below don't support the "L" pattern character
+        String fmt = Build.VERSION.SDK_INT <= 8 ? "d MMM yyyy" : "d LLL yyyy";
+        SimpleDateFormat dfOutput = new SimpleDateFormat(fmt), dfInput = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
         try {
             d1 = dfOutput.format(dfInput.parse(event.optString("start_date")));
             d2 = dfOutput.format(dfInput.parse(event.optString("end_date")));
