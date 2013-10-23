@@ -22,6 +22,8 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
+
 public class EventDetail extends JIActivity implements OnClickListener {
     private JSONObject eventJSON;
     private int eventRowID = 0;
@@ -38,16 +40,18 @@ public class EventDetail extends JIActivity implements OnClickListener {
         // Get info from the intent scratch board
         try {
             this.eventJSON = new JSONObject(getIntent().getStringExtra("eventJSON"));
-        } catch (JSONException e) {
-            android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No event passed to activity", e);
-        }
-        try {
             eventRowID = this.eventJSON.getInt("rowID");
         } catch (JSONException e) {
-            android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No row ID in event JSON");
+            // No JSON means we can't continue
+            android.util.Log.v(JIActivity.LOG_JOINDIN_APP, "No event JSON available to activity");
+            Crashlytics.setString("eventDetail_eventJSON", getIntent().getStringExtra("eventJSON"));
+
+            // Tell the user
+            showToast(getString(R.string.activityEventDetailFailedJSON), Toast.LENGTH_LONG);
+            finish();
+            return;
         }
         if (eventRowID == 0) {
-            // TODO alert and stop activity
             android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "Event row ID is invalid");
         }
 
