@@ -28,6 +28,12 @@
             android:layout_width="fill_parent"></TextView>
     </LinearLayout>
 
+    <TextView
+        android:layout_height="wrap_content"
+        android:id="@+id/TalkRowSpeaker"
+        android:layout_weight="3"
+        android:layout_width="fill_parent"></TextView>
+
     <LinearLayout
         android:id="@+id/LinearLayout01"
         android:layout_height="wrap_content"
@@ -42,18 +48,13 @@
             android:id="@+id/TalkRowRating"></ImageView>
 
         <TextView
-            android:layout_height="wrap_content"
-            android:id="@+id/TalkRowSpeaker"
-            android:layout_weight="3"
-            android:layout_width="fill_parent"></TextView>
-
-        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/TalkRowComments"
             android:gravity="right"
             android:layout_gravity="right"
-            android:text=""></TextView>
+            android:text=""
+            android:layout_weight="0.5"></TextView>
     </LinearLayout>
 
     <LinearLayout

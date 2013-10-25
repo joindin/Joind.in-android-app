@@ -18,6 +18,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -270,9 +272,30 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> {
         TextView t5 = (TextView) v.findViewById(R.id.TalkRowTrack);
         if (t1 != null) t1.setText(o.optString("talk_title"));
         if (t2 != null) t2.setText(t2Text);
-        if (t3 != null) t3.setText(o.optString("speaker"));
         if (t4 != null) t4.setText(outputTalkDateFormat.format(talkDate));
         if (t5 != null) t5.setText(track);
+
+        // Speaker details
+        ArrayList<String> speakerNames = new ArrayList<String>();
+        try {
+            JSONArray speakerEntries = o.getJSONArray("speakers");
+            for (int i = 0; i < speakerEntries.length(); i++) {
+                speakerNames.add(speakerEntries.getJSONObject(i).getString("speaker_name"));
+            }
+        } catch (JSONException e) {
+            Log.d(JIActivity.LOG_JOINDIN_APP, "Couldn't get speaker names");
+            e.printStackTrace();
+        }
+        if (speakerNames.size() == 1) {
+            t3.setText("Speaker: " + speakerNames.get(0));
+        }
+        else if (speakerNames.size() > 1) {
+            String allSpeakers = TextUtils.join(", ", speakerNames);
+            t3.setText("Speakers: " + allSpeakers);
+        }
+        else {
+            t3.setText("");
+        }
 
         // Set specified talk category image
         ImageView r = (ImageView) v.findViewById(R.id.TalkRowImageType);
