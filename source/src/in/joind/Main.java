@@ -448,11 +448,10 @@ class JIEventAdapter extends ArrayAdapter<JSONObject> {
         if (o == null) return convertView;
 
         // Display (or load in the background if needed) the event logo
-
         // Remove logo (this could be a recycled row)
         ImageView el = (ImageView) convertView.findViewById(R.id.EventDetailLogo);
         el.setTag("");
-        el.setVisibility(View.GONE);
+        el.setImageDrawable(null);
 
         // Display (or load in the background if needed) the event logo
         if (!o.isNull("icon")) {
