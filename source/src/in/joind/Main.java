@@ -448,9 +448,11 @@ class JIEventAdapter extends ArrayAdapter<JSONObject> {
         if (o == null) return convertView;
 
         // Display (or load in the background if needed) the event logo
-        // Remove logo (this could be a recycled row)
+        // We temporarily set the view to GONE to ensure that the row
+        // gets recycled (and the image gets updated if required)
         ImageView el = (ImageView) convertView.findViewById(R.id.EventDetailLogo);
         el.setTag("");
+        el.setVisibility(View.GONE);
         el.setImageDrawable(null);
 
         // Display (or load in the background if needed) the event logo
@@ -459,6 +461,10 @@ class JIEventAdapter extends ArrayAdapter<JSONObject> {
             el.setTag(filename);
             image_loader.displayImage("http://joind.in/inc/img/event_icons/", filename, (Activity) context, el);
         }
+        else {
+            el.setImageResource(R.drawable.event_icon_none);
+        }
+        el.setVisibility(View.VISIBLE);
 
         // Set a darker color when the event is currently running.
         long event_start = 0;
@@ -484,8 +490,8 @@ class JIEventAdapter extends ArrayAdapter<JSONObject> {
 
         // When the user is attending this event, we display our "attending" image.
         ImageView im = (ImageView) convertView.findViewById(R.id.EventDetailAttendingImg);
-        if (o.optBoolean("attending") == false) {
-            im.setVisibility(View.INVISIBLE);
+        if (!o.optBoolean("attending")) {
+            im.setVisibility(View.GONE);
         } else {
             im.setVisibility(View.VISIBLE);
         }
