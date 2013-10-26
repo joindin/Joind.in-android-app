@@ -51,6 +51,7 @@
     <string name="activityAddCommentSpinnerFourStars">Four stars</string>
     <string name="activityAddCommentSpinnerFiveStars">Five stars</string>
     <string name="activityAddCommentSendingComment">Sending comment...</string>
+    <string name="activityAddCommentPrivateCommentLabel">Mark this comment as private</string>
 
     <string name="activityEventDetailTitle">Event details</string>
 
@@ -101,5 +102,9 @@
     <string name="authenticatorAccountType">in.joind</string>
     <string name="authenticatorTitle">Log in to joind.in</string>
     <string name="authTokenType">oauth2</string>
+
+    <!-- some error messages -->
+    <string name="activityEventDetailFailedJSON">Couldn\'t retrieve event details</string>
+    <string name="activityTalkCommentsFailedJSON">Couldn\'t retrieve talk details</string>
 
 </resources>

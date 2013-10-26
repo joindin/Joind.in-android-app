@@ -18,6 +18,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.Toast;
@@ -60,6 +61,8 @@ public class AddComment extends JIActivity implements OnClickListener {
 
 
         // Are we commenting on an event?
+        CheckBox privateComment = (CheckBox) findViewById(R.id.CommentPrivate);
+        privateComment.setChecked(false); // default
         if (this.commentType.compareTo("event") == 0) {
             // Get event information
             try {
@@ -75,6 +78,12 @@ public class AddComment extends JIActivity implements OnClickListener {
             v.setVisibility(View.GONE);
             v = (View) findViewById(R.id.TextViewRating);
             v.setVisibility(View.GONE);
+
+            // and hide the private comment checkbox
+            privateComment.setVisibility(View.GONE);
+        }
+        else {
+            privateComment.setVisibility(View.VISIBLE);
         }
 
         // Add handler to the buttons
@@ -143,6 +152,9 @@ public class AddComment extends JIActivity implements OnClickListener {
         EditText tmp1 = (EditText) findViewById(R.id.CommentText);
         String comment = tmp1.getText().toString();
 
+        CheckBox tmp2 = (CheckBox) findViewById(R.id.CommentPrivate);
+        int privateComment = tmp2.isChecked() ? 1 : 0;
+
         JSONObject data = new JSONObject();
 
         try {
@@ -164,6 +176,12 @@ public class AddComment extends JIActivity implements OnClickListener {
                 data.put("rating", rating);
             } catch (JSONException e) {
                 // do nothing
+            }
+
+            // and a private status
+            try {
+                data.put("private", privateComment);
+            } catch (JSONException e) {
             }
 
             url = this.talkJSON.optString("comments_uri");

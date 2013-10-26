@@ -13,6 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.util.Linkify;
 import android.view.View;
@@ -21,6 +22,8 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.crashlytics.android.Crashlytics;
 
 public class EventDetail extends JIActivity implements OnClickListener {
     private JSONObject eventJSON;
@@ -38,16 +41,18 @@ public class EventDetail extends JIActivity implements OnClickListener {
         // Get info from the intent scratch board
         try {
             this.eventJSON = new JSONObject(getIntent().getStringExtra("eventJSON"));
-        } catch (JSONException e) {
-            android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No event passed to activity", e);
-        }
-        try {
             eventRowID = this.eventJSON.getInt("rowID");
         } catch (JSONException e) {
-            android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No row ID in event JSON");
+            // No JSON means we can't continue
+            android.util.Log.v(JIActivity.LOG_JOINDIN_APP, "No event JSON available to activity");
+            Crashlytics.setString("eventDetail_eventJSON", getIntent().getStringExtra("eventJSON"));
+
+            // Tell the user
+            showToast(getString(R.string.activityEventDetailFailedJSON), Toast.LENGTH_LONG);
+            finish();
+            return;
         }
         if (eventRowID == 0) {
-            // TODO alert and stop activity
             android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "Event row ID is invalid");
         }
 
@@ -95,7 +100,10 @@ public class EventDetail extends JIActivity implements OnClickListener {
 
         String d1 = null;
         String d2 = null;
-        SimpleDateFormat dfOutput = new SimpleDateFormat("d LLL yyyy"), dfInput = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+
+        // Android 2.2 and below don't support the "L" pattern character
+        String fmt = Build.VERSION.SDK_INT <= 8 ? "d MMM yyyy" : "d LLL yyyy";
+        SimpleDateFormat dfOutput = new SimpleDateFormat(fmt), dfInput = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
         try {
             d1 = dfOutput.format(dfInput.parse(event.optString("start_date")));
             d2 = dfOutput.format(dfInput.parse(event.optString("end_date")));

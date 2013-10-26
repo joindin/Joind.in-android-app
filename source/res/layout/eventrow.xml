@@ -9,7 +9,7 @@
         android:layout_height="50dip"
         android:layout_width="50dip"
         android:visibility="gone"
-        android:layout_marginRight="5px"></ImageView>
+        android:layout_marginRight="10dp"></ImageView>
 
     <LinearLayout
         android:orientation="vertical"
