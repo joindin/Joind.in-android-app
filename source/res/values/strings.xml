@@ -68,14 +68,14 @@
 
     <!-- Global strings, can occur everywhere -->
     <string name="generalPleaseWait">Please wait...</string>
-    <string name="generalViewCommentSingular">View comment (%d)</string>
-    <string name="generalViewCommentPlural">View comments (%d)</string>
+    <string name="generalViewCommentSingular">Comment (%d)</string>
+    <string name="generalViewCommentPlural">Comments (%d)</string>
 
-    <string name="generalViewTrackSingular">View tracks (%d)</string>
-    <string name="generalViewTrackPlural">View tracks (%d)</string>
+    <string name="generalViewTrackSingular">Track (%d)</string>
+    <string name="generalViewTrackPlural">Tracks (%d)</string>
 
-    <string name="generalViewTalkSingular">View talk (%d)</string>
-    <string name="generalViewTalkPlural">View talks (%d)</string>
+    <string name="generalViewTalkSingular">Talk (%d)</string>
+    <string name="generalViewTalkPlural">Talks (%d)</string>
 
     <string name="generalEventTalksSingular">%d event talk</string>
     <string name="generalEventTalksPlural">%d event talks</string>
