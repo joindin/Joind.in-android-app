@@ -11,18 +11,18 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
         
-	    <TextView
+        <TextView
 	        android:layout_height="wrap_content"
 	        android:textStyle="bold"
 	        android:layout_weight="1"	  
 	        android:layout_width="0dp"      
 	        android:id="@+id/CommentRowDate"></TextView>
 	    
-	    <ImageView
-	            android:id="@+id/CommentRowRate"
-	            android:layout_width="wrap_content"            
-	            android:background="@drawable/rating_0"
-	            android:layout_height="wrap_content"></ImageView>
+        <ImageView
+	        android:id="@+id/CommentRowRate"
+	        android:layout_width="wrap_content"            
+	        android:background="@drawable/rating_0"
+	        android:layout_height="wrap_content"></ImageView>
 	</LinearLayout>
 	
     <LinearLayout
