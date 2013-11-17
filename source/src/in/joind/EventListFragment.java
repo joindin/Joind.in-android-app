@@ -7,7 +7,9 @@ package in.joind;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.Loader;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,6 +23,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,7 +41,8 @@ public class EventListFragment extends ListFragment {
     private JIEventAdapter m_eventAdapter;
     private EventLoaderThread event_loader_thread;
     MainActivity parentActivity;
-    JIRest rest;    // Our rest object to communicate with joind.in API
+    JIRest rest;
+    ListView listView;
 
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -48,22 +53,45 @@ public class EventListFragment extends ListFragment {
         super.onCreate(savedInstanceState);
     }
 
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = super.onCreateView(inflater, container, savedInstanceState);
+        ArrayList<JSONObject> m_events = new ArrayList<JSONObject>();
+        m_eventAdapter = new JIEventAdapter(getActivity(), R.layout.eventrow, m_events);
+        setListAdapter(m_eventAdapter);
+
+        return view;
+    }
+
+    @Override
+    public void onActivityCreated(android.os.Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        listView = getListView();
+    }
+
     public void onPause() {
         if (event_loader_thread != null) {
             event_loader_thread.stopThread();
         }
+        listView = null;
         super.onPause();
     }
 
     public void onResume() {
         super.onResume();
-        setupEvents();
+
+        if (listView != null) {
+            setListShown(false);
+        }
         loadEvents(this.getTag());
+
+        setupEvents();
     }
 
     void loadEvents(String type) {
         if (event_loader_thread != null) {
-            // Stop event loading thread.. we are going to start a new one...
+            // Stop event loading thread, we're going to start a new one
             event_loader_thread.stopThread();
         }
 
@@ -75,13 +103,6 @@ public class EventListFragment extends ListFragment {
     }
 
     protected void setupEvents() {
-        // Create array with all found events and add it to the event list
-        ArrayList<JSONObject> m_events = new ArrayList<JSONObject>();
-        m_eventAdapter = new JIEventAdapter(getActivity(), R.layout.eventrow, m_events);
-
-        setListAdapter(m_eventAdapter);
-
-        // When clicked on a event, check which one it is, and go to event detail class/activity
         getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
                 Intent myIntent = new Intent();
@@ -96,6 +117,10 @@ public class EventListFragment extends ListFragment {
 
     // Display events by populating the m_eventAdapter (custom list) with items loaded from DB
     public int displayEvents(final String eventType) {
+        if (listView != null) {
+            setListShown(true);
+        }
+
         // Clear all events
         m_eventAdapter.clear();
 
@@ -112,6 +137,7 @@ public class EventListFragment extends ListFragment {
         if (eventType.equals("upcoming")) title = this.getString(R.string.activityMainEventsUpcoming);
 
         parentActivity.setEventsTitle(title, count);
+
         return count;
     }
 
@@ -143,14 +169,13 @@ public class EventListFragment extends ListFragment {
             // Get some event data from the joind.in API
             rest = new JIRest(EventListFragment.this.getActivity());
             String urlPostfix = "events";
-            String uriToUse = "";
             if (event_type.length() > 0) {
                 urlPostfix += "?filter=" + event_type;
             }
-            uriToUse = rest.makeFullURI(urlPostfix);
+            String uriToUse = rest.makeFullURI(urlPostfix);
 
             JSONObject fullResponse;
-            JSONObject metaObj = new JSONObject();
+            JSONObject metaObj;
             DataHelper dh = DataHelper.getInstance();
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
             boolean isFirst = true;
@@ -162,7 +187,6 @@ public class EventListFragment extends ListFragment {
 
                     if (error == JIRest.OK) {
 
-                        // Remove all event comments for this event and insert newly loaded comments
                         fullResponse = rest.getJSONResult();
                         if (fullResponse == null) {
                             break;
@@ -179,8 +203,9 @@ public class EventListFragment extends ListFragment {
                             JSONObject json_event = json.getJSONObject(i);
 
                             // Don't add when we are adding to the Past AND we want to display "attended only"
-                            if (event_type.compareTo("past") == 0 && prefs.getBoolean("attendonly", true) && !json_event.optBoolean("user_attending"))
+                            if (event_type.equals("past") && prefs.getBoolean("attendonly", false) && !json_event.optBoolean("user_attending")) {
                                 continue;
+                            }
                             dh.insertEvent(event_type, json_event);
                         }
                         uriToUse = metaObj.getString("next_page");
@@ -195,7 +220,7 @@ public class EventListFragment extends ListFragment {
                         // If we're looking at "hot" events, this API call just
                         // returns events, and more events, and more events....
                         // so we'll just stop after the first round
-                        if (event_type == "hot") {
+                        if (event_type.equals("hot")) {
                             break;
                         }
                     } else {
@@ -216,9 +241,9 @@ public class EventListFragment extends ListFragment {
                 // We can only modify the UI in a UIThread, so we create another thread
                 getActivity().runOnUiThread(new Runnable() {
                     public void run() {
-                        // Display result from the rest to the user
-                        Toast toast = Toast.makeText(getActivity().getApplicationContext(), rest.getError(), Toast.LENGTH_LONG);
-                        toast.show();
+                    // Display result from the rest to the user
+                    Toast toast = Toast.makeText(getActivity().getApplicationContext(), rest.getError(), Toast.LENGTH_LONG);
+                    toast.show();
                     }
                 });
             }
@@ -226,7 +251,7 @@ public class EventListFragment extends ListFragment {
             // Show the events
             getActivity().runOnUiThread(new Runnable() {
                 public void run() {
-                    displayEvents(event_type);
+                displayEvents(event_type);
                 }
             });
         }
@@ -235,11 +260,11 @@ public class EventListFragment extends ListFragment {
 
 
 class JIEventAdapter extends ArrayAdapter<JSONObject> {
-    private ArrayList<JSONObject> all_items;        // The all items for the listview
-    private ArrayList<JSONObject> filtered_items;   // The current currently viewed in the listview
+    private ArrayList<JSONObject> all_items;
+    private ArrayList<JSONObject> filtered_items;
     private Context context;
-    LayoutInflater inflator;
-    public ImageLoader image_loader;            // eventlogo image loader
+    LayoutInflater inflater;
+    public ImageLoader image_loader;
     private PTypeFilter filter;
 
     public int getCount() {
@@ -250,21 +275,19 @@ class JIEventAdapter extends ArrayAdapter<JSONObject> {
         return filtered_items.get(position);
     }
 
-
     public JIEventAdapter(Context context, int textViewResourceId, ArrayList<JSONObject> items) {
         super(context, textViewResourceId, items);
-        this.context = context;       // Saving context, sincve we need it on other places where the context is not known.
+        this.context = context;
         this.all_items = items;
         this.filtered_items = items;
-        this.inflator = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
+        this.inflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.image_loader = new ImageLoader(context.getApplicationContext(), "events");
     }
 
     // This function will create a custom row with our event data.
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
-            convertView = this.inflator.inflate(R.layout.eventrow, null);
+            convertView = this.inflater.inflate(R.layout.eventrow, null);
         }
 
         // Get the (JSON) data we need
@@ -361,7 +384,7 @@ class JIEventAdapter extends ArrayAdapter<JSONObject> {
                     JSONObject json = all_items.get(index);
                     String title = json.optString("name");
                     // Add to the filtered result list when our string is found in the event_name
-                    if (title.toUpperCase().indexOf(prefix.toString().toUpperCase()) >= 0)
+                    if (title.toUpperCase().contains(prefix.toString().toUpperCase()))
                         i.add(json);
                 }
                 results.values = i;

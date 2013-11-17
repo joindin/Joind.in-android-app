@@ -34,7 +34,7 @@
             android:label="@string/app_name">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="in.joind.Main" />
+                android:value="in.joind.MainActivity" />
         </activity>
         <activity
             android:name=".EventTalks"
@@ -114,7 +114,6 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <!-- Account management. Used to store access tokens -->
-    <uses-permission android:name="android.permission.ACCOUNT_MANAGER" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />

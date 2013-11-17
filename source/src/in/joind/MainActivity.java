@@ -41,6 +41,7 @@ import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
@@ -56,6 +57,7 @@ public class MainActivity extends JIActivity {
     private int event_sort_order = DataHelper.ORDER_DATE_ASC;
 
     private EditText filterText;
+    private FragmentTabHost tabHost;
 
     private TextWatcher filterTextWatcher = new TextWatcher() {
 
@@ -95,21 +97,32 @@ public class MainActivity extends JIActivity {
         filterText.removeTextChangedListener(filterTextWatcher);
     }
 
-
     protected void initialiseTabs()
     {
-        FragmentTabHost tabHost = (FragmentTabHost) findViewById(R.id.tabHost);
+        tabHost = (FragmentTabHost) findViewById(R.id.tabHost);
         tabHost.setup(this, getSupportFragmentManager(), R.id.realtabcontent);
         tabHost.addTab(tabHost.newTabSpec("hot").setIndicator("Hot"), EventListFragment.class, null);
         tabHost.addTab(tabHost.newTabSpec("upcoming").setIndicator("Upcoming"), EventListFragment.class, null);
         tabHost.addTab(tabHost.newTabSpec("past").setIndicator("Past"), EventListFragment.class, null);
+        tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
+            @Override
+            public void onTabChanged(String tabId) {
+                SharedPreferences sp = getSharedPreferences(JIActivity.SHARED_PREF_NAME, Context.MODE_PRIVATE);
+                sp.edit().putString("currentTab", tabId).commit();
+            }
+        });
     }
 
     // Will reload events. Needed when we return to the screen.
     public void onResume() {
         super.onResume();
-    }
 
+        SharedPreferences sp = getSharedPreferences(JIActivity.SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        if (sp.contains("currentTab")) {
+            String currentTab = sp.getString("currentTab", "hot");
+            tabHost.setCurrentTabByTag(currentTab);
+        }
+    }
 
     // Overriding the JIActivity add sort-items
     public boolean onCreateOptionsMenu(Menu menu) {
