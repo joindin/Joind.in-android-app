@@ -36,10 +36,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-public class EventListFragment extends ListFragment {
+public class EventListFragment extends ListFragment implements EventListFragmentInterface {
 
     private JIEventAdapter m_eventAdapter;
     private EventLoaderThread event_loader_thread;
+    int eventSortOrder = DataHelper.ORDER_DATE_ASC;
     MainActivity parentActivity;
     JIRest rest;
     ListView listView;
@@ -126,7 +127,7 @@ public class EventListFragment extends ListFragment {
 
         // add events and return count
         DataHelper dh = DataHelper.getInstance();
-        int count = dh.populateEvents(eventType, m_eventAdapter, DataHelper.ORDER_DATE_ASC);
+        int count = dh.populateEvents(eventType, m_eventAdapter, eventSortOrder);
 
         // Tell the adapter that our data set has changed so it can update it
         m_eventAdapter.notifyDataSetChanged();
@@ -140,6 +141,16 @@ public class EventListFragment extends ListFragment {
 
         return count;
     }
+
+    public void setEventSortOrder(int sortOrder) {
+        this.eventSortOrder = sortOrder;
+        displayEvents(this.getTag());
+    }
+
+    public int getEventSortOrder() {
+        return this.eventSortOrder;
+    }
+
 
     class EventLoaderThread extends Thread {
         private volatile Thread runner;

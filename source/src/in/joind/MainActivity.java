@@ -48,13 +48,11 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class MainActivity extends JIActivity {
 
-    private String currentTab;                   // Current selected tab
+    private String currentTab = "hot";                   // Current selected tab
 
     // Constants for dynamically added menu items
     private static final int MENU_SORT_DATE = 1;
     private static final int MENU_SORT_TITLE = 2;
-
-    private int event_sort_order = DataHelper.ORDER_DATE_ASC;
 
     private EditText filterText;
     private FragmentTabHost tabHost;
@@ -109,6 +107,7 @@ public class MainActivity extends JIActivity {
             public void onTabChanged(String tabId) {
                 SharedPreferences sp = getSharedPreferences(JIActivity.SHARED_PREF_NAME, Context.MODE_PRIVATE);
                 sp.edit().putString("currentTab", tabId).commit();
+                currentTab = tabId;
             }
         });
     }
@@ -119,7 +118,7 @@ public class MainActivity extends JIActivity {
 
         SharedPreferences sp = getSharedPreferences(JIActivity.SHARED_PREF_NAME, Context.MODE_PRIVATE);
         if (sp.contains("currentTab")) {
-            String currentTab = sp.getString("currentTab", "hot");
+            currentTab = sp.getString("currentTab", "hot");
             tabHost.setCurrentTabByTag(currentTab);
         }
     }
@@ -139,16 +138,20 @@ public class MainActivity extends JIActivity {
 
     // Overriding the JIActivity handler to handle the sorting
     public boolean onOptionsItemSelected(MenuItem item) {
+        EventListFragment fragment = (EventListFragment) getSupportFragmentManager().findFragmentByTag(currentTab);
+        int currentEventSortOrder;
+        int newEventSortOrder;
+
         switch (item.getItemId()) {
             case MENU_SORT_DATE:
-                // Toast.makeText(this, "Sorting by data", Toast.LENGTH_SHORT).show();
-                this.event_sort_order = this.event_sort_order == DataHelper.ORDER_DATE_ASC ? DataHelper.ORDER_DATE_DESC : DataHelper.ORDER_DATE_ASC;
-                //displayEvents(this.currentTab);
+                currentEventSortOrder = fragment.getEventSortOrder();
+                newEventSortOrder = (currentEventSortOrder == DataHelper.ORDER_DATE_ASC ? DataHelper.ORDER_DATE_DESC : DataHelper.ORDER_DATE_ASC);
+                fragment.setEventSortOrder(newEventSortOrder);
                 break;
             case MENU_SORT_TITLE:
-                // Toast.makeText(this, "Sorting by title", Toast.LENGTH_SHORT).show();
-                this.event_sort_order = this.event_sort_order == DataHelper.ORDER_TITLE_ASC ? DataHelper.ORDER_TITLE_DESC : DataHelper.ORDER_TITLE_ASC;
-                //displayEvents(this.currentTab);
+                currentEventSortOrder = fragment.getEventSortOrder();
+                newEventSortOrder = (currentEventSortOrder == DataHelper.ORDER_TITLE_ASC ? DataHelper.ORDER_TITLE_DESC : DataHelper.ORDER_TITLE_ASC);
+                fragment.setEventSortOrder(newEventSortOrder);
                 break;
         }
 
