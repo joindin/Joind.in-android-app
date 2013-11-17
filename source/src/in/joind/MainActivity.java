@@ -63,11 +63,11 @@ public class MainActivity extends JIActivity {
         }
 
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            //m_eventAdapter.getFilter().filter(s);
+            EventListFragment fragment = (EventListFragment) getSupportFragmentManager().findFragmentByTag(currentTab);
+            fragment.filterByString(s);
         }
 
         public void afterTextChanged(Editable s) {
-
         }
     };
 

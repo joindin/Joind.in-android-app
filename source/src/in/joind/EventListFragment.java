@@ -151,6 +151,10 @@ public class EventListFragment extends ListFragment implements EventListFragment
         return this.eventSortOrder;
     }
 
+    public void filterByString(CharSequence s) {
+        m_eventAdapter.getFilter().filter(s);
+    }
+
 
     class EventLoaderThread extends Thread {
         private volatile Thread runner;
