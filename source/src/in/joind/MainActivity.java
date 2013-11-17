@@ -12,7 +12,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import android.app.SearchManager;
 import android.support.v4.app.FragmentTabHost;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import in.joind.R;
 import org.json.JSONArray;
@@ -46,7 +49,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class MainActivity extends JIActivity {
+public class MainActivity extends JIActivity implements SearchView.OnQueryTextListener {
 
     private String currentTab = "hot";                   // Current selected tab
 
@@ -56,20 +59,6 @@ public class MainActivity extends JIActivity {
 
     private EditText filterText;
     private FragmentTabHost tabHost;
-
-    private TextWatcher filterTextWatcher = new TextWatcher() {
-
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-        }
-
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            EventListFragment fragment = (EventListFragment) getSupportFragmentManager().findFragmentByTag(currentTab);
-            fragment.filterByString(s);
-        }
-
-        public void afterTextChanged(Editable s) {
-        }
-    };
 
     /**
      * Called when the activity is first created.
@@ -84,16 +73,8 @@ public class MainActivity extends JIActivity {
         DataHelper.createInstance(this.getApplicationContext());
 
         initialiseTabs();
-
-        filterText = (EditText) findViewById(R.id.FilterBar);
-        filterText.addTextChangedListener(filterTextWatcher);
     }
 
-
-    protected void onDestroy() {
-        super.onDestroy();
-        filterText.removeTextChangedListener(filterTextWatcher);
-    }
 
     protected void initialiseTabs()
     {
@@ -131,6 +112,15 @@ public class MainActivity extends JIActivity {
         menu_date.setIcon(android.R.drawable.ic_menu_month);
         MenuItem menu_title = menu.add(0, MENU_SORT_TITLE, 0, R.string.OptionMenuSortTitle);
         menu_title.setIcon(android.R.drawable.ic_menu_sort_alphabetically);
+
+        // Associate searchable configuration with the SearchView
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        MenuItem searchItem = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        if (searchView != null) {
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+            searchView.setOnQueryTextListener(this);
+        }
 
         return true;
     }
@@ -189,5 +179,18 @@ public class MainActivity extends JIActivity {
     public void setEventsTitle(String title, int count) {
         // Set main title to event category plus the number of events found
         setTabTitle(title, count);
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String s) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String s) {
+        EventListFragment fragment = (EventListFragment) getSupportFragmentManager().findFragmentByTag(currentTab);
+        fragment.filterByString(s);
+
+        return false;
     }
 }
