@@ -4,26 +4,88 @@
     <modelVersion>4.0.0</modelVersion>
 
     <version>2.0.1</version>
+    <name>joind.in Android app</name>
     <groupId>in</groupId>
-    <artifactId>joind-android-parent</artifactId>
-    <packaging>pom</packaging>
-    <name>joind.in Android app parent POM project</name>
-
-    <modules>
-        <module>source</module>
-    </modules>
+    <artifactId>joind.in</artifactId>
+    <packaging>apk</packaging>
+    <url>https://github.com/joindin/Joind.in-android-app</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <android.version>4.0.1.2</android.version>
+        <platform.version>4.0.1.2</platform.version>
         <android.plugin.version>3.6.0</android.plugin.version>
     </properties>
-    <scm>
-        <connection>scm:git:git://github.com/joindin/Joind.in-android-app.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/joindin/Joind.in-android-app.git</developerConnection>
-        <url>https://github.com/joindin/Joind.in-android-app</url>
-    </scm>
+
+    <!-- local repository for deps that aren't in maven central -->
+    <repositories>
+        <repository>
+            <id>crashlytics-repo</id>
+            <url>http://download.crashlytics.com/maven</url>
+        </repository>
+        <repository>
+            <id>project.local</id>
+            <name>project</name>
+            <url>file:${project.basedir}/repo</url>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>crashlytics-plugin-repo</id>
+            <url>http://download.crashlytics.com/maven</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.google.android</groupId>
+            <artifactId>android</artifactId>
+            <version>${platform.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>android.support</groupId>
+            <artifactId>compatibility-v4</artifactId>
+            <version>18</version>
+        </dependency>
+
+        <dependency>
+            <groupId>android.support</groupId>
+            <artifactId>compatibility-v7</artifactId>
+            <version>18</version>
+            <type>apklib</type>
+        </dependency>
+
+        <dependency>
+            <groupId>android.support</groupId>
+            <artifactId>compatibility-v7</artifactId>
+            <version>18</version>
+            <type>jar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>android.support</groupId>
+            <artifactId>compatibility-v7-appcompat</artifactId>
+            <version>18</version>
+            <type>apklib</type>
+        </dependency>
+
+        <dependency>
+            <groupId>android.support</groupId>
+            <artifactId>compatibility-v7-appcompat</artifactId>
+            <version>18</version>
+            <type>jar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>com.crashlytics.android</groupId>
+            <artifactId>crashlytics</artifactId>
+            <version>[1.0.2,)</version>
+        </dependency>
+    </dependencies>
     <build>
+        <finalName>${project.artifactId}</finalName>
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -32,15 +94,37 @@
                     <version>${android.plugin.version}</version>
                     <extensions>true</extensions>
                 </plugin>
-                <plugin>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>2.3.2</version>
-                    <configuration>
-                        <source>1.6</source>
-                        <target>1.6</target>
-                    </configuration>
-                </plugin>
             </plugins>
         </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+                <artifactId>android-maven-plugin</artifactId>
+                <configuration>
+                    <sdk>
+                        <platform>14</platform>
+                    </sdk>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.crashlytics</groupId>
+                <artifactId>crashlytics-maven</artifactId>
+                <version>1.0.3</version>
+                <executions>
+                    <execution>
+                        <id>GenerateResources</id>
+                        <goals>
+                            <goal>GenerateResources</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>CleanupResources</id>
+                        <goals>
+                            <goal>CleanupResources</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 </project>
