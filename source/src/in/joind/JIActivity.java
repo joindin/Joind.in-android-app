@@ -42,7 +42,7 @@ public class JIActivity extends ActionBarActivity {
         // Needed to show the circular progress animation in the top right corner.
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
-        Crashlytics.start(this);
+//        Crashlytics.start(this);
     }
 
     public void onResume()

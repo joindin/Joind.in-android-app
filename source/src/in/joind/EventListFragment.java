@@ -7,9 +7,7 @@ package in.joind;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.Loader;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,7 +21,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,33 +44,35 @@ public class EventListFragment extends ListFragment implements EventListFragment
 
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        Log.d("JoindInApp", "onAttach");
         parentActivity = (MainActivity) activity;
-    }
-
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
-        ArrayList<JSONObject> m_events = new ArrayList<JSONObject>();
-        m_eventAdapter = new JIEventAdapter(getActivity(), R.layout.eventrow, m_events);
-        setListAdapter(m_eventAdapter);
-
+//        Log.d("JoindInApp", "onCreateView");
+//        ArrayList<JSONObject> m_events = new ArrayList<JSONObject>();
+//        m_eventAdapter = new JIEventAdapter(getActivity(), R.layout.eventrow, m_events);
+//        setListAdapter(m_eventAdapter);
+//
         return view;
     }
 
     @Override
     public void onActivityCreated(android.os.Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        Log.d("JoindInApp", "onActivityCreated");
 
         listView = getListView();
     }
 
     public void onPause() {
         if (event_loader_thread != null) {
+            Log.d(MainActivity.LOG_JOINDIN_APP, "Stopping event loader thread");
             event_loader_thread.stopThread();
+        } else {
+            Log.d(MainActivity.LOG_JOINDIN_APP, "No event loader thread?");
         }
         listView = null;
         super.onPause();
@@ -81,6 +80,7 @@ public class EventListFragment extends ListFragment implements EventListFragment
 
     public void onResume() {
         super.onResume();
+        Log.d("JoindInApp", "onResume");
 
         if (listView != null) {
             setListShown(false);
@@ -172,11 +172,15 @@ public class EventListFragment extends ListFragment implements EventListFragment
 
         public synchronized void stopThread() {
             // Already stopped
-            if (runner == null) return;
+            if (runner == null) {
+                Log.d("JoindInApp", "No runner");
+                return;
+            }
 
             Thread moribund = runner;
             runner = null;
             moribund.interrupt();
+            Log.d("JoindInApp", "Interrupting");
         }
 
         public void run() {

@@ -8,46 +8,19 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 
 import android.app.SearchManager;
 import android.support.v4.app.FragmentTabHost;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
-import in.joind.R;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.View.OnClickListener;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Filter;
-import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TabHost;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
 
 public class MainActivity extends JIActivity implements SearchView.OnQueryTextListener {
 
@@ -57,7 +30,6 @@ public class MainActivity extends JIActivity implements SearchView.OnQueryTextLi
     private static final int MENU_SORT_DATE = 1;
     private static final int MENU_SORT_TITLE = 2;
 
-    private EditText filterText;
     private FragmentTabHost tabHost;
 
     /**
@@ -79,7 +51,7 @@ public class MainActivity extends JIActivity implements SearchView.OnQueryTextLi
     protected void initialiseTabs()
     {
         tabHost = (FragmentTabHost) findViewById(R.id.tabHost);
-        tabHost.setup(this, getSupportFragmentManager(), R.id.realtabcontent);
+        tabHost.setup(this, getSupportFragmentManager(), R.id.tabContent);
         tabHost.addTab(tabHost.newTabSpec("hot").setIndicator("Hot"), EventListFragment.class, null);
         tabHost.addTab(tabHost.newTabSpec("upcoming").setIndicator("Upcoming"), EventListFragment.class, null);
         tabHost.addTab(tabHost.newTabSpec("past").setIndicator("Past"), EventListFragment.class, null);
@@ -100,6 +72,9 @@ public class MainActivity extends JIActivity implements SearchView.OnQueryTextLi
         SharedPreferences sp = getSharedPreferences(JIActivity.SHARED_PREF_NAME, Context.MODE_PRIVATE);
         if (sp.contains("currentTab")) {
             currentTab = sp.getString("currentTab", "hot");
+            tabHost.setCurrentTabByTag(currentTab);
+        } else {
+            currentTab = sp.getString("defaultEventTab", "hot");
             tabHost.setCurrentTabByTag(currentTab);
         }
     }
