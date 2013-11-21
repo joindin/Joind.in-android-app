@@ -1,4 +1,31 @@
-bin
-gen
+# built application files
+*.apk
+*.ap_
+
+# files for the dex VM
+*.dex
+
+# Java class files
+*.class
+
+# generated files
+bin/
+gen/
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# Eclipse project files
+.classpath
+.project
 .settings
+
+# Maven
+target
+release.properties
+pom.xml.*
+gen-external-apklibs
+
+# Crashlytics string export
 source/res/values/com_crashlytics_export_strings.xml
+
