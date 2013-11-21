@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <version>2.0.1</version>
+    <groupId>in</groupId>
+    <artifactId>joind-android-parent</artifactId>
+    <packaging>pom</packaging>
+    <name>joind.in Android app parent POM project</name>
+
+    <modules>
+        <module>source</module>
+    </modules>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <android.version>4.0.1.2</android.version>
+        <android.plugin.version>3.6.0</android.plugin.version>
+    </properties>
+    <scm>
+        <connection>scm:git:git://github.com/joindin/Joind.in-android-app.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/joindin/Joind.in-android-app.git</developerConnection>
+        <url>https://github.com/joindin/Joind.in-android-app</url>
+    </scm>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+                    <artifactId>android-maven-plugin</artifactId>
+                    <version>${android.plugin.version}</version>
+                    <extensions>true</extensions>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>2.3.2</version>
+                    <configuration>
+                        <source>1.6</source>
+                        <target>1.6</target>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>
