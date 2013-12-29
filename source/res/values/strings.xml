@@ -8,7 +8,7 @@
     <string name="apiDateFormat">yyyy-MM-dd\'T\'HH:mm:ssZ</string>
 
     <!-- API URL to use -->
-    <string name="apiURL">http://api.joind.in/v2.1/</string>
+    <string name="apiURL">https://api.joind.in/v2.1/</string>
 
     <!-- OAuth URL to use, and the callback -->
     <string name="oauthURL">http://joind.in/user/oauth_allow</string>
