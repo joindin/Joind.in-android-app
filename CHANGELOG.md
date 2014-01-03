@@ -1,3 +1,10 @@
+# 2.0.2
+
+* Remove the word "View" from the Event detail buttons (JOINDIN-377)
+* Event detail buttons now show dynamic counts where available (JOINDIN-386)
+* Move rating icons to top-right corner of comments (JOINDIN-381)
+* Switch to using HTTPS for API access
+
 # 2.0.1
 
 * Show placeholder image for events without images
