@@ -4,29 +4,31 @@ package in.joind;
  * Communication with joind.in API
  */
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.SocketTimeoutException;
+import java.net.URL;
+import java.nio.charset.Charset;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import in.joind.R;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
+
 import org.apache.http.HttpStatus;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.*;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.CoreProtocolPNames;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
 
 import android.content.Context;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSession;
 
 class JIRest {
     public static final int OK = 0;
@@ -41,6 +43,7 @@ class JIRest {
     private String error = "";
     private String result = "";
     private JSONObject jsonResult = null;
+    private int timeoutLength = 30000; // time in ms
 
     private Context context;
 
@@ -69,154 +72,139 @@ class JIRest {
 
     public int getJSONFullURI(String fullURI) {
 
+        HttpURLConnection connection = getConnection(fullURI);
+        if (connection == null) {
+            this.error = this.context.getString(R.string.JIRestValidConnectionError);
+
+            return ERROR;
+        }
+
+        connection.addRequestProperty("Content-type", "application/json");
+        connection = addAuthDetailsToRequest(connection);
+
         try {
             // Create http client with timeouts so we don't have to wait
             // indefinitely when the internet is kaput
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpParams params = httpclient.getParams();
-            HttpConnectionParams.setConnectionTimeout(params, 30000);
-            HttpConnectionParams.setSoTimeout(params, 15000);
 
-            HttpGet httpget = new HttpGet(fullURI);
-
-            httpget.addHeader("Content-type", "application/json");
-
-            // Do not add the "expect: 100-continue" headerline. It will mess up some proxy systems
-            httpget.getParams().setBooleanParameter(CoreProtocolPNames.USE_EXPECT_CONTINUE, false);
-
-            httpget = (HttpGet) addAuthDetailsToRequest(httpget);
-
+            // Get response
+            InputStream instream = new BufferedInputStream(connection.getInputStream());
+            this.result = Main.convertStreamToString(instream);
             try {
-                // Post stuff
-                HttpResponse response = httpclient.execute (httpget);
-
-                // Get response
-                HttpEntity entity = response.getEntity();
-                if (entity != null) {
-                    // If we receive some data, place it in our result string
-                    // and try and convert it to JSON
-                    InputStream instream = entity.getContent();
-                    this.result = Main.convertStreamToString(instream);
-                    try {
-                        this.jsonResult = new JSONObject(this.result);
-                    } catch (JSONException e) {
-                        // Couldn't parse JSON result; leave as null
-                    }
-                    instream.close();
-                    return OK;
-                }
-            } catch (ClientProtocolException e) {
-                // Error during communication
-                this.error = String.format (this.context.getString(R.string.JIRestProtocolError), e.getMessage());
-                return ERROR;
-            } catch (SocketTimeoutException e) {
-                // Socket has timed out
-                this.error = this.context.getString(R.string.JIRestSocketTimeout);
-                return TIMEOUT;
-            } catch (IOException e) {
-                // IO exception occurred
-                this.error = String.format (this.context.getString(R.string.JIRestIOError), e.getMessage());
-                return ERROR;
+                this.jsonResult = new JSONObject(this.result);
+            } catch (JSONException e) {
+                // Couldn't parse JSON result; leave as null
             }
+            instream.close();
+
+        } catch (SocketTimeoutException e) {
+            // Socket timeout occurred
+            this.error = String.format(this.context.getString(R.string.JIRestSocketTimeout), e.getMessage());
+            connection.disconnect();
+
+            return ERROR;
+        } catch (IOException e) {
+            // IO exception occurred
+            this.error = String.format (this.context.getString(R.string.JIRestIOError), e.getMessage());
+            connection.disconnect();
+
+            return ERROR;
         } catch (Exception e) {
             // Something else happened
             this.error  = String.format (this.context.getString(R.string.JIRestUnknownError), e.getMessage());
+            connection.disconnect();
+
             return ERROR;
         }
+
+        connection.disconnect();
+
         return OK;
     }
 
     public int requestToFullURI(String fullURI, JSONObject json, String method)
     {
-        if (method == METHOD_POST) {
-            HttpPost obj = new HttpPost(fullURI);
-            StringEntity jsonEntity = null;
+        HttpURLConnection connection = getConnection(fullURI);
+        if (method.equals(METHOD_POST)) {
             if (json != null) {
-                try {
-                    jsonEntity = new StringEntity(json.toString());
-                    jsonEntity.setContentType("application/json");
-                } catch (UnsupportedEncodingException e) {
-                    // Ignore exception
-                }
+                String content = json.toString();
+                connection.setFixedLengthStreamingMode(content.length());
             }
-            obj.setEntity(jsonEntity);
+            connection.setDoOutput(true);
+            try {
+                connection.setRequestMethod("POST");
+            } catch (ProtocolException e) {
+                return ERROR;
+            }
 
-            return doMethodRequest(obj);
+            return doMethodRequest(connection, json);
         }
-        if (method == METHOD_DELETE) {
-            HttpDelete obj = new HttpDelete(fullURI);
-            return doMethodRequest(obj);
+        if (method.equals(METHOD_DELETE)) {
+            try {
+                connection.setRequestMethod("DELETE");
+            } catch (ProtocolException e) {
+                return ERROR;
+            }
+
+            return doMethodRequest(connection, null);
         }
 
         return ERROR;
     }
 
-    protected int doMethodRequest(HttpUriRequest requestObj) {
+    protected int doMethodRequest(HttpURLConnection connection, JSONObject content) {
+
+        connection.setRequestProperty("Content-type", "application/json");
+        connection = addAuthDetailsToRequest(connection);
 
         try {
-            // Create http client with timeouts so we don't have to wait
-            // indefinitely when the internet is kaput
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpParams params = httpclient.getParams();
-            HttpConnectionParams.setConnectionTimeout(params, 30000);
-            HttpConnectionParams.setSoTimeout(params, 15000);
-
-            requestObj.addHeader("Content-type", "application/json");
-
-            requestObj = addAuthDetailsToRequest(requestObj);
-
-            // Do not add the "expect: 100-continue" headerline. It will mess up some proxy systems
-            requestObj.getParams().setBooleanParameter(CoreProtocolPNames.USE_EXPECT_CONTINUE, false);
-
-            try {
-                // Post stuff
-                HttpResponse response = httpclient.execute (requestObj);
-
-                // Get response
-                HttpEntity entity = response.getEntity();
-                if (entity != null) {
-                    // If we receive some data, place it in our result string
-                    // and try and convert to JSON
-                    InputStream instream = entity.getContent();
-                    this.result = Main.convertStreamToString(instream);
-                    try {
-                        this.jsonResult = new JSONObject(this.result);
-                    } catch (JSONException e) {
-                        // Couldn't parse JSON result; leave as null
-                    }
-                    instream.close();
-                    int statusCode = response.getStatusLine().getStatusCode();
-                    switch (statusCode) {
-                        case HttpStatus.SC_OK:
-                        case HttpStatus.SC_CREATED:
-                            return OK;
-                        default:
-                            this.error = String.format (this.context.getString(R.string.JIRestUnknownError), statusCode);
-                            return ERROR;
-                    }
-                }
-            } catch (ClientProtocolException e) {
-                // Error during communication
-                this.error = String.format (this.context.getString(R.string.JIRestProtocolError), e.getMessage());
-                return ERROR;
-            } catch (SocketTimeoutException e) {
-                // Socket has timed out
-                this.error = this.context.getString(R.string.JIRestSocketTimeout);
-                return TIMEOUT;
-            } catch (IOException e) {
-                // IO exception occurred
-                this.error = String.format (this.context.getString(R.string.JIRestIOError), e.getMessage());
-                return ERROR;
+            if (content != null) {
+                OutputStream outputStream = new BufferedOutputStream(connection.getOutputStream());
+                outputStream.write(content.toString().getBytes(Charset.forName("UTF-8")));
             }
+
+            // Get response
+            InputStream instream = new BufferedInputStream(connection.getInputStream());
+            this.result = Main.convertStreamToString(instream);
+            try {
+                this.jsonResult = new JSONObject(this.result);
+            } catch (JSONException e) {
+                // Couldn't parse JSON result; leave as null
+            }
+            instream.close();
+
+            int statusCode = connection.getResponseCode();
+            connection.disconnect();
+
+            switch (statusCode) {
+                case HttpStatus.SC_OK:
+                case HttpStatus.SC_CREATED:
+                    return OK;
+                default:
+                    this.error = String.format (this.context.getString(R.string.JIRestUnknownError), statusCode);
+                    return ERROR;
+            }
+        } catch (SocketTimeoutException e) {
+            // Socket timeout occurred
+            this.error = String.format(this.context.getString(R.string.JIRestSocketTimeout), e.getMessage());
+            connection.disconnect();
+
+            return ERROR;
+        } catch (IOException e) {
+            // IO exception occurred
+            this.error = String.format(this.context.getString(R.string.JIRestIOError), e.getMessage());
+            connection.disconnect();
+
+            return ERROR;
         } catch (Exception e) {
             // Something else happened
             this.error  = String.format (this.context.getString(R.string.JIRestUnknownError), e.getMessage());
+            connection.disconnect();
+
             return ERROR;
         }
-        return OK;
     }
 
-    protected HttpUriRequest addAuthDetailsToRequest(HttpUriRequest request) {
+    protected HttpURLConnection addAuthDetailsToRequest(HttpURLConnection connection) {
         AccountManager am = AccountManager.get(context);
         Account[] accounts = am.getAccountsByType(context.getString(R.string.authenticatorAccountType));
         Account thisAccount = (accounts.length > 0 ? accounts[0] : null);
@@ -224,9 +212,38 @@ class JIRest {
             String authToken = am.peekAuthToken(thisAccount, context.getString(R.string.authTokenType));
 
             // Add authentication details
-            request.addHeader("Authorization", "OAuth " + authToken);
+            connection.setRequestProperty("Authorization", "OAuth " + authToken);
         }
 
-        return request;
+        return connection;
+    }
+
+    protected HttpURLConnection getConnection(String hostURL)
+    {
+        try {
+            final URL url = new URL(hostURL);
+            if (url.getProtocol().equals("https")) {
+                HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
+                    @Override
+                    public boolean verify(String hostname, SSLSession session) {
+                    return hostname.equals(url.getHost());
+                    }
+                });
+
+                HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+                connection.setConnectTimeout(timeoutLength);
+
+                return connection;
+            } else {
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setConnectTimeout(timeoutLength);
+
+                return connection;
+            }
+        } catch (MalformedURLException e) {
+            return null;
+        } catch (IOException e) {
+            return null;
+        }
     }
 }
