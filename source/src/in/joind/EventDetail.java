@@ -64,8 +64,6 @@ public class EventDetail extends JIActivity implements OnClickListener {
         button = (Button)findViewById(R.id.ButtonEventDetailsViewTracks);
         button.setOnClickListener(this);
 
-        displayDetails(eventRowID);
-
         // We et the onclick listener for the 'i attended' button AFTER loaded the details.
         // Otherwise we might end up clicking it when it's not in the correct state (disabled when you are
         // attending the event)
@@ -84,6 +82,8 @@ public class EventDetail extends JIActivity implements OnClickListener {
 
         CheckBox checkbox = (CheckBox)findViewById(R.id.CheckBoxEventDetailsAttending);
         checkbox.setEnabled(isAuthenticated());
+
+        displayDetails(eventRowID);
     }
 
     public void displayDetails (int event_row_ID) {
@@ -124,7 +124,7 @@ public class EventDetail extends JIActivity implements OnClickListener {
         
         // Add number of talks to the correct button caption
         Button b = (Button) this.findViewById(R.id.ButtonEventDetailsViewTalks);
-        int talkCount = event.optInt("event_talks_count");
+        int talkCount = dh.getTalkCountForEvent(event_row_ID);
         if (talkCount == 0) {
             b.setText(getString(R.string.generalViewTalkNoCount));
         } else if (talkCount == 1) {
