@@ -122,10 +122,12 @@ public class EventDetail extends JIActivity implements OnClickListener {
         t.setText (event.optString("description"));
         Linkify.addLinks(t, Linkify.ALL);
         
-     // Add number of talks to the correct button caption
+        // Add number of talks to the correct button caption
         Button b = (Button) this.findViewById(R.id.ButtonEventDetailsViewTalks);
         int talkCount = event.optInt("event_talks_count");
-        if (talkCount == 1) {
+        if (talkCount == 0) {
+            b.setText(getString(R.string.generalViewTalkNoCount));
+        } else if (talkCount == 1) {
             b.setText(String.format(getString(R.string.generalViewTalkSingular), talkCount));
         } else {
             b.setText(String.format(getString(R.string.generalViewTalkPlural), talkCount));

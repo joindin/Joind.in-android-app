@@ -77,6 +77,7 @@
 
     <string name="generalViewTalkSingular">Talk (%d)</string>
     <string name="generalViewTalkPlural">Talks (%d)</string>
+    <string name="generalViewTalkNoCount">Talks</string>
 
     <string name="generalEventTalksSingular">%d event talk</string>
     <string name="generalEventTalksPlural">%d event talks</string>
