@@ -61,6 +61,7 @@
     <string name="activityMainEventsUpcoming">Upcoming events</string>
     <string name="activityMainEventsFavorites">Favorite events</string>
 
+    <string name="JIRestValidConnectionError">Couldn\'t establish a valid connection</string>
     <string name="JIRestProtocolError">There was a protocol based error: %s</string>
     <string name="JIRestSocketTimeout">Timeout while connecting to joind.in website.</string>
     <string name="JIRestIOError">There was an IO stream related error: %s</string>
