@@ -27,5 +27,7 @@ pom.xml.*
 gen-external-apklibs
 
 # Crashlytics string export
-source/res/values/com_crashlytics_export_strings.xml
+res/values/com_crashlytics_export_strings.xml
 
+# OAuth properties file
+res/raw/oauth.properties

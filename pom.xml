@@ -3,7 +3,7 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <version>2.0.1</version>
+    <version>2.0.2</version>
     <name>joind.in Android app</name>
     <groupId>in</groupId>
     <artifactId>joind.in</artifactId>
@@ -13,7 +13,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <platform.version>4.0.1.2</platform.version>
-        <android.plugin.version>3.6.0</android.plugin.version>
+        <android.plugin.version>3.8.0</android.plugin.version>
     </properties>
 
     <!-- local repository for deps that aren't in maven central -->
@@ -84,6 +84,7 @@
             <version>[1.0.2,)</version>
         </dependency>
     </dependencies>
+
     <build>
         <finalName>${project.artifactId}</finalName>
         <pluginManagement>
@@ -121,6 +122,27 @@
                         <id>CleanupResources</id>
                         <goals>
                             <goal>CleanupResources</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <id>GenerateResources</id>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <target>
+                                <echo message="Checking existence of res/raw/oauth.properties..." />
+
+                                <ant antfile="oauth_build.xml" />
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
                         </goals>
                     </execution>
                 </executions>

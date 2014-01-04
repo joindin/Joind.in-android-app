@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="oauth_build" default="do-check">
+
+    <target name="do-check" depends="check-oauth-properties, oauth-exists, create-oauth-properties" />
+
+    <target name="check-oauth-properties">
+        <available file="res/raw/oauth.properties" property="oauth.present" />
+    </target>
+
+    <target name="oauth-exists" if="oauth.present">
+        <echo>File exists; not overwriting</echo>
+    </target>
+
+    <target name="create-oauth-properties" unless="oauth.present">
+        <echo>Generating res/raw/oauth.properties, key is ${oauth.api_key}, callback is ${oauth.callback}</echo>
+        <propertyfile file="res/raw/oauth.properties" comment="OAuth properties">
+            <entry key="api_key" value="${oauth.api_key}"/>
+            <entry key="callback" value="${oauth.callback}"/>
+        </propertyfile>
+    </target>
+
+</project>
