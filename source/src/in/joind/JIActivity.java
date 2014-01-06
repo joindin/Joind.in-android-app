@@ -124,11 +124,6 @@ public class JIActivity extends ActionBarActivity {
         return true;
     }
 
-    @Override
-    public FragmentManager getSupportFragmentManager() {
-        return null;
-    }
-
     protected void showToast(String message, int duration) {
         Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.activityEventDetailFailedJSON), duration);
         toast.show();

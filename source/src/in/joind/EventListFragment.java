@@ -38,49 +38,46 @@ public class EventListFragment extends ListFragment implements EventListFragment
     private JIEventAdapter m_eventAdapter;
     private EventLoaderThread event_loader_thread;
     int eventSortOrder = DataHelper.ORDER_DATE_ASC;
-    MainActivity parentActivity;
+    Main parentActivity;
     JIRest rest;
     ListView listView;
 
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         Log.d("JoindInApp", "onAttach");
-        parentActivity = (MainActivity) activity;
+        parentActivity = (Main) activity;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
-//        Log.d("JoindInApp", "onCreateView");
-//        ArrayList<JSONObject> m_events = new ArrayList<JSONObject>();
-//        m_eventAdapter = new JIEventAdapter(getActivity(), R.layout.eventrow, m_events);
-//        setListAdapter(m_eventAdapter);
-//
+        ArrayList<JSONObject> m_events = new ArrayList<JSONObject>();
+        m_eventAdapter = new JIEventAdapter(getActivity(), R.layout.eventrow, m_events);
+        setListAdapter(m_eventAdapter);
+
         return view;
     }
 
     @Override
     public void onActivityCreated(android.os.Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Log.d("JoindInApp", "onActivityCreated");
 
         listView = getListView();
     }
 
+    @Override
     public void onPause() {
-        if (event_loader_thread != null) {
-            Log.d(MainActivity.LOG_JOINDIN_APP, "Stopping event loader thread");
-            event_loader_thread.stopThread();
-        } else {
-            Log.d(MainActivity.LOG_JOINDIN_APP, "No event loader thread?");
-        }
-        listView = null;
         super.onPause();
+
+        if (event_loader_thread != null) {
+            event_loader_thread.stopThread();
+        }
+        event_loader_thread = null;
+        listView = null;
     }
 
     public void onResume() {
         super.onResume();
-        Log.d("JoindInApp", "onResume");
 
         if (listView != null) {
             setListShown(false);
@@ -173,14 +170,12 @@ public class EventListFragment extends ListFragment implements EventListFragment
         public synchronized void stopThread() {
             // Already stopped
             if (runner == null) {
-                Log.d("JoindInApp", "No runner");
                 return;
             }
 
             Thread moribund = runner;
             runner = null;
             moribund.interrupt();
-            Log.d("JoindInApp", "Interrupting");
         }
 
         public void run() {
@@ -245,14 +240,13 @@ public class EventListFragment extends ListFragment implements EventListFragment
                     } else {
                         break;
                     }
-                } while (metaObj.getInt("count") > 0 && !interrupted());
+                } while (Thread.currentThread() == runner && metaObj.getInt("count") > 0 && !interrupted());
             } catch (JSONException e) {
                 getActivity().runOnUiThread(new Runnable() {
                     public void run() {
                         displayEvents(event_type);
                     }
                 });
-                e.printStackTrace();
             }
 
             // Something bad happened? :(
@@ -270,7 +264,7 @@ public class EventListFragment extends ListFragment implements EventListFragment
             // Show the events
             getActivity().runOnUiThread(new Runnable() {
                 public void run() {
-                displayEvents(event_type);
+                    displayEvents(event_type);
                 }
             });
         }
