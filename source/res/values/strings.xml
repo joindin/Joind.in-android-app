@@ -8,7 +8,7 @@
     <string name="apiDateFormat">yyyy-MM-dd\'T\'HH:mm:ssZ</string>
 
     <!-- API URL to use -->
-    <string name="apiURL">http://api.joind.in/v2.1/</string>
+    <string name="apiURL">https://api.joind.in/v2.1/</string>
 
     <!-- OAuth URL to use, and the callback -->
     <string name="oauthURL">http://joind.in/user/oauth_allow</string>
@@ -62,6 +62,7 @@
     <string name="activityMainEventsUpcoming">Upcoming events</string>
     <string name="activityMainEventsFavorites">Favorite events</string>
 
+    <string name="JIRestValidConnectionError">Couldn\'t establish a valid connection</string>
     <string name="JIRestProtocolError">There was a protocol based error: %s</string>
     <string name="JIRestSocketTimeout">Timeout while connecting to joind.in website.</string>
     <string name="JIRestIOError">There was an IO stream related error: %s</string>
@@ -69,14 +70,15 @@
 
     <!-- Global strings, can occur everywhere -->
     <string name="generalPleaseWait">Please wait...</string>
-    <string name="generalViewCommentSingular">View comment (%d)</string>
-    <string name="generalViewCommentPlural">View comments (%d)</string>
+    <string name="generalViewCommentSingular">Comment (%d)</string>
+    <string name="generalViewCommentPlural">Comments (%d)</string>
 
-    <string name="generalViewTrackSingular">View tracks (%d)</string>
-    <string name="generalViewTrackPlural">View tracks (%d)</string>
+    <string name="generalViewTrackSingular">Track (%d)</string>
+    <string name="generalViewTrackPlural">Tracks (%d)</string>
 
-    <string name="generalViewTalkSingular">View talk (%d)</string>
-    <string name="generalViewTalkPlural">View talks (%d)</string>
+    <string name="generalViewTalkSingular">Talk (%d)</string>
+    <string name="generalViewTalkPlural">Talks (%d)</string>
+    <string name="generalViewTalkNoCount">Talks</string>
 
     <string name="generalEventTalksSingular">%d event talk</string>
     <string name="generalEventTalksPlural">%d event talks</string>

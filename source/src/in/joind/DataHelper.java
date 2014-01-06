@@ -265,6 +265,12 @@ public final class DataHelper {
         return count;
     }
 
+    public int getTalkCountForEvent(int event_id) {
+        Cursor c = this.db.rawQuery("SELECT json,_rowid_ FROM talks WHERE event_id = " + event_id, null);
+
+        return c.getCount();
+    }
+
     // Populates a talk comment adapter and returns the number of items populated
     public int populateTalkComments(int talk_id, JITalkCommentAdapter m_talkCommentAdapter) {
         Cursor c = this.db.rawQuery("SELECT json,_rowid_ FROM tcomments WHERE talk_id = " + talk_id, null);

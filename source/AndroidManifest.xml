@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="in.joind"
-      android:versionCode="2"
-      android:versionName="2.0.1">
+      android:versionCode="3"
+      android:versionName="2.0.2">
 
-    <uses-sdk android:minSdkVersion="5"  android:targetSdkVersion="15"/>
+    <uses-sdk android:minSdkVersion="9"  android:targetSdkVersion="15"/>
 
 	<!--  We need to upgrade to SDK 1.6 and we can support larger screens -->
 	<supports-screens
