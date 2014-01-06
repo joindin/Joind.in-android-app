@@ -1,7 +1,7 @@
 package in.joind;
 
 /*
- * MainActivity activity. Displays all events and let the user select one.
+ * Main activity. Displays all events and let the user select one.
  */
 
 import java.io.BufferedReader;
@@ -22,7 +22,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TabHost;
 
-public class MainActivity extends JIActivity implements SearchView.OnQueryTextListener {
+public class Main extends JIActivity implements SearchView.OnQueryTextListener {
 
     private String currentTab = "hot";                   // Current selected tab
 
