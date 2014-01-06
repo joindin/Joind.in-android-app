@@ -330,10 +330,9 @@ class JIEventAdapter extends ArrayAdapter<JSONObject> {
         long event_start = 0;
         long event_end = 0;
         try {
-            event_start = new SimpleDateFormat().parse(o.optString("start_date")).getTime();
-            event_end = new SimpleDateFormat().parse(o.optString("end_date")).getTime();
+            event_start = new SimpleDateFormat(context.getString(R.string.apiDateFormat)).parse(o.optString("start_date")).getTime();
+            event_end = new SimpleDateFormat(context.getString(R.string.apiDateFormat)).parse(o.optString("end_date")).getTime();
         } catch (ParseException e) {
-            e.printStackTrace();
         }
         long cts = System.currentTimeMillis() / 1000;
         if (event_start <= cts && cts <= event_end) {
