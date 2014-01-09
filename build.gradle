@@ -1,0 +1,40 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url 'http://download.crashlytics.com/maven' }
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.7.0'
+        classpath 'com.crashlytics.tools.gradle:crashlytics-gradle:1.+'
+    }
+}
+
+apply plugin: 'android'
+apply plugin: 'crashlytics'
+
+repositories {            
+    maven { url 'http://download.crashlytics.com/maven' }
+}
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion "19.0.0"
+
+    sourceSets {
+        main {
+            manifest.srcFile 'source/AndroidManifest.xml'
+            java.srcDirs = ['source/src']
+            resources.srcDirs = ['source/src']
+            aidl.srcDirs = ['source/src']
+            renderscript.srcDirs = ['source/src']
+            res.srcDirs = ['source/res']
+            assets.srcDirs = ['source/assets']
+        }
+    }
+}
+
+dependencies {
+    compile 'com.android.support:appcompat-v7:18.0.+'
+    compile 'com.crashlytics.android:crashlytics:1.+'
+}
