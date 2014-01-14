@@ -15,6 +15,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TabHost;
 
@@ -79,7 +80,8 @@ public class Main extends JIActivity implements SearchView.OnQueryTextListener {
 
     // Overriding the JIActivity add sort-items
     public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.home_menu, menu); // Use the custom home menu
 
         MenuItem menu_date = menu.add(0, MENU_SORT_DATE, 0, R.string.OptionMenuSortDate);
         menu_date.setIcon(android.R.drawable.ic_menu_month);
@@ -97,7 +99,6 @@ public class Main extends JIActivity implements SearchView.OnQueryTextListener {
 
         return true;
     }
-
 
     // Overriding the JIActivity handler to handle the sorting
     public boolean onOptionsItemSelected(MenuItem item) {

@@ -69,7 +69,8 @@ public class JIActivity extends ActionBarActivity {
         });
     }
 
-    // Automatically called. Creates option menu. All activities share the same menu.
+    // Automatically called. Creates option menu. All activities share the same menu, except for the home screen
+    // which sorts itself out
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
