@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Global menu that can be called (almost) everywhere. We should probably change
      this into different menu's depending on activity but this is sufficient for now. -->
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/settings_menu_item"
         android:title="@string/OptionMenuSettings"
@@ -17,4 +18,11 @@
         android:title="@string/OptionMenuAbout"
         android:alphabeticShortcut="A"
         android:icon="@android:drawable/ic_menu_info_details"/>
+    <item
+        android:id="@+id/search"
+        android:title="@string/OptionMenuSearch"
+        android:icon="@drawable/ic_action_search"
+        android:showAsAction="always"
+        app:showAsAction="always"
+        app:actionViewClass="android.support.v7.widget.SearchView" />
 </menu>

@@ -19,8 +19,10 @@
     <string name="OptionMenuClearCache">Clear cache</string>
     <string name="OptionMenuAbout">About</string>
 
+    <string name="OptionMenuSearch">Search</string>
     <string name="OptionMenuSortDate">Sort by date</string>
     <string name="OptionMenuSortTitle">Sort by name</string>
+    <string name="SearchHint">Search event names</string>
 
     <!--  Context menu strings -->
     <string name="ContextMainAddToFavorite">Add to favorite list</string>
