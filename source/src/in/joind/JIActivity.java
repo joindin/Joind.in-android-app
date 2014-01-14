@@ -30,6 +30,7 @@ public class JIActivity extends ActionBarActivity {
     protected boolean isAuthenticated;
     static String _comment_history;
     final public static String LOG_JOINDIN_APP = "JoindInApp";
+    final public static String SHARED_PREF_NAME = "in.joind";
 
 	public static void setCommentHistory(String comment) {
 		_comment_history = comment;
