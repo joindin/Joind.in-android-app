@@ -32,7 +32,7 @@ import java.util.ArrayList;
  * The list fragment that is shown in our tabbed view.
  * Lists events depending on event type (in our case, the fragment's Tag value)
  */
-public class EventListFragment extends ListFragment {
+public class EventListFragment extends ListFragment implements EventListFragmentInterface {
 
     private JIEventAdapter m_eventAdapter;
     private EventLoaderThread event_loader_thread;
@@ -128,6 +128,8 @@ public class EventListFragment extends ListFragment {
         // Tell the adapter that our data set has changed so it can update it
         m_eventAdapter.notifyDataSetChanged();
 
+        parentActivity.setEventsCountTitle(count);
+
         return count;
     }
 
@@ -149,6 +151,8 @@ public class EventListFragment extends ListFragment {
         if (eventType.equals("hot")) title = this.getString(R.string.activityMainEventsHot);
         if (eventType.equals("past")) title = this.getString(R.string.activityMainEventsPast);
         if (eventType.equals("upcoming")) title = this.getString(R.string.activityMainEventsUpcoming);
+
+        parentActivity.setEventsTitle(title, 0);
     }
 
     class EventLoaderThread extends Thread {
