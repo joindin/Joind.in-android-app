@@ -85,7 +85,9 @@
     <string name="generalEventTracksSingular">%d event track</string>
     <string name="generalEventTracksPlural">%d event tracks</string>
 
-	<string name="generalTime" formatted="false">Time start: %02d:%02d</string>
+    <string name="generalTime" formatted="false">Time start: %02d:%02d</string>
+    <string name="generalEventCountSingular">%d event</string>
+    <string name="generalEventCountPlural">%d events</string>
     <string name="generalCommentSingular">%d comment</string>
     <string name="generalCommentPlural">%d comments</string>
     <string name="generalAnonymous">Anonymous</string>
