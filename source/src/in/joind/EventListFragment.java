@@ -197,6 +197,7 @@ public class EventListFragment extends ListFragment implements EventListFragment
             boolean isFirst = true;
             int error = JIRest.OK; // default
 
+            parentActivity.displayHorizontalProgress(true);
             try {
                 do {
                     error = rest.getJSONFullURI(uriToUse);
@@ -269,6 +270,7 @@ public class EventListFragment extends ListFragment implements EventListFragment
                     displayEvents(event_type);
                 }
             });
+            parentActivity.displayHorizontalProgress(false);
         }
     }
 }

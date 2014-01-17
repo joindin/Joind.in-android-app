@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TabHost;
 
 /**
@@ -171,6 +172,16 @@ public class Main extends JIActivity implements SearchView.OnQueryTextListener {
         fragment.filterByString(s);
 
         return false;
+    }
+
+    public void displayHorizontalProgress(final boolean state) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                View v = findViewById(R.id.progress_bar);
+                v.setVisibility(state ? View.VISIBLE : View.GONE);
+            }
+        });
     }
 
     protected void setTabTitle(String title, int eventCount) {
