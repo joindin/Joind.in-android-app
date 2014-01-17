@@ -133,7 +133,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
     // Load talks in new thread...
     public void loadTalks(final int eventRowID, final int track_id, final String talkVerboseURI) {
         // Display progress bar
-        displayProgressBar(true);
+        displayProgressBarCircular(true);
 
 
         new Thread() {
@@ -173,7 +173,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
                         }
                     } while (metaObj.getInt("count") > 0);
                 } catch (JSONException e) {
-                    displayProgressBar(false);
+                    displayProgressBarCircular(false);
                     // Something went wrong. Just display the current talks.
                     runOnUiThread(new Runnable() {
                         public void run() {
@@ -183,7 +183,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
                 }
 
                 // Remove progress bar
-                displayProgressBar(false);
+                displayProgressBarCircular(false);
                 runOnUiThread(new Runnable() {
                     public void run() {
                         displayTalks(eventRowID, track_id);

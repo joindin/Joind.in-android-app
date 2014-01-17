@@ -61,7 +61,7 @@ public class JIActivity extends ActionBarActivity {
     }
 
     // Displays (or hides) the circular progress animation in the top left corner
-    public void displayProgressBar (final boolean state) {
+    public void displayProgressBarCircular(final boolean state) {
         runOnUiThread(new Runnable() {
             public void run() {
                 setProgressBarIndeterminateVisibility(state);

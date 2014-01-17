@@ -140,7 +140,7 @@ public class EventComments extends JIActivity implements OnClickListener {
     // Load all event comments from joind.in API and display them
     public void loadEventComments (final int eventRowID, final String commentsURI) {
         // Display progress bar
-        displayProgressBar (true);
+        displayProgressBarCircular(true);
 
         new Thread () {
             public void run() {
@@ -187,7 +187,7 @@ public class EventComments extends JIActivity implements OnClickListener {
                 }
 
                 // Remove progress bar
-                displayProgressBar (false);
+                displayProgressBarCircular(false);
                 runOnUiThread(new Runnable() { public void run() { displayEventComments(eventRowID); }});
             }
         }.start();
