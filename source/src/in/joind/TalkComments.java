@@ -131,7 +131,7 @@ public class TalkComments extends JIActivity implements OnClickListener {
     // Load all talks from the joind.in API, populate database and display the new talks
     public void loadTalkComments(final int talk_id, final String commentsURI) {
         // Display progress bar
-        displayProgressBar(true);
+        displayProgressBarCircular(true);
 
         // Do loading of talks in separate thread
         new Thread() {
@@ -179,7 +179,7 @@ public class TalkComments extends JIActivity implements OnClickListener {
                 }
 
                 // Remove progress bar
-                displayProgressBar(false);
+                displayProgressBarCircular(false);
                 runOnUiThread(new Runnable() {
                     public void run() {
                         displayTalkComments(talk_id);

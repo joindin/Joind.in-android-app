@@ -1,76 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Main layout with all events -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
-    <TableLayout
-        android:id="@+id/TableLayout01"
-        android:layout_width="fill_parent"
+
+    <ProgressBar android:id="@+id/progress_bar"
+        android:visibility="gone"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="30">
-        <TableRow
-            android:id="@+id/TableRow01"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_gravity="center_vertical|center_horizontal"
-            android:gravity="center_vertical|center_horizontal"
-            android:layout_marginTop="5px">
-            <Button
-                android:text="Hot"
-                android:layout_height="fill_parent"
-                android:layout_width="fill_parent"
-                android:height="30dip"
-                android:id="@+id/ButtonMainEventHot"
-                android:textStyle="bold"
-                android:textSize="11dip"
-                android:layout_weight=".25"
-                android:width="0dip"></Button>
-            <Button
-                android:text="Upcoming"
-                android:layout_height="fill_parent"
-                android:layout_width="fill_parent"
-                android:height="30dip"
-                android:id="@+id/ButtonMainEventUpcoming"
-                android:textStyle="bold"
-                android:textSize="11dip"
-                android:layout_weight=".25"
-                android:width="0dip"></Button>
-            <Button
-                android:text="Past"
-                android:layout_height="fill_parent"
-                android:layout_width="fill_parent"
-                android:height="30dip"
-                android:id="@+id/ButtonMainEventPast"
-                android:textStyle="bold"
-                android:textSize="11dip"
-                android:layout_weight=".25"
-                android:width="0dip"></Button>
-        </TableRow>
-    </TableLayout>
-    <ListView
+        android:indeterminate="true"
+        android:layout_marginTop="-7dp"
+        style="?android:attr/progressBarStyleHorizontal" />
+
+    <android.support.v4.app.FragmentTabHost
         android:layout_width="fill_parent"
-        android:id="@+id/ListViewMainEvents"
-        android:scrollbars="vertical"
-        android:layout_height="0px"
-        android:layout_weight="10000">
-	</ListView>
-	<LinearLayout
-		android:id="@+id/LinearLayout01"
-		android:layout_height="wrap_content"
-		android:layout_width="fill_parent"
-		android:layout_gravity="bottom" android:layout_weight="10">
-		<ImageView
-			android:id="@+id/ImageView01"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:background="@android:drawable/ic_menu_search"></ImageView>
-		<EditText
-			android:layout_height="wrap_content"
-			android:id="@+id/FilterBar"
-			android:gravity="fill_horizontal"
-			android:layout_width="fill_parent"
-			android:inputType="text"
-			android:layout_marginRight="5px"></EditText>
-	</LinearLayout>
-</LinearLayout>
+        android:layout_height="fill_parent"
+        android:id="@+id/tabHost">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TabWidget
+                android:id="@android:id/tabs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:orientation="horizontal" />
+
+            <FrameLayout
+                android:id="@+id/tabContent"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0"/>
+
+            <FrameLayout
+                android:id="@+id/realtabcontent"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
+
+    </android.support.v4.app.FragmentTabHost>
+
+</FrameLayout>

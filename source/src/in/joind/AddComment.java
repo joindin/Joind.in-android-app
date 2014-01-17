@@ -142,7 +142,7 @@ public class AddComment extends JIActivity implements OnClickListener {
         String url;
 
         // Display progress bar
-        displayProgressBar(true);
+        displayProgressBarCircular(true);
 
         lastError = "";
 
@@ -205,7 +205,7 @@ public class AddComment extends JIActivity implements OnClickListener {
         }
 
         // Remove progress bar
-        displayProgressBar(false);
+        displayProgressBarCircular(false);
 
         return result == JIRest.OK;
     }

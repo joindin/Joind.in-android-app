@@ -163,7 +163,7 @@ public class EventDetail extends JIActivity implements OnClickListener {
 
     public void loadDetails (final int eventRowID, final String eventVerboseURI) {
         // Display progress bar
-        displayProgressBar (true);
+        displayProgressBarCircular(true);
 
         new Thread () {
             public void run () {
@@ -193,7 +193,7 @@ public class EventDetail extends JIActivity implements OnClickListener {
                 });
 
                 // Remove progress bar
-                displayProgressBar (false);
+                displayProgressBarCircular(false);
             }
 
         }.start();
@@ -228,7 +228,7 @@ public class EventDetail extends JIActivity implements OnClickListener {
                 // We run in a background thread
                 public void run() {
                     // Display progress bar (@TODO: Check if this works since it's not a UI thread)
-                    displayProgressBar (true);
+                    displayProgressBarCircular(true);
 
                     // Fetch state of checkbox (on or off)
                     CheckBox cb = (CheckBox)findViewById(R.id.CheckBoxEventDetailsAttending);
@@ -245,7 +245,7 @@ public class EventDetail extends JIActivity implements OnClickListener {
                     });
 
                     // Stop displaying progress bar
-                    displayProgressBar (false);
+                    displayProgressBarCircular(false);
                 }
             }.start();
         }

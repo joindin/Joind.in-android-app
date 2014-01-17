@@ -30,6 +30,7 @@ public class JIActivity extends ActionBarActivity {
     protected boolean isAuthenticated;
     static String _comment_history;
     final public static String LOG_JOINDIN_APP = "JoindInApp";
+    final public static String SHARED_PREF_NAME = "in.joind";
 
 	public static void setCommentHistory(String comment) {
 		_comment_history = comment;
@@ -60,7 +61,7 @@ public class JIActivity extends ActionBarActivity {
     }
 
     // Displays (or hides) the circular progress animation in the top left corner
-    public void displayProgressBar (final boolean state) {
+    public void displayProgressBarCircular(final boolean state) {
         runOnUiThread(new Runnable() {
             public void run() {
                 setProgressBarIndeterminateVisibility(state);
@@ -68,7 +69,8 @@ public class JIActivity extends ActionBarActivity {
         });
     }
 
-    // Automatically called. Creates option menu. All activities share the same menu.
+    // Automatically called. Creates option menu. All activities share the same menu, except for the home screen
+    // which sorts itself out
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
@@ -121,11 +123,6 @@ public class JIActivity extends ActionBarActivity {
                 break;
         }
         return true;
-    }
-
-    @Override
-    public FragmentManager getSupportFragmentManager() {
-        return null;
     }
 
     protected void showToast(String message, int duration) {

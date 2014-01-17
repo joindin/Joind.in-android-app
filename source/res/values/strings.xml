@@ -19,8 +19,10 @@
     <string name="OptionMenuClearCache">Clear cache</string>
     <string name="OptionMenuAbout">About</string>
 
+    <string name="OptionMenuSearch">Search</string>
     <string name="OptionMenuSortDate">Sort by date</string>
     <string name="OptionMenuSortTitle">Sort by name</string>
+    <string name="SearchHint">Search event names</string>
 
     <!--  Context menu strings -->
     <string name="ContextMainAddToFavorite">Add to favorite list</string>
@@ -85,7 +87,9 @@
     <string name="generalEventTracksSingular">%d event track</string>
     <string name="generalEventTracksPlural">%d event tracks</string>
 
-	<string name="generalTime" formatted="false">Time start: %02d:%02d</string>
+    <string name="generalTime" formatted="false">Time start: %02d:%02d</string>
+    <string name="generalEventCountSingular">%d event</string>
+    <string name="generalEventCountPlural">%d events</string>
     <string name="generalCommentSingular">%d comment</string>
     <string name="generalCommentPlural">%d comments</string>
     <string name="generalAnonymous">Anonymous</string>
