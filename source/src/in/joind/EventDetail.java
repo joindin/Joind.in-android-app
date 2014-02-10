@@ -144,8 +144,7 @@ public class EventDetail extends JIActivity implements OnClickListener {
 
         // See if this event has tracks
         b = (Button) this.findViewById(R.id.ButtonEventDetailsViewTracks);
-        JSONArray tracks = event.optJSONArray("tracks");
-        int trackCount = (tracks == null) ? 0 : tracks.length();
+        int trackCount = dh.getTrackCountForEvent(event_row_ID);
         if (trackCount == 1) {
             b.setText(String.format(getString(R.string.generalViewTrackSingular), trackCount));
         } else {

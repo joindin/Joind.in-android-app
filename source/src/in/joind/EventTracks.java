@@ -3,6 +3,8 @@ package in.joind;
 import java.util.ArrayList;
 
 import in.joind.R;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -17,6 +19,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Toast;
+
+import com.crashlytics.android.Crashlytics;
 
 /*
  * Displays all tracks from specified event.
@@ -25,6 +30,7 @@ import android.widget.AdapterView.OnItemClickListener;
 public class EventTracks extends JIActivity {
     private JITrackAdapter m_trackAdapter;    // adapter for listview
     private JSONObject eventJSON;
+    private int eventRowID = 0;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,14 +44,19 @@ public class EventTracks extends JIActivity {
         // Get event ID from the intent scratch board
         try {
             this.eventJSON = new JSONObject(getIntent().getStringExtra("eventJSON"));
+            this.eventRowID = this.eventJSON.getInt("rowID");
         } catch (JSONException e) {
             android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No event passed to activity", e);
+            Crashlytics.setString("eventTracks_eventJSON", getIntent().getStringExtra("eventJSON"));
+
+            // Tell the user
+            showToast(getString(R.string.activityEventDetailFailedJSON), Toast.LENGTH_LONG);
+            finish();
+            return;
         }
 
         // Set all the event information
-        TextView t;
-        t = (TextView) this.findViewById(R.id.EventTracksCaption);
-        t.setText(this.eventJSON.optString("event_name"));
+        setTitle(this.eventJSON.optString("name"));
 
         // Initialize track list
         ArrayList<JSONObject> m_tracks = new ArrayList<JSONObject>();
@@ -59,18 +70,24 @@ public class EventTracks extends JIActivity {
                 // Open event details with additional eventTrack data.
                 Intent myIntent = new Intent();
                 myIntent.setClass(getApplicationContext(), EventTalks.class);
-                myIntent.putExtra("eventJSON", getIntent().getStringExtra("eventJSON"));
+                myIntent.putExtra("eventJSON", eventJSON.toString());
                 myIntent.putExtra("eventTrack", parent.getAdapter().getItem(pos).toString());
                 startActivity(myIntent);
             }
         });
 
-        // Display cached talks
-        int event_id = this.eventJSON.optInt("ID");
-        displayTracks(event_id);
+        // Display cached tracks
+        displayTracks(eventRowID);
+
+        // Load new tracks (in background)
+        try {
+            loadTracks(eventRowID, eventJSON.getString("tracks_uri"));
+        } catch (JSONException e) {
+            android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No tracks URI available");
+        }
     }
 
-    // Display all talks in the talk list (adapter)
+    // Display all tracks in the track list (adapter)
     public int displayTracks(int event_id) {
         DataHelper dh = DataHelper.getInstance(this);
 
@@ -79,17 +96,81 @@ public class EventTracks extends JIActivity {
         m_trackAdapter.notifyDataSetChanged();
 
         // Set title bar with number of talks found
+        String tracksFound = "";
         if (trackCount == 1) {
-            setTitle(String.format(getString(R.string.generalEventTracksSingular), trackCount));
+            tracksFound = String.format(getString(R.string.generalEventTracksSingular), trackCount);
         } else {
-            setTitle(String.format(getString(R.string.generalEventTracksPlural), trackCount));
+            tracksFound = String.format(getString(R.string.generalEventTracksPlural), trackCount);
         }
+        getSupportActionBar().setSubtitle(tracksFound);
         return trackCount;
+    }
+
+    public void loadTracks(final int eventRowID, final String trackVerboseURI) {
+        // Display progress bar
+        displayProgressBarCircular(true);
+
+
+        new Thread() {
+            public void run() {
+                // This URI may change depending on how many talks are to be loaded
+                String uriToUse = trackVerboseURI;
+                JSONObject fullResponse;
+                JSONObject metaObj = new JSONObject();
+                JIRest rest = new JIRest(EventTracks.this);
+                boolean isFirst = true;
+                DataHelper dh = DataHelper.getInstance();
+
+                try {
+                    do {
+                        // Fetch talk data from joind.in API
+                        int error = rest.getJSONFullURI(uriToUse);
+
+                        // @TODO: We do not handle errors?
+
+                        if (error == JIRest.OK) {
+                            fullResponse = rest.getJSONResult();
+                            metaObj = fullResponse.getJSONObject("meta");
+
+                            if (isFirst) {
+                                dh.deleteTalksFromEvent(eventRowID);
+                                isFirst = false;
+                            }
+
+                            // Remove all talks from event, and insert new data
+                            JSONArray json = fullResponse.getJSONArray("tracks");
+
+                            for (int i = 0; i != json.length(); i++) {
+                                JSONObject json_track = json.getJSONObject(i);
+                                dh.insertTrack(eventRowID, json_track);
+                            }
+                            uriToUse = metaObj.getString("next_page");
+                        }
+                    } while (metaObj.getInt("count") > 0);
+                } catch (JSONException e) {
+                    displayProgressBarCircular(false);
+                    // Something went wrong. Just display the current talks.
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            displayTracks(eventRowID);
+                        }
+                    });
+                }
+
+                // Remove progress bar
+                displayProgressBarCircular(false);
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        displayTracks(eventRowID);
+                    }
+                });
+            }
+        }.start();
     }
 }
 
 /**
- * Adapter that hold our talk rows. See  JIEventAdapter class in main.java for more info
+ * Adapter that holds our track rows. See  JIEventAdapter class in main.java for more info
  */
 class JITrackAdapter extends ArrayAdapter<JSONObject> {
     private ArrayList<JSONObject> items;
@@ -112,7 +193,7 @@ class JITrackAdapter extends ArrayAdapter<JSONObject> {
         if (o == null) return v;
 
         String t2Text;
-        int talkCount = o.optInt("used");
+        int talkCount = o.optInt("talks_count");
         if (talkCount == 1) {
             t2Text = String.format(this.context.getString(R.string.generalEventTalksSingular), talkCount);
         } else {

@@ -29,7 +29,7 @@ public final class DataHelper {
     private static DataHelper DHinstance = null;
 
     private static final String DATABASE_NAME = "joindin.db";
-    private static final int DATABASE_VERSION = 12;  // Increasing this version number will result in automatic call to onUpgrade()
+    private static final int DATABASE_VERSION = 13;  // Increasing this version number will result in automatic call to onUpgrade()
 
     public static final int ORDER_DATE_ASC = 1;
     public static final int ORDER_DATE_DESC = 2;
@@ -152,6 +152,18 @@ public final class DataHelper {
         return db.insert("talks", "", values);
     }
 
+    // Insert a new track
+    public long insertTrack(int eventRowID, JSONObject track) {
+        ContentValues values = new ContentValues();
+        String uri = track.optString("uri");
+        values.put("event_id", eventRowID);
+        values.put("uri", uri);
+        values.put("json", track.toString());
+
+        db.delete("tracks", "uri=?", new String[]{uri});
+        return db.insert("tracks", "", values);
+    }
+
     // Insert a new talk comment
     public long insertTalkComment(int talkID, JSONObject talkComment) {
         ContentValues values = new ContentValues();
@@ -235,32 +247,6 @@ public final class DataHelper {
         return count;
     }
 
-    public int populateTracks(int event_id, JITrackAdapter m_trackAdapter) {
-        int trackCount = 0;
-        Cursor c = this.db.rawQuery("SELECT json FROM events WHERE event_id = " + event_id, null);
-
-        if (c.getCount() == 0) {
-            c.close();
-            return 0;
-        }
-
-        c.moveToFirst();
-        try {
-            JSONObject json = new JSONObject(c.getString(0));
-            JSONArray json_tracks = json.getJSONArray("tracks");
-            trackCount = json_tracks.length();
-
-            for (int i = 0; i != json_tracks.length(); i++) {
-                m_trackAdapter.add(json_tracks.getJSONObject(i));
-            }
-        } catch (JSONException e) {
-            android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "Could not add item to list", e);
-        }
-
-        c.close();
-        return trackCount;
-    }
-
     // Populates a talk adapter and returns the number of items populated
     public int populateTalks(int event_id, int track_id, JITalkAdapter m_talkAdapter) {
         Cursor c;
@@ -297,6 +283,19 @@ public final class DataHelper {
         return count;
     }
 
+    public int getTrackCountForEvent(int event_id) {
+        Cursor c = this.db.rawQuery("SELECT json,_rowid_ FROM tracks WHERE event_id = " + event_id, null);
+
+        return c.getCount();
+    }
+
+    public int populateTracks(int event_id, JITrackAdapter m_trackAdapter) {
+        Cursor c = this.db.rawQuery("SELECT json,_rowid_ FROM tracks WHERE event_id = " + event_id, null);
+        int count = c.getCount();
+        populate(c, m_trackAdapter);
+        return count;
+    }
+
     // Populates specified adapter with a query (should be JSON data column)
     private void populate(Cursor c, ArrayAdapter<JSONObject> adapter) {
         // No cursor given, do not do anything
@@ -330,6 +329,7 @@ public final class DataHelper {
             db.execSQL("CREATE TABLE [events]    ([event_uri] VARCHAR COLLATE NOCASE, [event_title] VARCHAR COLLATE NOCASE, [event_start] INTEGER, [json] VARCHAR)");
             db.execSQL("CREATE TABLE [event_types] ([event_id] INTEGER, [event_type] VARCHAR COLLATE NOCASE)");
             db.execSQL("CREATE TABLE [talks]     ([event_id] INTEGER, [uri] VARCHAR, [track_id] INTEGER, [json] VARCHAR)");
+            db.execSQL("CREATE TABLE [tracks]     ([event_id] INTEGER, [uri] VARCHAR, [json] VARCHAR)");
             db.execSQL("CREATE TABLE [ecomments] ([event_id] INTEGER, [json] VARCHAR)");
             db.execSQL("CREATE TABLE [tcomments] ([talk_id] INTEGER, [json] VARCHAR)");
         }
