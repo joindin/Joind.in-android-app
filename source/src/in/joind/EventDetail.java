@@ -151,9 +151,6 @@ public class EventDetail extends JIActivity implements OnClickListener {
             b.setText(String.format(getString(R.string.generalViewTrackPlural), trackCount));
         }
 
-        // Set track button enabled when we have at least 1 track
-        b.setEnabled((trackCount > 0));
-
         // Tick the checkbox, depending on if we are attending or not
         CheckBox c = (CheckBox)findViewById(R.id.CheckBoxEventDetailsAttending);
         c.setChecked(event.optBoolean("attending"));
