@@ -26,6 +26,8 @@ import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -49,7 +51,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
         // Get event ID from the intent scratch board
         try {
             this.eventJSON = new JSONObject(getIntent().getStringExtra("eventJSON"));
-            if (getIntent().hasExtra("tracks")) {
+            if (getIntent().hasExtra("eventTrack")) {
                 this.trackJSON = new JSONObject(getIntent().getStringExtra("eventTrack"));
             }
         } catch (JSONException e) {
@@ -93,13 +95,13 @@ public class EventTalks extends JIActivity implements OnClickListener {
             }
         });
 
-        // Display cached talks
-        int track_id = (this.trackJSON != null) ? this.trackJSON.optInt("ID") : -1;
-        displayTalks(eventRowID, track_id);
+        // Display cached talks, optionally filtered by a track (by URI)
+        String trackURI = (this.trackJSON != null) ? this.trackJSON.optString("track_name") : ""; // FIXME name => uri
+        displayTalks(eventRowID, trackURI);
 
         // Load new talks (in background)
         try {
-            loadTalks(eventRowID, track_id, eventJSON.getString("talks_uri"));
+            loadTalks(eventRowID, trackURI, eventJSON.getString("talks_uri"));
         } catch (JSONException e) {
             android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No talks URI available");
         }
@@ -107,13 +109,24 @@ public class EventTalks extends JIActivity implements OnClickListener {
 
 
     // Display talks in the talk list (adapter), depending on the track_id
-    public int displayTalks(int eventRowID, int track_id) {
+    public int displayTalks(int eventRowID, String trackURI) {
         DataHelper dh = DataHelper.getInstance(this);
 
         m_talkAdapter.clear();
-        int talkCount = dh.populateTalks(eventRowID, track_id, m_talkAdapter);
+        dh.populateTalks(eventRowID, m_talkAdapter);
+        updateSubtitle(0); // initial
         m_talkAdapter.notifyDataSetChanged();
+        m_talkAdapter.getFilter().filter(trackURI, new Filter.FilterListener() {
+            @Override
+            public void onFilterComplete(int count) {
+                updateSubtitle(count);
+            }
+        });
 
+        return 0;
+    }
+
+    protected void updateSubtitle(int talkCount) {
         // Set title bar with number of talks found
         String talksFound = "";
         if (this.trackJSON != null) {
@@ -126,12 +139,10 @@ public class EventTalks extends JIActivity implements OnClickListener {
             talksFound += String.format(getString(R.string.generalEventTalksPlural), talkCount);
         }
         getSupportActionBar().setSubtitle(talksFound);
-        return talkCount;
     }
 
-
     // Load talks in new thread...
-    public void loadTalks(final int eventRowID, final int track_id, final String talkVerboseURI) {
+    public void loadTalks(final int eventRowID, final String trackURI, final String talkVerboseURI) {
         // Display progress bar
         displayProgressBarCircular(true);
 
@@ -177,7 +188,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
                     // Something went wrong. Just display the current talks.
                     runOnUiThread(new Runnable() {
                         public void run() {
-                            displayTalks(eventRowID, track_id);
+                            displayTalks(eventRowID, trackURI);
                         }
                     });
                 }
@@ -186,7 +197,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
                 displayProgressBarCircular(false);
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        displayTalks(eventRowID, track_id);
+                        displayTalks(eventRowID, trackURI);
                     }
                 });
             }
@@ -206,15 +217,17 @@ public class EventTalks extends JIActivity implements OnClickListener {
 /**
  * Adapter that hold our talk rows. See  JIEventAdapter class in main.java for more info
  */
-class JITalkAdapter extends ArrayAdapter<JSONObject> {
-    private ArrayList<JSONObject> items;
+class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable {
+    private ArrayList<JSONObject> items, filtered_items;
     private Context context;
     private TimeZone tz;
+    private TrackFilter filter;
 
     public JITalkAdapter(Context context, int textViewResourceId, ArrayList<JSONObject> mTalks, TimeZone tz) {
         super(context, textViewResourceId, mTalks);
         this.context = context;
         this.items = mTalks;
+        this.filtered_items = mTalks;
         this.tz = tz;
     }
 
@@ -225,7 +238,7 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> {
             v = vi.inflate(R.layout.talkrow, null);
         }
 
-        JSONObject o = items.get(position);
+        JSONObject o = filtered_items.get(position);
         if (o == null) return v;
 
         // Convert the supplied date/time string into something we can use
@@ -330,4 +343,66 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> {
         return v;
     }
 
+    public Filter getFilter() {
+        if (filter == null) {
+            filter = new TrackFilter();
+        }
+        return filter;
+    }
+
+    public int getCount() {
+        return filtered_items.size();
+    }
+
+    public JSONObject getItem(int position) {
+        return filtered_items.get(position);
+    }
+
+    private class TrackFilter extends Filter {
+        @SuppressWarnings("unchecked")
+        protected void publishResults(CharSequence prefix, FilterResults results) {
+            filtered_items = (ArrayList<JSONObject>) results.values;
+
+            notifyDataSetChanged();
+        }
+
+        protected FilterResults performFiltering(CharSequence match) {
+            FilterResults results = new FilterResults();
+            ArrayList<JSONObject> i = new ArrayList<JSONObject>();
+
+            if (match != null && match.toString().length() > 0) {
+
+                for (int index = 0; index < items.size(); index++) {
+                    JSONObject json = items.get(index);
+                    JSONArray tracks = json.optJSONArray("tracks");
+                    if (tracks.length() == 0) {
+                        continue;
+                    }
+
+                    int tracksLength = tracks.length();
+                    for (int j = 0; j < tracksLength; j++) {
+                        JSONObject track = tracks.optJSONObject(j);
+                        if (track == null) {
+                            continue;
+                        }
+
+                        // Add to the filtered result list when the match is present in the URI
+                        if (track.optString("track_name").toUpperCase().equals(match.toString().toUpperCase())) { // FIXME track_name => track_uri
+                            i.add(json);
+                            break;
+                        }
+                    }
+                }
+                results.values = i;
+                results.count = i.size();
+            } else {
+                synchronized (items) {
+                    results.values = items;
+                    results.count = items.size();
+                }
+            }
+
+            return results;
+        }
+    }
 }
