@@ -248,14 +248,11 @@ public final class DataHelper {
     }
 
     // Populates a talk adapter and returns the number of items populated
-    public int populateTalks(int event_id, int track_id, JITalkAdapter m_talkAdapter) {
+    public int populateTalks(int event_id, JITalkAdapter m_talkAdapter) {
         Cursor c;
 
-        if (track_id == -1) {
-            c = this.db.rawQuery("SELECT json,_rowid_ FROM talks WHERE event_id = " + event_id, null);
-        } else {
-            c = this.db.rawQuery("SELECT json,_rowid_ FROM talks WHERE event_id = " + event_id + " and track_id = " + track_id, null);
-        }
+        c = this.db.rawQuery("SELECT json,_rowid_ FROM talks WHERE event_id = " + event_id, null);
+
         int count = c.getCount();
         populate(c, m_talkAdapter);
         return count;
