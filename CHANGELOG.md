@@ -1,3 +1,9 @@
+# 2.0.3
+
+* Add Gradle build support
+* Moved Hot/Upcoming/Past buttons to tabbed interface
+* Move Search box to action bar widget.
+
 # 2.0.2
 
 * Remove the word "View" from the Event detail buttons (JOINDIN-377)
