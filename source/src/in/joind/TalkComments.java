@@ -111,7 +111,7 @@ public class TalkComments extends JIActivity implements OnClickListener {
 
     // This will add all comments for specified talk in the talkcomment listview / adapter
     public int displayTalkComments(int talk_id) {
-        DataHelper dh = DataHelper.getInstance();
+        DataHelper dh = DataHelper.getInstance(this);
 
         m_talkCommentAdapter.clear();
         int count = dh.populateTalkComments(talk_id, m_talkCommentAdapter);
@@ -142,7 +142,7 @@ public class TalkComments extends JIActivity implements OnClickListener {
                 JSONObject metaObj = new JSONObject();
                 JIRest rest = new JIRest(TalkComments.this);
                 boolean isFirst = true;
-                DataHelper dh = DataHelper.getInstance();
+                DataHelper dh = DataHelper.getInstance(TalkComments.this);
 
                 try {
                     do {
