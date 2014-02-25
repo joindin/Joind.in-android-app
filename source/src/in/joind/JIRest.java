@@ -160,6 +160,7 @@ class JIRest {
             if (content != null) {
                 OutputStream outputStream = new BufferedOutputStream(connection.getOutputStream());
                 outputStream.write(content.toString().getBytes(Charset.forName("UTF-8")));
+                outputStream.close();
             }
 
             // Get response
