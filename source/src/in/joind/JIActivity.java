@@ -110,7 +110,7 @@ public class JIActivity extends ActionBarActivity {
 
             case R.id.clear_menu_item:
                 // Removes all items from the database
-                DataHelper dh = DataHelper.getInstance();
+                DataHelper dh = DataHelper.getInstance(this);
                 dh.deleteAll();
                 Toast toast = Toast.makeText(getApplicationContext(), R.string.generalCacheCleared, Toast.LENGTH_LONG);
                 toast.show();

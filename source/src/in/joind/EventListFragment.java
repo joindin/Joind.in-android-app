@@ -122,7 +122,7 @@ public class EventListFragment extends ListFragment implements EventListFragment
         m_eventAdapter.clear();
 
         // add events and return count
-        DataHelper dh = DataHelper.getInstance();
+        DataHelper dh = DataHelper.getInstance(getActivity());
         int count = dh.populateEvents(eventType, m_eventAdapter, eventSortOrder);
 
         // Tell the adapter that our data set has changed so it can update it
@@ -192,7 +192,7 @@ public class EventListFragment extends ListFragment implements EventListFragment
 
             JSONObject fullResponse;
             JSONObject metaObj;
-            DataHelper dh = DataHelper.getInstance();
+            DataHelper dh = DataHelper.getInstance(EventListFragment.this.getActivity());
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
             boolean isFirst = true;
             int error = JIRest.OK; // default

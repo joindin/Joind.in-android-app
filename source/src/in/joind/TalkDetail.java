@@ -152,7 +152,7 @@ public class TalkDetail extends JIActivity implements OnClickListener {
                 // error, we were expecting a single talk
             }
 
-            DataHelper dh = DataHelper.getInstance();
+            DataHelper dh = DataHelper.getInstance(this);
             JSONObject thisTalk = json.getJSONObject(0);
             dh.insertTalk (talkID, thisTalk);
             this.talkJSON = thisTalk;
