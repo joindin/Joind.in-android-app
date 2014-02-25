@@ -44,7 +44,9 @@ public final class DataHelper {
     }
 
     public static DataHelper createInstance(Context context) {
-        if (DHinstance == null) DHinstance = new DataHelper(context);
+        if (DHinstance == null) {
+            reinitialise(context);
+        }
 
         return DHinstance;
     }
@@ -52,6 +54,14 @@ public final class DataHelper {
     public static DataHelper getInstance() {
         if (DHinstance == null) return null;
         return DHinstance;
+    }
+
+    public static DataHelper getInstance(Context context) {
+        return createInstance(context);
+    }
+
+    public static void reinitialise(Context context) {
+        DHinstance = new DataHelper(context);
     }
 
     // Updates a event
