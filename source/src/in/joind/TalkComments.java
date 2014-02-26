@@ -28,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
+import com.markupartist.android.widget.PullToRefreshListView;
 
 public class TalkComments extends JIActivity implements OnClickListener {
     private JITalkCommentAdapter m_talkCommentAdapter;  // adapter for listview
@@ -68,12 +69,24 @@ public class TalkComments extends JIActivity implements OnClickListener {
         // Initialize comment list
         ArrayList<JSONObject> m_talkcomments = new ArrayList<JSONObject>();
         m_talkCommentAdapter = new JITalkCommentAdapter(this, R.layout.talkrow, m_talkcomments);
-        ListView talkcommentlist = (ListView) findViewById(R.id.EventDetailComments);
+        final PullToRefreshListView talkcommentlist = (PullToRefreshListView) findViewById(R.id.EventDetailComments);
         talkcommentlist.setAdapter(m_talkCommentAdapter);
 
         // Display the cached comments
-        int talk_id = TalkComments.this.talkJSON.optInt("rowID");
+        final int talk_id = talkJSON.optInt("rowID");
         displayTalkComments(talk_id);
+
+        talkcommentlist.setOnRefreshListener(new PullToRefreshListView.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                try {
+                    loadTalkComments(talk_id, talkJSON.getString("comments_uri"));
+                } catch (JSONException e) {
+                    android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No comments URI available (talk comments)");
+                    talkcommentlist.onRefreshComplete();
+                }
+            }
+        });
 
         // Load new comments for this talk and display them
         try {
@@ -123,6 +136,8 @@ public class TalkComments extends JIActivity implements OnClickListener {
         } else {
             setTitle(String.format(getString(R.string.generalCommentPlural), count));
         }
+
+        ((PullToRefreshListView) findViewById(R.id.EventDetailComments)).onRefreshComplete();
 
         // Return the number of comments found
         return count;
