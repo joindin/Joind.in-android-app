@@ -33,6 +33,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
+import com.markupartist.android.widget.PullToRefreshListView;
+
 public class EventTalks extends JIActivity implements OnClickListener {
     private JITalkAdapter m_talkAdapter;    // adapter for listview
     private JSONObject eventJSON;
@@ -80,8 +82,11 @@ public class EventTalks extends JIActivity implements OnClickListener {
             tz = TimeZone.getDefault();
         }
         m_talkAdapter = new JITalkAdapter(this, R.layout.talkrow, m_talks, tz);
-        ListView talklist = (ListView) findViewById(R.id.ListViewEventTalks);
+        PullToRefreshListView talklist = (PullToRefreshListView) findViewById(R.id.ListViewEventTalks);
         talklist.setAdapter(m_talkAdapter);
+
+        // Figure out track ID
+        final int track_id = (this.trackJSON != null) ? this.trackJSON.optInt("ID") : -1;
 
         // Add listview listener so when we click on an talk, we can display details
         talklist.setOnItemClickListener(new OnItemClickListener() {
@@ -92,6 +97,16 @@ public class EventTalks extends JIActivity implements OnClickListener {
                 myIntent.putExtra("eventJSON", getIntent().getStringExtra("eventJSON"));
                 myIntent.putExtra("talkJSON", parent.getAdapter().getItem(pos).toString());
                 startActivity(myIntent);
+            }
+        });
+        talklist.setOnRefreshListener(new PullToRefreshListView.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                try {
+                    loadTalks(eventRowID, track_id, eventJSON.getString("talks_uri"));
+                } catch (JSONException e) {
+                    android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No talks URI available");
+                }
             }
         });
 
@@ -139,6 +154,10 @@ public class EventTalks extends JIActivity implements OnClickListener {
             talksFound += String.format(getString(R.string.generalEventTalksPlural), talkCount);
         }
         getSupportActionBar().setSubtitle(talksFound);
+
+        ((PullToRefreshListView) findViewById(R.id.ListViewEventTalks)).onRefreshComplete();
+
+        return talkCount;
     }
 
     // Load talks in new thread...

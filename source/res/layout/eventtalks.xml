@@ -6,10 +6,10 @@
     android:layout_height="fill_parent"
     android:layout_width="fill_parent">
 
-    <ListView
+    <com.markupartist.android.widget.PullToRefreshListView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:scrollbarAlwaysDrawVerticalTrack="true"
         android:scrollbars="vertical"
-        android:id="@+id/ListViewEventTalks"></ListView>
+        android:id="@+id/ListViewEventTalks"/>
 </LinearLayout>
