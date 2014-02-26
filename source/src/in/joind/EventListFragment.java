@@ -15,10 +15,13 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.markupartist.android.widget.PullToRefreshListView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,12 +51,29 @@ public class EventListFragment extends ListFragment implements EventListFragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = super.onCreateView(inflater, container, savedInstanceState);
+        ViewGroup viewGroup = (ViewGroup) super.onCreateView(inflater, container, savedInstanceState);
+
+        View lvOld = viewGroup.findViewById(android.R.id.list);
+
+        // Use the pull-to-refresh ListView, instead of a normal ListView
+        final PullToRefreshListView listView = new PullToRefreshListView(getActivity());
+        listView.setId(android.R.id.list);
+        listView.setLayoutParams(new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        listView.setDrawSelectorOnTop(false);
+
+        FrameLayout parent = (FrameLayout) lvOld.getParent();
+        parent.removeView(lvOld);
+        lvOld.setVisibility(View.GONE);
+
+        parent.addView(listView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
+        // Populate our list adapter
         ArrayList<JSONObject> m_events = new ArrayList<JSONObject>();
         m_eventAdapter = new JIEventAdapter(getActivity(), R.layout.eventrow, m_events);
         setListAdapter(m_eventAdapter);
 
-        return view;
+        return viewGroup;
     }
 
     @Override
@@ -110,6 +130,12 @@ public class EventListFragment extends ListFragment implements EventListFragment
                 startActivity(myIntent);
             }
         });
+        ((PullToRefreshListView) getListView()).setOnRefreshListener(new PullToRefreshListView.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadEvents(EventListFragment.this.getTag());
+            }
+        });
     }
 
     // Display events by populating the m_eventAdapter (custom list) with items loaded from DB
@@ -127,6 +153,9 @@ public class EventListFragment extends ListFragment implements EventListFragment
 
         // Tell the adapter that our data set has changed so it can update it
         m_eventAdapter.notifyDataSetChanged();
+        if (listView != null) {
+            ((PullToRefreshListView) getListView()).onRefreshComplete();
+        }
 
         parentActivity.setEventsCountTitle(count);
 
