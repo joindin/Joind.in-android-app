@@ -72,7 +72,7 @@ public class EventTracks extends JIActivity {
 
     // Display all talks in the talk list (adapter)
     public int displayTracks(int event_id) {
-        DataHelper dh = DataHelper.getInstance();
+        DataHelper dh = DataHelper.getInstance(this);
 
         m_trackAdapter.clear();
         int trackCount = dh.populateTracks(event_id, m_trackAdapter);

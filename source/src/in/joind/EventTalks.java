@@ -108,7 +108,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
 
     // Display talks in the talk list (adapter), depending on the track_id
     public int displayTalks(int eventRowID, int track_id) {
-        DataHelper dh = DataHelper.getInstance();
+        DataHelper dh = DataHelper.getInstance(this);
 
         m_talkAdapter.clear();
         int talkCount = dh.populateTalks(eventRowID, track_id, m_talkAdapter);
@@ -144,7 +144,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
                 JSONObject metaObj = new JSONObject();
                 JIRest rest = new JIRest(EventTalks.this);
                 boolean isFirst = true;
-                DataHelper dh = DataHelper.getInstance();
+                DataHelper dh = DataHelper.getInstance(EventTalks.this);
 
                 try {
                     do {

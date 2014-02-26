@@ -119,7 +119,7 @@ public class EventComments extends JIActivity implements OnClickListener {
 
     // Display all event comments in the event listview/adapter
     public int displayEventComments (int event_id) {
-        DataHelper dh = DataHelper.getInstance();
+        DataHelper dh = DataHelper.getInstance(this);
 
         m_eventCommentAdapter.clear();
         int count = dh.populateEventComments(event_id, m_eventCommentAdapter);
@@ -150,7 +150,7 @@ public class EventComments extends JIActivity implements OnClickListener {
                 JSONObject metaObj = new JSONObject();
                 JIRest rest = new JIRest (EventComments.this);
                 boolean isFirst = true;
-                DataHelper dh = DataHelper.getInstance();
+                DataHelper dh = DataHelper.getInstance(EventComments.this);
 
                 try {
                     do {

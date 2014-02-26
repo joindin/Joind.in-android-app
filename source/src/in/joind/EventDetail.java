@@ -87,7 +87,7 @@ public class EventDetail extends JIActivity implements OnClickListener {
     }
 
     public void displayDetails (int event_row_ID) {
-        DataHelper dh = DataHelper.getInstance();
+        DataHelper dh = DataHelper.getInstance(this);
         JSONObject event = dh.getEvent (event_row_ID);
         if (event == null) return;
 
@@ -182,7 +182,7 @@ public class EventDetail extends JIActivity implements OnClickListener {
 
 
                     //  Update event details
-                    DataHelper dh = DataHelper.getInstance();
+                    DataHelper dh = DataHelper.getInstance(EventDetail.this);
                     dh.updateEvent (eventRowID, jsonEvent);
                 }
 
