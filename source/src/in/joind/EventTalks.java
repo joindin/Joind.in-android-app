@@ -82,7 +82,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
             tz = TimeZone.getDefault();
         }
         m_talkAdapter = new JITalkAdapter(this, R.layout.talkrow, m_talks, tz);
-        PullToRefreshListView talklist = (PullToRefreshListView) findViewById(R.id.ListViewEventTalks);
+        final PullToRefreshListView talklist = (PullToRefreshListView) findViewById(R.id.ListViewEventTalks);
         talklist.setAdapter(m_talkAdapter);
 
         // Figure out track ID
@@ -106,6 +106,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
                     loadTalks(eventRowID, track_id, eventJSON.getString("talks_uri"));
                 } catch (JSONException e) {
                     android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No talks URI available");
+                    talklist.onRefreshComplete();
                 }
             }
         });

@@ -25,6 +25,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.markupartist.android.widget.PullToRefreshListView;
+
 public class EventComments extends JIActivity implements OnClickListener {
     private JIEventCommentAdapter m_eventCommentAdapter;    // adapter for listview
     private JSONObject eventJSON;
@@ -55,7 +57,7 @@ public class EventComments extends JIActivity implements OnClickListener {
         // Initialize comment list
         ArrayList<JSONObject> m_eventcomments = new ArrayList<JSONObject>();
         m_eventCommentAdapter = new JIEventCommentAdapter(this, R.layout.talkrow, m_eventcomments);
-        ListView eventcommentlist =(ListView)findViewById(R.id.EventDetailComments);
+        final PullToRefreshListView eventcommentlist = (PullToRefreshListView) findViewById(R.id.EventDetailComments);
         eventcommentlist.setAdapter(m_eventCommentAdapter);
 
         // Display the cached event comments
@@ -65,6 +67,18 @@ public class EventComments extends JIActivity implements OnClickListener {
         // Add handler to button
         Button button = (Button)findViewById(R.id.ButtonNewComment);
         button.setOnClickListener(this);
+
+        eventcommentlist.setOnRefreshListener(new PullToRefreshListView.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                try {
+                    loadEventComments (event_id, eventJSON.getString("comments_uri"));
+                } catch (JSONException e) {
+                    android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No comments URI available");
+                    eventcommentlist.onRefreshComplete();
+                }
+            }
+        });
 
         // Load new comments from the joind.in API and display them
         try {
@@ -131,6 +145,8 @@ public class EventComments extends JIActivity implements OnClickListener {
         } else {
             getSupportActionBar().setSubtitle(String.format(getString(R.string.generalCommentPlural), count));
         }
+
+        ((PullToRefreshListView) findViewById(R.id.EventDetailComments)).onRefreshComplete();
 
         // Return number of event comments.
         return count;
