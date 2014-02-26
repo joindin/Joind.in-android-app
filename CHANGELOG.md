@@ -1,3 +1,8 @@
+# 2.0.4
+
+* Fix broken comment posting (JOINDIN-436)
+* Fix some NPEs thrown and caught in Crashlytics
+
 # 2.0.3
 
 * Add Gradle build support
