@@ -96,7 +96,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
         });
 
         // Display cached talks, optionally filtered by a track (by URI)
-        String trackURI = (this.trackJSON != null) ? this.trackJSON.optString("track_name") : ""; // FIXME name => uri
+        String trackURI = (this.trackJSON != null) ? this.trackJSON.optString("uri") : "";
         displayTalks(eventRowID, trackURI);
 
         // Load new talks (in background)
@@ -387,7 +387,7 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable {
                         }
 
                         // Add to the filtered result list when the match is present in the URI
-                        if (track.optString("track_name").toUpperCase().equals(match.toString().toUpperCase())) { // FIXME track_name => track_uri
+                        if (track.optString("track_uri").equals(match.toString())) {
                             i.add(json);
                             break;
                         }
