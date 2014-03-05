@@ -144,16 +144,12 @@ public class EventDetail extends JIActivity implements OnClickListener {
 
         // See if this event has tracks
         b = (Button) this.findViewById(R.id.ButtonEventDetailsViewTracks);
-        JSONArray tracks = event.optJSONArray("tracks");
-        int trackCount = (tracks == null) ? 0 : tracks.length();
+        int trackCount = dh.getTrackCountForEvent(event_row_ID);
         if (trackCount == 1) {
             b.setText(String.format(getString(R.string.generalViewTrackSingular), trackCount));
         } else {
             b.setText(String.format(getString(R.string.generalViewTrackPlural), trackCount));
         }
-
-        // Set track button enabled when we have at least 1 track
-        b.setEnabled((trackCount > 0));
 
         // Tick the checkbox, depending on if we are attending or not
         CheckBox c = (CheckBox)findViewById(R.id.CheckBoxEventDetailsAttending);
