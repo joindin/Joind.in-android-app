@@ -85,8 +85,8 @@ public class EventTalks extends JIActivity implements OnClickListener {
         final PullToRefreshListView talklist = (PullToRefreshListView) findViewById(R.id.ListViewEventTalks);
         talklist.setAdapter(m_talkAdapter);
 
-        // Figure out track ID
-        final int track_id = (this.trackJSON != null) ? this.trackJSON.optInt("ID") : -1;
+        // Display cached talks, optionally filtered by a track (by URI)
+        final String trackURI = (this.trackJSON != null) ? this.trackJSON.optString("uri") : "";
 
         // Add listview listener so when we click on an talk, we can display details
         talklist.setOnItemClickListener(new OnItemClickListener() {
@@ -103,7 +103,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
             @Override
             public void onRefresh() {
                 try {
-                    loadTalks(eventRowID, track_id, eventJSON.getString("talks_uri"));
+                    loadTalks(eventRowID, trackURI, eventJSON.getString("talks_uri"));
                 } catch (JSONException e) {
                     android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No talks URI available");
                     talklist.onRefreshComplete();
@@ -111,8 +111,6 @@ public class EventTalks extends JIActivity implements OnClickListener {
             }
         });
 
-        // Display cached talks, optionally filtered by a track (by URI)
-        String trackURI = (this.trackJSON != null) ? this.trackJSON.optString("uri") : "";
         displayTalks(eventRowID, trackURI);
 
         // Load new talks (in background)
@@ -157,8 +155,6 @@ public class EventTalks extends JIActivity implements OnClickListener {
         getSupportActionBar().setSubtitle(talksFound);
 
         ((PullToRefreshListView) findViewById(R.id.ListViewEventTalks)).onRefreshComplete();
-
-        return talkCount;
     }
 
     // Load talks in new thread...
