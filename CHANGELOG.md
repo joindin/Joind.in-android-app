@@ -1,3 +1,7 @@
+# 2.0.5
+* Add pull-to-refresh on listings
+* Fix track display (JOINDIN-382)
+
 # 2.0.4
 
 * Fix broken comment posting (JOINDIN-436)
