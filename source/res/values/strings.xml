@@ -99,7 +99,7 @@
     <string name="generalSuccessFullyUnAttended">Successfully unattended</string>
     <string name="generatelAttendingError">Attending error: %s</string>
 
-    <string name="generalAboutTitle">About,..</string>
+    <string name="generalAboutTitle">About…</string>
     <string name="generalAboutButtonCaption">Close</string>
     <string name="generalAboutMessage">The joind.in Android application is part of the joind.in open source project. Visit http://joind.in/ to find out how you can get involved!\n\nPlease send any bug reports and feature requests to android@joind.in</string>
 
