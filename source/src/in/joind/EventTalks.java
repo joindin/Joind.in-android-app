@@ -17,6 +17,7 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -263,7 +264,8 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable {
         try {
             SimpleDateFormat inputTalkDateFormat = new SimpleDateFormat(context.getString(R.string.apiDateFormat));
             talkDate = inputTalkDateFormat.parse(o.getString("start_date"));
-            outputTalkDateFormat = new SimpleDateFormat("HH:mm");
+            String fmt = Build.VERSION.SDK_INT <= 8 ? "d MMM yyyy" : "d LLL yyyy";
+            outputTalkDateFormat = new SimpleDateFormat(fmt + ", HH:mm");
             outputTalkDateFormat.setTimeZone(tz);
         } catch (Exception e) {
             e.printStackTrace();
