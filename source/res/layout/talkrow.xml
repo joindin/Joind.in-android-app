@@ -35,7 +35,7 @@
         android:layout_width="fill_parent"></TextView>
 
     <LinearLayout
-        android:id="@+id/LinearLayout01"
+        android:id="@+id/LinearLayout02"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent">
 
@@ -58,7 +58,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/LinearLayout01"
+        android:id="@+id/LinearLayout03"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent">
 
