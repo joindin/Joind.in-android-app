@@ -264,7 +264,7 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable {
         try {
             SimpleDateFormat inputTalkDateFormat = new SimpleDateFormat(context.getString(R.string.apiDateFormat));
             talkDate = inputTalkDateFormat.parse(o.getString("start_date"));
-            String fmt = Build.VERSION.SDK_INT <= 8 ? "d MMM yyyy" : "d LLL yyyy";
+            String fmt = Build.VERSION.SDK_INT <= 8 ? "E d MMM yyyy" : "E d LLL yyyy";
             outputTalkDateFormat = new SimpleDateFormat(fmt + ", HH:mm");
             outputTalkDateFormat.setTimeZone(tz);
         } catch (Exception e) {
