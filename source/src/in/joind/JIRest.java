@@ -186,12 +186,14 @@ class JIRest {
             }
         } catch (SocketTimeoutException e) {
             // Socket timeout occurred
-            this.error = String.format(this.context.getString(R.string.JIRestSocketTimeout), e.getMessage());
+            this.error = String.format(this.context.getString(R.string.JIRestSocketTimeout));
             connection.disconnect();
 
             return ERROR;
         } catch (IOException e) {
-            // IO exception occurred
+            // IO exception occurred. Get the result anyway
+            InputStream instream = new BufferedInputStream(connection.getErrorStream());
+            this.result = Main.convertStreamToString(instream);
             this.error = String.format(this.context.getString(R.string.JIRestIOError), e.getMessage());
             connection.disconnect();
 
