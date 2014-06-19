@@ -13,6 +13,7 @@
     <!-- OAuth URL to use, and the callback -->
     <string name="oauthURL">http://joind.in/user/oauth_allow</string>
     <string name="oauthDeniedMessage">Couldn\'t authenticate with joind.in</string>
+    <string name="oauthGenericErrorMessage">There was a problem authenticating you</string>
 
     <!-- Option menu strings -->
     <string name="OptionMenuSettings">Settings</string>
@@ -107,6 +108,11 @@
 
     <string name="authenticatorAccountType">in.joind</string>
     <string name="authenticatorTitle">Log in to joind.in</string>
+    <string name="authHelperText">Enter your joind.in username and password below. We\'ll use this only for the purposes of signing you in - after that we use an access token to authenticate you. You can revoke this token at any time on the joind.in website</string>
+    <string name="authHintUsername">joind.in username</string>
+    <string name="authHintPassword">joind.in password</string>
+    <string name="authSignInButton">Sign in</string>
+    <string name="authSignInProgressText">Signing you in to joind.in...</string>
     <string name="authTokenType">oauth2</string>
 
     <!-- some error messages -->
