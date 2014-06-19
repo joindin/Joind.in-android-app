@@ -30,7 +30,7 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSession;
 
-class JIRest {
+public class JIRest {
     public static final int OK = 0;
     public static final int TIMEOUT = 1;
     public static final int ERROR = 2;
