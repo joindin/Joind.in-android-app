@@ -1,6 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<WebView  xmlns:android="http://schemas.android.com/apk/res/android"
-          android:id="@+id/webview"
-          android:layout_width="fill_parent"
-          android:layout_height="fill_parent"
-/>
+<LinearLayout
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_gravity="center_horizontal"
+    android:weightSum="1"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:padding="32dp">
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/authHelperText"
+        android:layout_marginBottom="16dp" />
+
+    <TextView
+        android:id="@+id/authErrors"
+        android:layout_width="fill_parent"
+        android:textColor="#ffff0000"
+        android:textStyle="bold"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:layout_marginBottom="16dp" />
+
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/authUsername"
+        android:hint="@string/authHintUsername"
+        android:inputType="text"
+        android:layout_marginBottom="16dp" />
+
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/authPassword"
+        android:hint="@string/authHintPassword"
+        android:fontFamily="sans-serif"
+        android:inputType="textPassword"
+        android:layout_marginBottom="16dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/authSignInButton"
+        android:id="@+id/authSignInButton"
+        android:layout_gravity="center_horizontal" />
+
+</LinearLayout>
