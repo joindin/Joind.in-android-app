@@ -17,24 +17,22 @@
 package in.joind.authenticator;
 
 import android.accounts.Account;
-import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
-import android.app.Activity;
-import android.content.ContentResolver;
-import android.content.Context;
+import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import in.joind.JIActivity;
+import in.joind.JIRest;
 import in.joind.OAuthHelper;
 import in.joind.R;
 
@@ -43,12 +41,11 @@ import in.joind.R;
  */
 public class AuthenticatorActivity extends JoindInAuthenticatorActivity {
 
-    final static public String USERNAME = "joind.in";
+    final static public String DUMMY_USERNAME = "joind.in";
 
     private AccountManager mAccountManager;
 
     private String oauthAPIKey;
-    private String oauthCallback;
 
     /**
      * {@inheritDoc}
@@ -57,56 +54,12 @@ public class AuthenticatorActivity extends JoindInAuthenticatorActivity {
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
 
-        final Activity activity = this;
-
-        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-
         // Allow ActionBar 'up' navigation
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(R.string.authenticatorTitle);
 
         mAccountManager = AccountManager.get(this);
         setContentView(R.layout.authenticator);
-
-        WebView webView = (WebView) findViewById(R.id.webview);
-        CookieSyncManager.createInstance(this);
-        CookieManager cookieManager = CookieManager.getInstance();
-        cookieManager.removeAllCookie();
-
-        // Don't remember passwords or form submission data
-        webView.getSettings().setSaveFormData(false);
-        webView.getSettings().setSavePassword(false);
-
-        webView.setWebViewClient(new WebViewClient() {
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-
-                // Get the URL without any query strings
-                Uri thisUri = Uri.parse(url);
-                String thisURL = thisUri.toString().replace("?" + thisUri.getQuery(), "");
-
-                if (thisURL.equals(oauthCallback)) {
-                    // Successful? We should have an access token (null if not found)
-                    String accessToken = thisUri.getQueryParameter("access_token");
-                    onAuthenticationResult(accessToken);
-                    view.setVisibility(View.GONE);
-
-                    return true;
-                }
-                return false;
-            }
-
-            public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                super.onPageStarted(view, url, favicon);
-
-                activity.setProgressBarIndeterminateVisibility(true);
-            }
-
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-
-                activity.setProgressBarIndeterminateVisibility(false);
-            }
-        });
 
         // API key first - if we can't get this, no use continuing
         oauthAPIKey = OAuthHelper.getApiKey(this);
@@ -122,12 +75,59 @@ public class AuthenticatorActivity extends JoindInAuthenticatorActivity {
                 }
             });
         }
-        oauthCallback = OAuthHelper.getCallback(this);
 
-        Uri.Builder builder = Uri.parse(getString(R.string.oauthURL)).buildUpon();
-        builder.appendQueryParameter("api_key", oauthAPIKey);
-        builder.appendQueryParameter("callback", oauthCallback);
-        webView.loadUrl(builder.toString());
+        setupSigninClick();
+    }
+
+    /**
+     * Sets up the onClick handler for the sign-in button
+     */
+    protected void setupSigninClick() {
+        // Button click handler - does the sign-in
+        Button signInButton = (Button) findViewById(R.id.authSignInButton);
+        signInButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Clear any errors
+                TextView errorView = (TextView) findViewById(R.id.authErrors);
+                errorView.setText("");
+
+                // Sign user in and retrieve token, user uri
+                TextView usernameView = (TextView) findViewById(R.id.authUsername);
+                TextView passwordView = (TextView) findViewById(R.id.authPassword);
+                final String username = usernameView.getText().toString();
+                final String password = passwordView.getText().toString();
+
+                final ProgressDialog pleaseWait = ProgressDialog.show(AuthenticatorActivity.this, getString(R.string.generalPleaseWait), getString(R.string.authSignInProgressText), true);
+
+                // Create new thread, otherwise the progress dialog does not show
+                new Thread() {
+                    public void run() {
+                        JSONObject data = new JSONObject();
+                        try {
+                            data.put("username", username);
+                            data.put("password", password);
+                            data.put("grant_type", "password");
+                            data.put("client_id", oauthAPIKey);
+                        } catch (JSONException e) {
+                            pleaseWait.dismiss();
+
+                            return;
+                        }
+
+                        String url = getString(R.string.apiURL) + "token";
+                        JIRest rest = new JIRest(AuthenticatorActivity.this);
+                        rest.requestToFullURI(url, data, JIRest.METHOD_POST);
+
+                        // Dismiss the dialog
+                        pleaseWait.dismiss();
+
+                        // Handle the response (success or otherwise)
+                        onAuthenticationResult(rest.getResult());
+                    }
+                }.start();
+            }
+        });
     }
 
     /**
@@ -139,41 +139,104 @@ public class AuthenticatorActivity extends JoindInAuthenticatorActivity {
      *
      * @param authToken the authentication token result.
      */
-    private void finishLogin(String authToken) {
-        // Use a dummy username here
-        // as we can't currently retrieve the actual username
-        // from the API
+    private void finishLogin(final String authToken, final String userURI) {
 
-        final Account account = new Account(USERNAME, getString(R.string.authenticatorAccountType));
-        mAccountManager.addAccountExplicitly(account, "", null);
-        mAccountManager.setAuthToken(account, getString(R.string.authTokenType), authToken);
+        //
+        new Thread() {
+            public void run() {
+                String username = DUMMY_USERNAME;
+                JIRest rest = new JIRest(AuthenticatorActivity.this);
+                int result = rest.getJSONFullURI(userURI);
+                if (result != JIRest.OK) {
+                    // A problem retrieving the user's details
+                } else {
+                    // We've got the user's profile data back
+                    // Try and extract their username
+                    try {
+                        JSONObject jsonResult = rest.getJSONResult();
+                        JSONArray allUsers = jsonResult.getJSONArray("users");
+                        JSONObject thisUser = allUsers.getJSONObject(0);
+                        username = thisUser.getString("username");
+                    } catch (Exception e) {
+                    }
+                }
 
-        final Intent intent = new Intent();
-        intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, USERNAME);
-        intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, getString(R.string.authenticatorAccountType));
-        intent.putExtra(AccountManager.KEY_AUTHTOKEN, authToken);
-        setAccountAuthenticatorResult(intent.getExtras());
-        setResult(RESULT_OK, intent);
-        finish();
+                // Add the account details
+                final Account account = new Account(username, getString(R.string.authenticatorAccountType));
+                mAccountManager.addAccountExplicitly(account, "", null);
+                mAccountManager.setAuthToken(account, getString(R.string.authTokenType), authToken);
+
+                final Intent intent = new Intent();
+                intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, DUMMY_USERNAME);
+                intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, getString(R.string.authenticatorAccountType));
+                intent.putExtra(AccountManager.KEY_AUTHTOKEN, authToken);
+                setAccountAuthenticatorResult(intent.getExtras());
+                setResult(RESULT_OK, intent);
+                finish();
+            }
+        }.start();
     }
 
     /**
-     * Called when the authentication process completes (see attemptLogin()).
+     * Called when the initial token request returns
      *
-     * @param authToken the authentication token returned by the server, or NULL if authentication failed.
+     * @param result the JSON result object returned from the request, or NULL if failed
      */
-    public void onAuthenticationResult(String authToken) {
+    public void onAuthenticationResult(String result) {
 
-        boolean success = ((authToken != null) && (authToken.length() > 0));
+        if (result == null) {
+            // Major fail!
+            handleSigninError(getString(R.string.oauthGenericErrorMessage));
+            Log.e(JIActivity.LOG_JOINDIN_APP, "onAuthenticationResult: failed to authenticate, no return data");
+
+            return;
+        }
+
+        JSONObject jsonResult;
+        try {
+            jsonResult = new JSONObject(result);
+        } catch (JSONException e) {
+            // We couldn't get a JSON object from the result
+            // What about an array? That's normally an error message as the single element in the array
+            String errorMessage = getString(R.string.oauthGenericErrorMessage);
+            try {
+                JSONArray jsonArray = new JSONArray(result);
+                if (jsonArray.length() == 1) {
+                    errorMessage = jsonArray.optString(0);
+                }
+            } catch (Exception e1) {
+            }
+
+            handleSigninError(errorMessage);
+            return;
+        }
+
+        String accessToken = jsonResult.optString("access_token");
+        String userURI = jsonResult.optString("user_uri");
+        boolean success = ((accessToken != null) && (accessToken.length() > 0));
 
         if (success) {
-            finishLogin(authToken);
+            finishLogin(accessToken, userURI);
         } else {
-            Log.e(JIActivity.LOG_JOINDIN_APP, "onAuthenticationResult: failed to authenticate");
-
-            Toast toast = Toast.makeText(this, getString(R.string.oauthDeniedMessage), Toast.LENGTH_LONG);
-            toast.show();
-            finish();
+            Log.e(JIActivity.LOG_JOINDIN_APP, "onAuthenticationResult: failed to authenticate successfully");
+            handleSigninError(getString(R.string.oauthGenericErrorMessage));
         }
+    }
+
+    /**
+     * Shows any authentication errors to the user
+     *
+     * @param rawErrorMessage
+     */
+    protected void handleSigninError(final String rawErrorMessage) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                TextView errorView = (TextView) findViewById(R.id.authErrors);
+                String errorMessage = rawErrorMessage.trim();
+                errorMessage = (errorMessage.length() > 0 ? errorMessage : getString(R.string.oauthGenericErrorMessage));
+                errorView.setText(errorMessage);
+            }
+        });
     }
 }
