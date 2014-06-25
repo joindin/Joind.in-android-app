@@ -12,22 +12,13 @@ public class OAuthHelper {
     protected static Properties prop = new Properties();
     private static boolean haveTriedLoading = false;
 
-    public static String getApiKey(Context context) {
+    public static String getClientID(Context context) {
 
         if (!loadResources(context)) {
             return null;
         }
 
-        return prop.getProperty("api_key", null);
-    }
-
-    public static String getCallback(Context context) {
-
-        if (!loadResources(context)) {
-            return null;
-        }
-
-        return prop.getProperty("callback", null);
+        return prop.getProperty("client_id", null);
     }
 
     private static boolean loadResources(Context context) {

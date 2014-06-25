@@ -49,8 +49,7 @@ task createOAuthProperties {
     if (!oauthProperties.exists()) {
         logger.info('Creating oauth.properties file from environment variables')
         ant.propertyfile(file: oauthProperties) {
-            entry( key: "api_key", value: System.getenv("oauth.api_key"))
-            entry( key: "callback", value: System.getenv("oauth.callback"))
+            entry( key: "client_id", value: System.getenv("oauth.client_id"))
         }
     }
 }
