@@ -9,9 +9,12 @@
     android:padding="32dp">
 
     <TextView
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:text="@string/authHelperText"
+        android:textSize="20sp"
+        android:gravity="center_horizontal"
         android:layout_marginBottom="16dp" />
 
     <TextView
@@ -38,13 +41,15 @@
         android:hint="@string/authHintPassword"
         android:fontFamily="sans-serif"
         android:inputType="textPassword"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="40dp" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/authSignInButton"
         android:id="@+id/authSignInButton"
+        android:paddingLeft="32dp"
+        android:paddingRight="32dp"
         android:layout_gravity="center_horizontal" />
 
 </LinearLayout>
