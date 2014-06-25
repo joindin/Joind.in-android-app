@@ -167,7 +167,7 @@ public class AuthenticatorActivity extends JoindInAuthenticatorActivity {
                 mAccountManager.setAuthToken(account, getString(R.string.authTokenType), authToken);
 
                 final Intent intent = new Intent();
-                intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, DUMMY_USERNAME);
+                intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, username);
                 intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, getString(R.string.authenticatorAccountType));
                 intent.putExtra(AccountManager.KEY_AUTHTOKEN, authToken);
                 setAccountAuthenticatorResult(intent.getExtras());
