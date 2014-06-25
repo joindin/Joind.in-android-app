@@ -45,7 +45,7 @@ public class AuthenticatorActivity extends JoindInAuthenticatorActivity {
 
     private AccountManager mAccountManager;
 
-    private String oauthAPIKey;
+    private String oauthClientID;
 
     /**
      * {@inheritDoc}
@@ -61,9 +61,9 @@ public class AuthenticatorActivity extends JoindInAuthenticatorActivity {
         mAccountManager = AccountManager.get(this);
         setContentView(R.layout.authenticator);
 
-        // API key first - if we can't get this, no use continuing
-        oauthAPIKey = OAuthHelper.getApiKey(this);
-        if (oauthAPIKey == null) {
+        // Client ID first - if we can't get this, no use continuing
+        oauthClientID = OAuthHelper.getClientID(this);
+        if (oauthClientID == null) {
             runOnUiThread(new Runnable() {
                 public void run() {
                     Toast toast = Toast.makeText(getApplicationContext(), "OAuth properties file not found; cannot continue", Toast.LENGTH_LONG);
@@ -108,7 +108,7 @@ public class AuthenticatorActivity extends JoindInAuthenticatorActivity {
                             data.put("username", username);
                             data.put("password", password);
                             data.put("grant_type", "password");
-                            data.put("client_id", oauthAPIKey);
+                            data.put("client_id", oauthClientID);
                         } catch (JSONException e) {
                             pleaseWait.dismiss();
 
