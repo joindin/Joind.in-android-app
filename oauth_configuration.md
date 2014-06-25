@@ -1,22 +1,33 @@
 # OAuth2 configuration
 
-If you're building the Joind.In Android app, you'll need to set up the OAuth2 configuration.
+If you're building the joind.in Android app, you'll need to set up the OAuth2 configuration.
 
-First, you'll need an API key from the Joind.In website. When you set this up, you'll need to
-supply a callback URL. This can be anything you want, but it must be a well-formed URL.  Make a
-note of this, as you'll need it in the next step. An example might be:
+It's best if you first set up the joind.in API locally - that way you can have full control over
+the client configuration.
 
-**http://yourjoindin.dev/oauth-callback**
+The Android app uses the OAuth2 "Client Credentials Flow" method of authentication - this means that
+your client ID needs to be authorised by the API.
 
-Note that the URL doesn't have to actually exist as a valid page - the app will intercept the
-request and bring you back out of the OAuth process.
+## Configuring the API
+In the API project, open up `src/config.php` and add an entry to the `password_client_ids` file:
 
-Next, you'll need to create a file called ``oauth.properties`` and place it in ``res/raw``.
-The content should be similar to the following:
+    $config =  array(
+        'mode' => 'development',
+        'oauth' => array(
+            'password_client_ids' => array(
+                // ...
+                'androidapp',
+            )
+        ),
+    );
 
-    api_key=ABCDE12345
-    callback=http://your.callback/url
+This will allow credentials access with a client ID of "androidapp".
 
-except inserting your API key and callback URL as appropriate.
+## Configuring the Android app
+In the Android app project, you'll need to create a file called ``oauth.properties`` and place it
+in ``res/raw``.  The content should be:
 
-Once you've placed this in, authentication via the app's settings page should work.
+    client_id=androidapp
+
+Once you've placed this in, authentication via the app's settings page should work when you build
+the app and point it to your local API.
