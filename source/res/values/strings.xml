@@ -108,7 +108,7 @@
 
     <string name="authenticatorAccountType">in.joind</string>
     <string name="authenticatorTitle">Log in to joind.in</string>
-    <string name="authHelperText">Enter your joind.in username and password below. We\'ll use this only for the purposes of signing you in - after that we use an access token to authenticate you. You can revoke this token at any time on the joind.in website</string>
+    <string name="authHelperText">Enter your joind.in details below</string>
     <string name="authHintUsername">joind.in username</string>
     <string name="authHintPassword">joind.in password</string>
     <string name="authSignInButton">Sign in</string>
