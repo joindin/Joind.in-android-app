@@ -14,6 +14,12 @@ Please report any issues at the Joind.In JIRA project, in the Android component:
 
 The application should be set up as any other Android project.
 Please read the documentation on how to [configure OAuth2](/oauth_configuration.md).
+
+To build with Gradle, run:
+
+    gradle build
+
+in the project root. The output APK is produced in `build/apk`.
   
 ## History
 
