@@ -21,6 +21,15 @@ public class OAuthHelper {
         return prop.getProperty("client_id", null);
     }
 
+    public static String getClientSecret(Context context) {
+
+        if (!loadResources(context)) {
+            return null;
+        }
+
+        return prop.getProperty("client_secret", null);
+    }
+
     private static boolean loadResources(Context context) {
         if (!haveTriedLoading) {
             try {
