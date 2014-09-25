@@ -13,13 +13,13 @@ buildscript {
 apply plugin: 'android'
 apply plugin: 'crashlytics'
 
-repositories {            
+repositories {
     maven { url 'http://download.crashlytics.com/maven' }
 }
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "19.0.0"
+    buildToolsVersion "19.1.0"
 
     sourceSets {
         main {
@@ -39,7 +39,7 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:18.0.+'
+    compile 'com.android.support:appcompat-v7:19.1.+'
     compile 'com.crashlytics.android:crashlytics:1.+'
 }
 
