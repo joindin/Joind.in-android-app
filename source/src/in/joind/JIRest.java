@@ -6,6 +6,7 @@ package in.joind;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -15,6 +16,8 @@ import java.net.ProtocolException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.security.GeneralSecurityException;
+import java.security.cert.X509Certificate;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -28,9 +31,17 @@ import org.json.JSONObject;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 public class JIRest {
+    // Number of times to attempt a connection
+    // This is partially to work around a bug in HTTPUrlConnection
+    private static final int MAX_RETRIES = 5;
+    private int numberOfTries = 0;
+
     public static final int OK = 0;
     public static final int TIMEOUT = 1;
     public static final int ERROR = 2;
@@ -98,7 +109,7 @@ public class JIRest {
 
         } catch (SocketTimeoutException e) {
             // Socket timeout occurred
-            this.error = String.format(this.context.getString(R.string.JIRestSocketTimeout), e.getMessage());
+            this.error = String.format(this.context.getString(R.string.JIRestSocketTimeout));
             connection.disconnect();
 
             return ERROR;
@@ -133,6 +144,7 @@ public class JIRest {
             try {
                 connection.setRequestMethod("POST");
             } catch (ProtocolException e) {
+                e.printStackTrace();
                 return ERROR;
             }
 
@@ -142,12 +154,14 @@ public class JIRest {
             try {
                 connection.setRequestMethod("DELETE");
             } catch (ProtocolException e) {
+                e.printStackTrace();
                 return ERROR;
             }
 
             return doMethodRequest(connection, null);
         }
 
+        android.util.Log.d(JIActivity.LOG_JOINDIN_APP, "Some error!!");
         return ERROR;
     }
 
@@ -156,55 +170,58 @@ public class JIRest {
         connection.setRequestProperty("Content-type", "application/json");
         connection = addAuthDetailsToRequest(connection);
 
-        try {
-            if (content != null) {
-                OutputStream outputStream = new BufferedOutputStream(connection.getOutputStream());
-                outputStream.write(content.toString().getBytes(Charset.forName("UTF-8")));
-                outputStream.close();
-            }
-
-            // Get response
-            InputStream instream = new BufferedInputStream(connection.getInputStream());
-            this.result = Main.convertStreamToString(instream);
+        int resultCode = ERROR;
+        numberOfTries = 0;
+        while (numberOfTries < MAX_RETRIES) {
             try {
-                this.jsonResult = new JSONObject(this.result);
-            } catch (JSONException e) {
-                // Couldn't parse JSON result; leave as null
+                if (content != null) {
+                    OutputStream outputStream = new BufferedOutputStream(connection.getOutputStream());
+                    outputStream.write(content.toString().getBytes(Charset.forName("UTF-8")));
+                    outputStream.close();
+                }
+
+                // Get response
+                InputStream instream = new BufferedInputStream(connection.getInputStream());
+                this.result = Main.convertStreamToString(instream);
+                try {
+                    this.jsonResult = new JSONObject(this.result);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    // Couldn't parse JSON result; leave as null
+                }
+                instream.close();
+
+                int statusCode = connection.getResponseCode();
+
+                switch (statusCode) {
+                    case HttpStatus.SC_OK:
+                    case HttpStatus.SC_CREATED:
+                        return OK;
+                    default:
+                        this.error = String.format (this.context.getString(R.string.JIRestUnknownError), statusCode);
+                        return ERROR;
+                }
+            } catch (SocketTimeoutException e) {
+                // Socket timeout occurred
+                this.error = String.format(this.context.getString(R.string.JIRestSocketTimeout));
+            } catch (IOException e) {
+                e.printStackTrace();
+                // IO exception occurred. Get the result anyway
+                InputStream instream = new BufferedInputStream(connection.getErrorStream());
+                this.result = Main.convertStreamToString(instream);
+                this.error = String.format(this.context.getString(R.string.JIRestIOError), e.getMessage());
+            } catch (Exception e) {
+                // Something else happened
+                e.printStackTrace();
+                this.error  = String.format (this.context.getString(R.string.JIRestUnknownError), e.getMessage());
+            } finally {
+                connection.disconnect();
             }
-            instream.close();
 
-            int statusCode = connection.getResponseCode();
-            connection.disconnect();
-
-            switch (statusCode) {
-                case HttpStatus.SC_OK:
-                case HttpStatus.SC_CREATED:
-                    return OK;
-                default:
-                    this.error = String.format (this.context.getString(R.string.JIRestUnknownError), statusCode);
-                    return ERROR;
-            }
-        } catch (SocketTimeoutException e) {
-            // Socket timeout occurred
-            this.error = String.format(this.context.getString(R.string.JIRestSocketTimeout));
-            connection.disconnect();
-
-            return ERROR;
-        } catch (IOException e) {
-            // IO exception occurred. Get the result anyway
-            InputStream instream = new BufferedInputStream(connection.getErrorStream());
-            this.result = Main.convertStreamToString(instream);
-            this.error = String.format(this.context.getString(R.string.JIRestIOError), e.getMessage());
-            connection.disconnect();
-
-            return ERROR;
-        } catch (Exception e) {
-            // Something else happened
-            this.error  = String.format (this.context.getString(R.string.JIRestUnknownError), e.getMessage());
-            connection.disconnect();
-
-            return ERROR;
+            numberOfTries++;
         }
+
+        return resultCode;
     }
 
     protected HttpURLConnection addAuthDetailsToRequest(HttpURLConnection connection) {
@@ -234,11 +251,13 @@ public class JIRest {
                 });
 
                 HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+                connection.setRequestProperty("Connection", "close");
                 connection.setConnectTimeout(timeoutLength);
 
                 return connection;
             } else {
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestProperty("Connection", "close");
                 connection.setConnectTimeout(timeoutLength);
 
                 return connection;

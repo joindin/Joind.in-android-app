@@ -195,10 +195,12 @@ public class AuthenticatorActivity extends JoindInAuthenticatorActivity {
             return;
         }
 
+        Log.d(JIActivity.LOG_JOINDIN_APP, "Result: " + result); // XXX sometimes we get nothing back here :-(
         JSONObject jsonResult;
         try {
             jsonResult = new JSONObject(result);
         } catch (JSONException e) {
+            e.printStackTrace();
             // We couldn't get a JSON object from the result
             // What about an array? That's normally an error message as the single element in the array
             String errorMessage = getString(R.string.oauthGenericErrorMessage);
@@ -208,6 +210,7 @@ public class AuthenticatorActivity extends JoindInAuthenticatorActivity {
                     errorMessage = jsonArray.optString(0);
                 }
             } catch (Exception e1) {
+                e1.printStackTrace();
             }
 
             handleSigninError(errorMessage);
