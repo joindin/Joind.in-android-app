@@ -115,6 +115,7 @@
     <string name="authSignInProgressText">Signing you in to joind.in...</string>
     <string name="authTokenType">oauth2</string>
     <string name="authOAuthPropertiesNotFound">Some configuration is missing. Try reinstalling?</string>
+    <string name="authSignedInOK">Signed in!</string>
 
     <!-- some error messages -->
     <string name="activityEventDetailFailedJSON">Couldn\'t retrieve event details</string>
