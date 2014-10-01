@@ -43,15 +43,6 @@
             android:inputType="textPassword"
             android:layout_marginBottom="40dp" />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/authSignInButton"
-            android:id="@+id/authSignInButton"
-            android:paddingLeft="32dp"
-            android:paddingRight="32dp"
-            android:layout_gravity="center_horizontal" />
-
     </LinearLayout>
 
 </LinearLayout>
