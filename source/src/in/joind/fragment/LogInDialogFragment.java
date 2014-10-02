@@ -20,6 +20,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import in.joind.C;
 import in.joind.JIActivity;
 import in.joind.JIRest;
 import in.joind.OAuthHelper;
@@ -212,6 +213,10 @@ public class LogInDialogFragment extends DialogFragment {
                         toast.show();
                     }
                 });
+
+                // Announce the user has signed in
+                Intent intent = new Intent(C.USER_LOGGED_IN);
+                getActivity().sendBroadcast(intent);
 
                 // and close the dialog
                 getDialog().dismiss();

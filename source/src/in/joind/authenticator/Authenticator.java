@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import in.joind.R;
+import in.joind.activity.SettingsActivity;
 
 public class Authenticator extends AbstractAccountAuthenticator {
 
@@ -24,7 +25,7 @@ public class Authenticator extends AbstractAccountAuthenticator {
     @Override
     public Bundle addAccount(AccountAuthenticatorResponse response, String accountType, String authTokenType, String[] requiredFeatures, Bundle options) throws NetworkErrorException {
 
-        final Intent intent = new Intent(mContext, AuthenticatorActivity.class);
+        final Intent intent = new Intent(mContext, SettingsActivity.class);
         intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, mContext.getString(R.string.authenticatorAccountType));
         intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
         final Bundle bundle = new Bundle();
@@ -54,7 +55,7 @@ public class Authenticator extends AbstractAccountAuthenticator {
         }
 
         // We need to get a new token
-        final Intent intent = new Intent(mContext, AuthenticatorActivity.class);
+        final Intent intent = new Intent(mContext, SettingsActivity.class);
         intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, mContext.getString(R.string.authenticatorAccountType));
         intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, accountAuthenticatorResponse);
         final Bundle bundle = new Bundle();

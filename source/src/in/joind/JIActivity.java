@@ -11,6 +11,9 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import com.crashlytics.android.Crashlytics;
 import in.joind.R;
+import in.joind.activity.SettingsActivity;
+import in.joind.fragment.LogInDialogFragment;
+
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
@@ -118,7 +121,7 @@ public class JIActivity extends ActionBarActivity {
 
             case R.id.settings_menu_item:
                 // Displays preferences
-                Intent settingsActivity = new Intent(getApplicationContext(), Preferences.class);
+                Intent settingsActivity = new Intent(getApplicationContext(), SettingsActivity.class);
                 startActivity(settingsActivity);
                 break;
         }
