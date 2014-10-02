@@ -40,8 +40,7 @@
             android:id="@+id/authPassword"
             android:hint="@string/authHintPassword"
             android:fontFamily="sans-serif"
-            android:inputType="textPassword"
-            android:layout_marginBottom="40dp" />
+            android:inputType="textPassword" />
 
     </LinearLayout>
 
