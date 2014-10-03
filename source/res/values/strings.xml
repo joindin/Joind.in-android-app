@@ -43,10 +43,10 @@
     <string name="TalkDetailSubtitle">Talk details</string>
 
     <!-- Preference activity strings -->
-    <string name="prefAuthLoginTitle">Log me into joind.in</string>
-    <string name="prefAuthLoggedInAs">Logged in as %s</string>
-    <string name="prefAuthLogInButton">Log in</string>
-    <string name="prefAuthLogOutButton">Log out</string>
+    <string name="prefAuthLoginTitle">Sign me into joind.in</string>
+    <string name="prefAuthLoggedInAs">Signed in as %s</string>
+    <string name="prefAuthLogInButton">Sign in</string>
+    <string name="prefAuthLogOutButton">Sign out</string>
     <string name="prefAttendOnlyTitle">Attended only</string>
     <string name="prefAttendOnlySummary">Only display past attended events</string>
     <string name="prefLoadImagesTitle">Load logos and gravatars</string>
@@ -71,7 +71,7 @@
     <string name="activityMainEventsUpcoming">Upcoming events</string>
     <string name="activityMainEventsFavorites">Favorite events</string>
 
-    <string name="activityTalkDetailAuthRequiredForStarring">You must be logged in to star a talk</string>
+    <string name="activityTalkDetailAuthRequiredForStarring">You must be signed in to star a talk</string>
 
     <string name="JIRestValidConnectionError">Couldn\'t establish a valid connection</string>
     <string name="JIRestProtocolError">There was a protocol based error: %s</string>
@@ -80,7 +80,7 @@
     <string name="JIRestUnknownError">Unknown error: %s</string>
 
     <!-- Global strings, can occur everywhere -->
-    <string name="generalPleaseWait">Please wait...</string>
+    <string name="generalPleaseWait">Please wait…</string>
     <string name="generalViewCommentSingular">Comment (%d)</string>
     <string name="generalViewCommentPlural">Comments (%d)</string>
 
@@ -120,13 +120,13 @@
     <string name="generalCacheCleared">The cache is cleared</string>
 
     <string name="authenticatorAccountType">in.joind</string>
-    <string name="authenticatorTitle">Log in to joind.in</string>
+    <string name="authenticatorTitle">Sign in to joind.in</string>
     <string name="authHelperText">Enter your joind.in details below</string>
     <string name="authHintUsername">joind.in username</string>
     <string name="authHintPassword">joind.in password</string>
     <string name="authSignInButton">Sign in</string>
     <string name="authCancelButton">Cancel</string>
-    <string name="authSignInProgressText">Signing you in to joind.in...</string>
+    <string name="authSignInProgressText">Signing you in to joind.in…</string>
     <string name="authTokenType">oauth2</string>
     <string name="authGravatarHash">gravatar_hash</string>
     <string name="authOAuthPropertiesNotFound">Some configuration is missing. Try reinstalling?</string>
