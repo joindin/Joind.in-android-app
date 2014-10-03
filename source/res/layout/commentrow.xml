@@ -6,25 +6,25 @@
               android:orientation="vertical"
               android:layout_height="wrap_content">
 	<LinearLayout
-        android:id="@+id/LinearLayout02"
+        android:id="@+id/LinearLayout01"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-        
+
         <TextView
 	        android:layout_height="wrap_content"
 	        android:textStyle="bold"
-	        android:layout_weight="1"	  
-	        android:layout_width="0dp"      
+	        android:layout_weight="1"
+	        android:layout_width="0dp"
 	        android:id="@+id/CommentRowDate"></TextView>
-	    
+
         <ImageView
 	        android:id="@+id/CommentRowRate"
-	        android:layout_width="wrap_content"            
+	        android:layout_width="wrap_content"
 	        android:background="@drawable/rating_0"
 	        android:layout_height="wrap_content"></ImageView>
 	</LinearLayout>
-	
+
     <LinearLayout
         android:id="@+id/LinearLayout02"
         android:layout_width="wrap_content"
@@ -47,7 +47,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/LinearLayout01"
+        android:id="@+id/LinearLayout03"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent">
 

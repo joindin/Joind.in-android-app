@@ -238,7 +238,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.talk_listing_menu, menu);
-        
+
         return true;
     }
 
