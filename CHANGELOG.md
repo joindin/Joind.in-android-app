@@ -1,4 +1,10 @@
+# 2.0.6
+
+* New OAuth signin process (JOINDIN-349, JOINDIN-454)
+* Add ability to star talks (and filter by them)
+
 # 2.0.5
+
 * Add pull-to-refresh on listings
 * Fix track display (JOINDIN-382)
 
