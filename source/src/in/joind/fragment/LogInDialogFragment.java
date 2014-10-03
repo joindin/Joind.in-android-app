@@ -185,8 +185,10 @@ public class LogInDialogFragment extends DialogFragment {
         new Thread() {
             public void run() {
                 String username = DUMMY_USERNAME;
+                String gravatarHash = ""; // dummy?
                 JIRest rest = new JIRest(getActivity());
-                int result = rest.getJSONFullURI(userURI);
+                String verboseUserURI = userURI + "?verbose=yes"; // force verbose URI
+                int result = rest.getJSONFullURI(verboseUserURI);
                 if (result != JIRest.OK) {
                     // A problem retrieving the user's details
                 } else {
@@ -196,7 +198,10 @@ public class LogInDialogFragment extends DialogFragment {
                         JSONObject jsonResult = rest.getJSONResult();
                         JSONArray allUsers = jsonResult.getJSONArray("users");
                         JSONObject thisUser = allUsers.getJSONObject(0);
+
+                        // Extract useful bits from the user's profile details
                         username = thisUser.getString("username");
+                        gravatarHash = thisUser.getString(getActivity().getString(R.string.authGravatarHash));
                     } catch (Exception e) {
                     }
                 }
@@ -205,6 +210,7 @@ public class LogInDialogFragment extends DialogFragment {
                 final Account account = new Account(username, getActivity().getString(R.string.authenticatorAccountType));
                 accountManager.addAccountExplicitly(account, "", null);
                 accountManager.setAuthToken(account, getActivity().getString(R.string.authTokenType), authToken);
+                accountManager.setUserData(account, getActivity().getString(R.string.authGravatarHash), gravatarHash);
 
                 getActivity().runOnUiThread(new Runnable() {
                     @Override

@@ -45,6 +45,17 @@ public class ImageLoader {
         if (!_cacheDir.exists()) _cacheDir.mkdirs();
     }
 
+    public void clearCacheEntry(String filename) {
+        // Clear the cache for the supplied filename
+        if (_cache.containsKey(filename)) {
+            _cache.remove(filename);
+            File f = new File(_cacheDir, filename);
+            if (f.exists()) {
+                f.delete();
+            }
+        }
+    }
+
     public void displayImage(String url, String filename, Activity activity, ImageView imageView) {
         // Check if we are allowed to load images. If not, just return.
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext());

@@ -19,8 +19,8 @@
         <!-- User's gravatar. Only shown when they log in -->
         <ImageView
             android:id="@+id/gravatarImage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_gravity="center_vertical|left"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:visibility="gone" />

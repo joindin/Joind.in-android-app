@@ -11,10 +11,10 @@ import android.preference.PreferenceScreen;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import in.joind.C;
+import in.joind.ImageLoader;
 import in.joind.JIActivity;
 import in.joind.R;
 import in.joind.fragment.LogInDialogFragment;
@@ -29,6 +29,8 @@ public class SettingsActivity extends JIActivity implements PreferenceListFragme
     Account thisAccount;
     LogInReceiver logInReceiver;
 
+    ImageLoader imageLoader;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -37,6 +39,8 @@ public class SettingsActivity extends JIActivity implements PreferenceListFragme
 
     public void onResume() {
         super.onResume();
+
+        imageLoader = new ImageLoader(getApplicationContext(), "gravatars");
 
         getViewObjects();
         configureAccounts();
@@ -63,12 +67,23 @@ public class SettingsActivity extends JIActivity implements PreferenceListFragme
                     // Fire logout
                     accountManager.removeAccount(thisAccount, null, null);
                     loginLogoutText.setText(getString(R.string.prefAuthLoginTitle));
+                    logInOutButton.setText(getString(R.string.prefAuthLogInButton));
+                    gravatarImage.setVisibility(View.GONE);
                     thisAccount = null;
+
+                    // Clear the image cache of this gravatar
+                    if (!gravatarImage.getTag().equals("")) {
+                        imageLoader.clearCacheEntry((String) gravatarImage.getTag());
+                    }
                 }
             }
         });
         loginLogoutText = (TextView) findViewById(R.id.logInOutText);
+
+        // Configure gravatar image
         gravatarImage = (ImageView) findViewById(R.id.gravatarImage);
+        gravatarImage.setTag("");
+        gravatarImage.setImageDrawable(null);
     }
 
     @Override
@@ -96,10 +111,13 @@ public class SettingsActivity extends JIActivity implements PreferenceListFragme
 
         if (thisAccount != null && !thisAccount.name.equals("")) {
             loginLogoutText.setText(String.format(getString(R.string.prefAuthLoggedInAs), thisAccount.name));
-            logInOutButton.setText(getString(R.string.prefAuthLogInButton));
+            logInOutButton.setText(getString(R.string.prefAuthLogOutButton));
 
-            // TODO fetch gravatar
-            gravatarImage.setVisibility(View.VISIBLE);
+            // Fetch gravatar
+            String gravatarHash = accountManager.getUserData(thisAccount, getString(R.string.authGravatarHash));
+            String filename = gravatarHash + "?d=mm"; // Default of the "mystery man"
+            gravatarImage.setTag(filename);
+            imageLoader.displayImage("http://www.gravatar.com/avatar/", filename, this, gravatarImage);
         }
     }
 
