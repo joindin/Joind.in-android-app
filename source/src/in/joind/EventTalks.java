@@ -9,12 +9,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimeZone;
 
-import in.joind.R;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -23,6 +24,9 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
@@ -227,13 +231,48 @@ public class EventTalks extends JIActivity implements OnClickListener {
         }.start();
     }
 
-
     @Override
     public void onClick(View v) {
-        // TODO Auto-generated method stub
-
     }
 
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.talk_listing_menu, menu);
+        
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.talk_filter_menu_item:
+                // Ask the user what they want to filter by
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle(R.string.TalkMenuFilter);
+                builder.setItems(R.array.TalkMenuFilterArray, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // The 'which' argument contains the index position
+                        // of the selected item
+                        switch (which) {
+                            case 0:
+                                // All items
+                                m_talkAdapter.getFilter().filter("");
+                                break;
+
+                            case 1:
+                                // Starred items
+                                m_talkAdapter.getFilter().filter("starred");
+                                break;
+                        }
+                    }
+                });
+                builder.create().show();
+
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 }
 
 
@@ -244,7 +283,7 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable {
     private ArrayList<JSONObject> items, filtered_items;
     private Context context;
     private TimeZone tz;
-    private TrackFilter filter;
+    private StarredFilter filter;
     private boolean isAuthenticated;
 
     public JITalkAdapter(Context context, int textViewResourceId, ArrayList<JSONObject> mTalks, TimeZone tz, boolean isAuthenticated) {
@@ -449,7 +488,7 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable {
 
     public Filter getFilter() {
         if (filter == null) {
-            filter = new TrackFilter();
+            filter = new StarredFilter();
         }
         return filter;
     }
@@ -462,7 +501,10 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable {
         return filtered_items.get(position);
     }
 
-    private class TrackFilter extends Filter {
+    /**
+     * Starred filter
+     */
+    private class StarredFilter extends Filter {
         @SuppressWarnings("unchecked")
         protected void publishResults(CharSequence prefix, FilterResults results) {
             filtered_items = (ArrayList<JSONObject>) results.values;
@@ -474,27 +516,11 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable {
             FilterResults results = new FilterResults();
             ArrayList<JSONObject> i = new ArrayList<JSONObject>();
 
-            if (match != null && match.toString().length() > 0) {
-
+            if (match != null && match.toString().equals("starred")) {
                 for (int index = 0; index < items.size(); index++) {
                     JSONObject json = items.get(index);
-                    JSONArray tracks = json.optJSONArray("tracks");
-                    if (tracks.length() == 0) {
-                        continue;
-                    }
-
-                    int tracksLength = tracks.length();
-                    for (int j = 0; j < tracksLength; j++) {
-                        JSONObject track = tracks.optJSONObject(j);
-                        if (track == null) {
-                            continue;
-                        }
-
-                        // Add to the filtered result list when the match is present in the URI
-                        if (track.optString("track_uri").equals(match.toString())) {
-                            i.add(json);
-                            break;
-                        }
+                    if (json.optBoolean("starred", false)) {
+                        i.add(json);
                     }
                 }
                 results.values = i;

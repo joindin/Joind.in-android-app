@@ -25,6 +25,12 @@
     <string name="OptionMenuSortTitle">Sort by name</string>
     <string name="SearchHint">Search event names</string>
 
+    <string name="TalkMenuFilter">Filter by…</string>
+    <string-array name="TalkMenuFilterArray">
+        <item>All talks</item>
+        <item>Starred talks</item>
+    </string-array>
+
     <!--  Context menu strings -->
     <string name="ContextMainAddToFavorite">Add to favorite list</string>
     <string name="ContextMainRemoveFromFavorite">Remove from favorite list</string>

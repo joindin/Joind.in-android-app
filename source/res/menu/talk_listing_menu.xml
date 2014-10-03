@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Menu that's used all through the app, except on the home page -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/talk_filter_menu_item"
+        android:title="@string/TalkMenuFilter"
+        android:alphabeticShortcut="F"
+        android:icon="@android:drawable/ic_menu_preferences"/>
+    <item
+        android:id="@+id/settings_menu_item"
+        android:title="@string/OptionMenuSettings"
+        android:alphabeticShortcut="S"
+        android:icon="@android:drawable/ic_menu_preferences"/>
+    <item
+        android:id="@+id/clear_menu_item"
+        android:title="@string/OptionMenuClearCache"
+        android:alphabeticShortcut="C"
+        android:icon="@android:drawable/ic_menu_close_clear_cancel"/>
+    <item
+        android:id="@+id/about_menu_item"
+        android:title="@string/OptionMenuAbout"
+        android:alphabeticShortcut="A"
+        android:icon="@android:drawable/ic_menu_info_details"/>
+</menu>
