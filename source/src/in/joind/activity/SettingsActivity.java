@@ -9,6 +9,8 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.preference.PreferenceScreen;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -20,9 +22,9 @@ import in.joind.fragment.PreferenceListFragment;
 
 public class SettingsActivity extends JIActivity implements PreferenceListFragment.OnPreferenceAttachedListener {
 
-    LinearLayout loginLogoutContainer;
     TextView loginLogoutText;
-    TextView loggedInAs;
+    ImageView gravatarImage;
+    Button logInOutButton;
     AccountManager accountManager;
     Account thisAccount;
     LogInReceiver logInReceiver;
@@ -51,8 +53,8 @@ public class SettingsActivity extends JIActivity implements PreferenceListFragme
     }
 
     protected void getViewObjects() {
-        loginLogoutContainer = (LinearLayout) findViewById(R.id.loginLogoutContainer);
-        loginLogoutContainer.setOnClickListener(new View.OnClickListener() {
+        logInOutButton = (Button) findViewById(R.id.logInOutButton);
+        logInOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (thisAccount == null || thisAccount.name.equals("")) {
@@ -61,13 +63,12 @@ public class SettingsActivity extends JIActivity implements PreferenceListFragme
                     // Fire logout
                     accountManager.removeAccount(thisAccount, null, null);
                     loginLogoutText.setText(getString(R.string.prefAuthLoginTitle));
-                    loggedInAs.setText("");
                     thisAccount = null;
                 }
             }
         });
-        loginLogoutText = (TextView) findViewById(R.id.loginLogoutText);
-        loggedInAs = (TextView) findViewById(R.id.loggedInAs);
+        loginLogoutText = (TextView) findViewById(R.id.logInOutText);
+        gravatarImage = (ImageView) findViewById(R.id.gravatarImage);
     }
 
     @Override
@@ -94,8 +95,11 @@ public class SettingsActivity extends JIActivity implements PreferenceListFragme
         thisAccount = (accounts.length > 0 ? accounts[0] : null);
 
         if (thisAccount != null && !thisAccount.name.equals("")) {
-            loginLogoutText.setText(getString(R.string.prefAuthLogoutTitle));
-            loggedInAs.setText(getString(R.string.prefAuthLogoutSummary));
+            loginLogoutText.setText(String.format(getString(R.string.prefAuthLoggedInAs), thisAccount.name));
+            logInOutButton.setText(getString(R.string.prefAuthLogInButton));
+
+            // TODO fetch gravatar
+            gravatarImage.setVisibility(View.VISIBLE);
         }
     }
 
@@ -110,8 +114,6 @@ public class SettingsActivity extends JIActivity implements PreferenceListFragme
                 return;
             }
             if (action.equals(C.USER_LOGGED_IN)) {
-//            loginLogoutText.setText(getString(R.string.prefAuthLogoutTitle));
-//            loggedInAs.setText(getString(R.string.prefAuthLogoutSummary));
                 configureAccounts();
             }
         }

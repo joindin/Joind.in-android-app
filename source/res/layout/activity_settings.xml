@@ -13,19 +13,32 @@
         android:focusable="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:padding="8dp">
 
+        <!-- User's gravatar. Only shown when they log in -->
+        <ImageView
+            android:id="@+id/gravatarImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|left"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:visibility="gone" />
+
         <TextView
-            android:id="@+id/loginLogoutText"
+            android:id="@+id/logInOutText"
             android:textSize="18sp"
             android:text="@string/prefAuthLoginTitle"
-            android:layout_width="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:layout_width="0dp"
             android:layout_height="wrap_content" />
-        <TextView
-            android:id="@+id/loggedInAs"
-            android:textSize="12sp"
-            android:layout_width="match_parent"
+
+        <Button
+            android:id="@+id/logInOutButton"
+            android:text="@string/prefAuthLogInButton"
+            android:layout_gravity="center_vertical|right"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
     </LinearLayout>

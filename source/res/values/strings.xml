@@ -38,8 +38,9 @@
 
     <!-- Preference activity strings -->
     <string name="prefAuthLoginTitle">Log me into joind.in</string>
-    <string name="prefAuthLogoutTitle">You\'re logged in!</string>
-    <string name="prefAuthLogoutSummary">Touch to log out</string>
+    <string name="prefAuthLoggedInAs">Logged in as %s</string>
+    <string name="prefAuthLogInButton">Log in</string>
+    <string name="prefAuthLogOutButton">Log out</string>
     <string name="prefAttendOnlyTitle">Attended only</string>
     <string name="prefAttendOnlySummary">Only display past attended events</string>
     <string name="prefLoadImagesTitle">Load logos and gravatars</string>
