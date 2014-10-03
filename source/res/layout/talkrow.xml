@@ -33,9 +33,16 @@
 
         </LinearLayout>
 
-        <ImageView
+        <ProgressBar
+            android:id="@+id/TalkRowProgress"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            style="?android:attr/android:progressBarStyleSmall" />
+
+        <CheckBox
             android:id="@+id/TalkRowStarred"
-            android:src="@drawable/ic_star_active"
+            android:button="@drawable/talkrow_star_background"
             android:layout_width="wrap_content"
             android:layout_height="match_parent" />
 

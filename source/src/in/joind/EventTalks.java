@@ -28,10 +28,11 @@ import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
-import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -51,6 +52,10 @@ public class EventTalks extends JIActivity implements OnClickListener {
 
         // Set layout
         setContentView(R.layout.eventtalks);
+    }
+
+    public void onResume() {
+        super.onResume();
 
         // Get event ID from the intent scratch board
         try {
@@ -83,7 +88,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
         } catch (JSONException e) {
             tz = TimeZone.getDefault();
         }
-        m_talkAdapter = new JITalkAdapter(this, R.layout.talkrow, m_talks, tz);
+        m_talkAdapter = new JITalkAdapter(this, R.layout.talkrow, m_talks, tz, isAuthenticated());
         final PullToRefreshListView talklist = (PullToRefreshListView) findViewById(R.id.ListViewEventTalks);
         talklist.setAdapter(m_talkAdapter);
 
@@ -240,13 +245,15 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable {
     private Context context;
     private TimeZone tz;
     private TrackFilter filter;
+    private boolean isAuthenticated;
 
-    public JITalkAdapter(Context context, int textViewResourceId, ArrayList<JSONObject> mTalks, TimeZone tz) {
+    public JITalkAdapter(Context context, int textViewResourceId, ArrayList<JSONObject> mTalks, TimeZone tz, boolean isAuthenticated) {
         super(context, textViewResourceId, mTalks);
         this.context = context;
         this.items = mTalks;
         this.filtered_items = mTalks;
         this.tz = tz;
+        this.isAuthenticated = isAuthenticated;
     }
 
     public View getView(int position, View convertview, ViewGroup parent) {
@@ -256,7 +263,7 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable {
             v = vi.inflate(R.layout.talkrow, null);
         }
 
-        JSONObject o = filtered_items.get(position);
+        final JSONObject o = filtered_items.get(position);
         if (o == null) return v;
 
         // Convert the supplied date/time string into something we can use
@@ -361,10 +368,83 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable {
 
         // Show/hide the starred icon if the talk is starred
         boolean starredStatus = o.optBoolean("starred", false);
-        ImageView starredImageView = (ImageView) v.findViewById(R.id.TalkRowStarred);
-        starredImageView.setVisibility(starredStatus ? View.VISIBLE : View.GONE);
+        CheckBox starredImageButton = (CheckBox) v.findViewById(R.id.TalkRowStarred);
+        starredImageButton.setVisibility(isAuthenticated ? View.VISIBLE : View.GONE);
+        starredImageButton.setChecked(starredStatus);
+        final View finalV = v;
+        starredImageButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                markTalkStarred(finalV, o.optString("starred_uri"), ((CheckBox) view).isChecked());
+            }
+        });
 
         return v;
+    }
+
+    /**
+     * Mark the talk as starred - update the icon and submit the request
+     * @param isStarred
+     */
+    protected void markTalkStarred(final View parentRow, final String starredURI, final boolean isStarred) {
+        final CheckBox starredImageButton = (CheckBox) parentRow.findViewById(R.id.TalkRowStarred);
+        final ProgressBar progressBar = (ProgressBar) parentRow.findViewById(R.id.TalkRowProgress);
+
+        new Thread() {
+            public void run() {
+                updateProgressStatus(progressBar, starredImageButton, true);
+
+                final String result = doStarTalk(isStarred, starredURI);
+
+                // TODO Hide the progress indicator
+                updateProgressStatus(progressBar, starredImageButton, false);
+            }
+        }.start();
+    }
+
+    /**
+     * CALLED FROM SEPARATE THREAD
+     * This shows/hides the progressbar and the checkbox alternately.
+     *
+     * @param progressBar
+     * @param starredImageButton
+     * @param showProgress
+     */
+    private void updateProgressStatus(final ProgressBar progressBar, final CheckBox starredImageButton, final boolean showProgress) {
+        progressBar.post(new Runnable() {
+            @Override
+            public void run() {
+                progressBar.setVisibility(showProgress ? View.VISIBLE : View.GONE);
+            }
+        });
+        starredImageButton.post(new Runnable() {
+            @Override
+            public void run() {
+                starredImageButton.setVisibility(showProgress ? View.GONE : View.VISIBLE);
+            }
+        });
+    }
+
+    /**
+     * Post/delete the starred status from this talk
+     *
+     * @param initialState
+     * @return
+     */
+    private String doStarTalk(boolean initialState, String starredURI) {
+        JIRest rest = new JIRest(context);
+        int error = rest.requestToFullURI(starredURI, null, initialState ? JIRest.METHOD_POST : JIRest.METHOD_DELETE);
+
+        if (error != JIRest.OK) {
+            return String.format(context.getString(R.string.generalStarringError), rest.getError());
+        }
+
+        // Everything went as expected
+        if (initialState) {
+            return context.getString(R.string.generalSuccessStarred);
+        } else {
+            return context.getString(R.string.generalSuccessUnstarred);
+        }
     }
 
     public Filter getFilter() {
