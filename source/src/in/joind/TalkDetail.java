@@ -7,7 +7,7 @@ package in.joind;
 
 import android.text.TextUtils;
 import android.util.Log;
-import in.joind.R;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,15 +15,23 @@ import org.json.JSONObject;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.util.Linkify;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 public class TalkDetail extends JIActivity implements OnClickListener {
+
+    MenuItem starTalkButton;
+
     private JSONObject talkJSON, eventJSON;
+    private boolean talkIsStarred = false;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,6 +112,50 @@ public class TalkDetail extends JIActivity implements OnClickListener {
         }
     }
 
+    /**
+     * Talk detail allows a user to star talks
+     * @param menu
+     * @return
+     */
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.talk_detail_menu, menu);
+        starTalkButton = menu.findItem(R.id.starTalk);
+
+        return true;
+    }
+
+    /**
+     * Handle menu clicks
+     * Essentially this is just the "star talk" option
+     * @param item
+     * @return
+     */
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.starTalk:
+                // Adjust talk status via API
+                // Only for authenticated users though
+                if (!isAuthenticated()) {
+                    Toast toast = Toast.makeText(this, getString(R.string.activityTalkDetailAuthRequiredForStarring), Toast.LENGTH_LONG);
+                    toast.show();
+
+                    return true;
+                }
+
+                if (talkIsStarred) {
+                    markTalkStarred(false);
+                } else {
+                    markTalkStarred(true);
+                    starTalkButton.setIcon(getResources().getDrawable(R.drawable.ic_star_active));
+                }
+                talkIsStarred = !talkIsStarred;
+                break;
+        }
+
+        return true;
+    }
+
     public void onClick(View v) {
         if (v == findViewById(R.id.ButtonNewComment)) {
             // Goto comment activity and add new comment to this talk
@@ -167,6 +219,54 @@ public class TalkDetail extends JIActivity implements OnClickListener {
             b.setText(String.format(getString(R.string.generalViewCommentSingular), commentCount));
         } else {
             b.setText(String.format(getString(R.string.generalViewCommentPlural), commentCount));
+        }
+    }
+
+    /**
+     * Mark the talk as starred - update the icon and submit the request
+     * @param isStarred
+     */
+    protected void markTalkStarred(final boolean isStarred) {
+        int iconID = (isStarred) ? R.drawable.ic_star_active : R.drawable.ic_star;
+        starTalkButton.setIcon(getResources().getDrawable(iconID));
+
+        new Thread() {
+            public void run() {
+                displayProgressBarCircular(true);
+
+                final String result = doStarTalk(isStarred);
+
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        Toast toast = Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG);
+                        toast.show ();
+                    }
+                });
+
+                displayProgressBarCircular(false);
+            }
+        }.start();
+    }
+
+    /**
+     * Post/delete the starred status from this talk
+     *
+     * @param initialState
+     * @return
+     */
+    private String doStarTalk(boolean initialState) {
+        JIRest rest = new JIRest(this);
+        int error = rest.requestToFullURI(this.talkJSON.optString("starred_uri"), null, initialState ? JIRest.METHOD_POST : JIRest.METHOD_DELETE);
+
+        if (error != JIRest.OK) {
+            return String.format(getString(R.string.generalStarringError), rest.getError());
+        }
+
+        // Everything went as expected
+        if (initialState) {
+            return getString(R.string.generalSuccessStarred);
+        } else {
+            return getString(R.string.generalSuccessUnstarred);
         }
     }
 }
