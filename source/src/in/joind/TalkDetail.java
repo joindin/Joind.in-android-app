@@ -122,6 +122,10 @@ public class TalkDetail extends JIActivity implements OnClickListener {
         inflater.inflate(R.menu.talk_detail_menu, menu);
         starTalkButton = menu.findItem(R.id.starTalk);
 
+        // We have to wait until this menu is created before we can set the starred status
+        talkIsStarred = (isAuthenticated() && talkJSON.optBoolean("starred", false));
+        updateStarredIcon(talkIsStarred);
+
         return true;
     }
 
@@ -227,8 +231,7 @@ public class TalkDetail extends JIActivity implements OnClickListener {
      * @param isStarred
      */
     protected void markTalkStarred(final boolean isStarred) {
-        int iconID = (isStarred) ? R.drawable.ic_star_active : R.drawable.ic_star;
-        starTalkButton.setIcon(getResources().getDrawable(iconID));
+        updateStarredIcon(isStarred);
 
         new Thread() {
             public void run() {
@@ -246,6 +249,16 @@ public class TalkDetail extends JIActivity implements OnClickListener {
                 displayProgressBarCircular(false);
             }
         }.start();
+    }
+
+    /**
+     * Update the starred icon to a set state
+     *
+     * @param isStarred
+     */
+    protected void updateStarredIcon(boolean isStarred) {
+        int iconID = (isStarred) ? R.drawable.ic_star_active : R.drawable.ic_star;
+        starTalkButton.setIcon(getResources().getDrawable(iconID));
     }
 
     /**
