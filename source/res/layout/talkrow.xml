@@ -7,32 +7,39 @@
               android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/LinearLayout01"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_width="fill_parent">
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:drawableLeft="@drawable/talk"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:id="@+id/TalkRowCaption"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:layout_width="wrap_content" />
+
+            <TextView
+                android:id="@+id/TalkRowSpeaker"
+                android:layout_height="wrap_content"
+                android:layout_width="fill_parent" />
+
+        </LinearLayout>
 
         <ImageView
-            android:background="@drawable/talk"
-            android:layout_height="wrap_content"
+            android:id="@+id/TalkRowStarred"
+            android:src="@drawable/ic_star_active"
             android:layout_width="wrap_content"
-            android:layout_marginRight="5px"
-            android:id="@+id/TalkRowImageType"></ImageView>
+            android:layout_height="match_parent" />
 
-        <TextView
-            android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:id="@+id/TalkRowCaption"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:layout_width="fill_parent"></TextView>
     </LinearLayout>
-
-    <TextView
-        android:layout_height="wrap_content"
-        android:id="@+id/TalkRowSpeaker"
-        android:layout_weight="3"
-        android:layout_width="fill_parent"></TextView>
 
     <LinearLayout
         android:id="@+id/LinearLayout02"
@@ -45,7 +52,7 @@
             android:layout_width="75dip"
             android:layout_marginTop="5px"
             android:layout_marginRight="5px"
-            android:id="@+id/TalkRowRating"></ImageView>
+            android:id="@+id/TalkRowRating" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -54,7 +61,7 @@
             android:gravity="right"
             android:layout_gravity="right"
             android:text=""
-            android:layout_weight="0.5"></TextView>
+            android:layout_weight="0.5" />
     </LinearLayout>
 
     <LinearLayout
@@ -66,7 +73,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/TalkRowTrack"
-            android:text=""></TextView>
+            android:text="" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -75,6 +82,6 @@
             android:id="@+id/TalkRowTime"
             android:gravity="right"
             android:layout_weight="3"
-            android:text=""></TextView>
+            android:text="" />
     </LinearLayout>
 </LinearLayout>

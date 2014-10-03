@@ -16,6 +16,7 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -329,11 +330,11 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable {
         }
 
         // Set specified talk category image
-        ImageView r = (ImageView) v.findViewById(R.id.TalkRowImageType);
-        if (o.optString("type").compareTo("Talk") == 0) r.setBackgroundResource(R.drawable.talk);
-        if (o.optString("type").compareTo("Social Event") == 0) r.setBackgroundResource(R.drawable.socialevent);
-        if (o.optString("type").compareTo("Workshop") == 0) r.setBackgroundResource(R.drawable.workshop);
-        if (o.optString("type").compareTo("Keynote") == 0) r.setBackgroundResource(R.drawable.keynote);
+        Resources resources = context.getResources();
+        if (o.optString("type").compareTo("Talk") == 0) t1.setCompoundDrawables(resources.getDrawable(R.drawable.talk), null, null, null);
+        if (o.optString("type").compareTo("Social Event") == 0) t1.setCompoundDrawables(resources.getDrawable(R.drawable.socialevent), null, null, null);
+        if (o.optString("type").compareTo("Workshop") == 0) t1.setCompoundDrawables(resources.getDrawable(R.drawable.workshop), null, null, null);
+        if (o.optString("type").compareTo("Keynote") == 0) t1.setCompoundDrawables(resources.getDrawable(R.drawable.keynote), null, null, null);
 
         ImageView rateview = (ImageView) v.findViewById(R.id.TalkRowRating);
         int rate = o.optInt("average_rating", 0);
@@ -357,6 +358,11 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable {
                 rateview.setBackgroundResource(R.drawable.rating_5);
                 break;
         }
+
+        // Show/hide the starred icon if the talk is starred
+        boolean starredStatus = o.optBoolean("starred", false);
+        ImageView starredImageView = (ImageView) v.findViewById(R.id.TalkRowStarred);
+        starredImageView.setVisibility(starredStatus ? View.VISIBLE : View.GONE);
 
         return v;
     }
