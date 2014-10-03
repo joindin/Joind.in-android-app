@@ -4,7 +4,8 @@
               android:layout_width="fill_parent"
               android:layout_height="?android:attr/listPreferredItemHeight"
               android:padding="6dip"
-              android:orientation="vertical">
+              android:orientation="vertical"
+              android:descendantFocusability="blocksDescendants">
 
     <LinearLayout
         android:layout_width="match_parent"
