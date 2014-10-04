@@ -257,11 +257,13 @@ public class EventTalks extends JIActivity implements OnClickListener {
                             case 0:
                                 // All items
                                 m_talkAdapter.getFilter().filter("");
+                                findViewById(R.id.filterDetails).setVisibility(View.GONE);
                                 break;
 
                             case 1:
                                 // Starred items
                                 m_talkAdapter.getFilter().filter("starred");
+                                findViewById(R.id.filterDetails).setVisibility(View.VISIBLE);
                                 break;
                         }
                     }

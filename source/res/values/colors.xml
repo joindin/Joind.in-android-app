@@ -2,4 +2,5 @@
 <resources>
     <color name="joindin_lightblue">#DEE6EF</color>
     <color name="joindin_turquoise">#007B97</color>
+    <color name="joindin_darkgrey">#444444</color>
 </resources>

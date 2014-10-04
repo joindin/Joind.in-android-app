@@ -6,6 +6,18 @@
     android:layout_height="fill_parent"
     android:layout_width="fill_parent">
 
+    <TextView
+        android:id="@+id/filterDetails"
+        android:background="@color/joindin_darkgrey"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:text="@string/activityTalkListFilteringByHeader"
+        android:gravity="center_horizontal|center_vertical"
+        android:padding="4dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
     <com.markupartist.android.widget.PullToRefreshListView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
