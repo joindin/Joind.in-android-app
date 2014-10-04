@@ -47,6 +47,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
     private JSONObject eventJSON;
     private JSONObject trackJSON = null;
     private int eventRowID = 0;
+    String trackURI;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,7 +98,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
         talklist.setAdapter(m_talkAdapter);
 
         // Display cached talks, optionally filtered by a track (by URI)
-        final String trackURI = (this.trackJSON != null) ? this.trackJSON.optString("uri") : "";
+        trackURI = (this.trackJSON != null) ? this.trackJSON.optString("uri") : "";
 
         // Add listview listener so when we click on an talk, we can display details
         talklist.setOnItemClickListener(new OnItemClickListener() {
@@ -506,7 +507,13 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable {
     /**
      * Starred filter
      */
-    private class StarredFilter extends Filter {
+    public class StarredFilter extends Filter {
+        private boolean checkStarredStatus = false;
+
+        public void setCheckStarredStatus(boolean checkStarredStatus) {
+            this.checkStarredStatus = checkStarredStatus;
+        }
+
         @SuppressWarnings("unchecked")
         protected void publishResults(CharSequence prefix, FilterResults results) {
             filtered_items = (ArrayList<JSONObject>) results.values;
@@ -518,11 +525,36 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable {
             FilterResults results = new FilterResults();
             ArrayList<JSONObject> i = new ArrayList<JSONObject>();
 
-            if (match != null && match.toString().equals("starred")) {
+            // Multiple filters here
+            if (checkStarredStatus || (match != null && match.length() > 0)) {
                 for (int index = 0; index < items.size(); index++) {
                     JSONObject json = items.get(index);
-                    if (json.optBoolean("starred", false)) {
-                        i.add(json);
+                    JSONArray tracks = json.optJSONArray("tracks");
+                    if (tracks.length() == 0) {
+                        continue;
+                    }
+
+                    int tracksLength = tracks.length();
+                    for (int j = 0; j < tracksLength; j++) {
+                        JSONObject track = tracks.optJSONObject(j);
+                        if (track == null) {
+                            continue;
+                        }
+
+                        // Add to the filtered result list when the match is present in the URI
+                        // If we need to check starred status as well, let's do that too
+                        if (match.toString().length() > 0) {
+                            // We have a track to match against, this happens first
+                            if (track.optString("track_uri").equals(match.toString())) {
+                                if ((checkStarredStatus && json.optBoolean("starred")) || !checkStarredStatus) {
+                                    i.add(json);
+                                    break;
+                                }
+                            }
+                        } else if (checkStarredStatus && json.optBoolean("starred")) {
+                            i.add(json);
+                            break;
+                        }
                     }
                 }
                 results.values = i;
