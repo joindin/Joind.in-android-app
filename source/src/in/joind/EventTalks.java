@@ -17,10 +17,12 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -48,6 +50,9 @@ public class EventTalks extends JIActivity implements OnClickListener {
     private JSONObject trackJSON = null;
     private int eventRowID = 0;
     String trackURI;
+
+    final private String FILTER_ALL = "";
+    final private String FILTER_STARRED = "starred";
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -133,7 +138,6 @@ public class EventTalks extends JIActivity implements OnClickListener {
         }
     }
 
-
     // Display talks in the talk list (adapter), depending on the track_id
     public int displayTalks(int eventRowID, String trackURI) {
         DataHelper dh = DataHelper.getInstance(this);
@@ -142,12 +146,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
         dh.populateTalks(eventRowID, m_talkAdapter);
         updateSubtitle(0); // initial
         m_talkAdapter.notifyDataSetChanged();
-        m_talkAdapter.getFilter().filter(trackURI, new Filter.FilterListener() {
-            @Override
-            public void onFilterComplete(int count) {
-                updateSubtitle(count);
-            }
-        });
+        applyPreferenceStarredFilter();
 
         return 0;
     }
@@ -257,16 +256,17 @@ public class EventTalks extends JIActivity implements OnClickListener {
                         switch (which) {
                             case 0:
                                 // All items
-                                m_talkAdapter.getFilter().filter("");
-                                findViewById(R.id.filterDetails).setVisibility(View.GONE);
+                                applyStarredFilter(FILTER_ALL);
+                                saveFilterPreference(FILTER_ALL);
                                 break;
 
                             case 1:
                                 // Starred items
-                                m_talkAdapter.getFilter().filter("starred");
-                                findViewById(R.id.filterDetails).setVisibility(View.VISIBLE);
+                                applyStarredFilter(FILTER_STARRED);
+                                saveFilterPreference(FILTER_STARRED);
                                 break;
                         }
+
                     }
                 });
                 builder.create().show();
@@ -275,6 +275,62 @@ public class EventTalks extends JIActivity implements OnClickListener {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Retrieve a user's previously-saved filter preference for
+     * this event, and tell the filter what to do
+     */
+    protected void applyPreferenceStarredFilter() {
+        String prefKey = "filter_" + eventRowID;
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String filterPreference = prefs.getString(prefKey, "");
+        applyStarredFilter(filterPreference);
+    }
+
+    /**
+     * Configure the filter based on track URI and starred preference
+     *
+     * @param filterType
+     */
+    protected void applyStarredFilter(String filterType) {
+        boolean showFilterHeader = false;
+
+        JITalkAdapter.StarredFilter starredFilter = (JITalkAdapter.StarredFilter) m_talkAdapter.getFilter();
+        if (filterType.equals("")) {
+            starredFilter.setCheckStarredStatus(false);
+        }
+        if (filterType.equals("starred")) {
+            starredFilter.setCheckStarredStatus(true);
+            showFilterHeader = true;
+        }
+
+        // Apply the track URI string matching filter
+        // The starred item is checked within the filter itself, based on the checkStarredStatus call
+        starredFilter.filter(trackURI, new Filter.FilterListener() {
+            @Override
+            public void onFilterComplete(int count) {
+                updateSubtitle(count);
+            }
+        });
+
+        findViewById(R.id.filterDetails).setVisibility(showFilterHeader ? View.VISIBLE : View.GONE);
+    }
+
+    /**
+     * Save the user's current filter preference to shared preferences
+     * for this event
+     *
+     * @param filterType
+     */
+    protected void saveFilterPreference(String filterType) {
+        String prefKey = "filter_" + eventRowID;
+
+        // Save filter preference in preferences
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(prefKey, filterType);
+        editor.apply();
     }
 }
 
@@ -438,7 +494,6 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable {
 
                 final String result = doStarTalk(isStarred, starredURI);
 
-                // TODO Hide the progress indicator
                 updateProgressStatus(progressBar, starredImageButton, false);
             }
         }.start();
