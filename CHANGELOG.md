@@ -1,3 +1,8 @@
+# 2.0.7
+
+* Fix listing talks by track
+* Remember a user's filtering preference for an event
+
 # 2.0.6
 
 * New OAuth signin process (JOINDIN-349, JOINDIN-454)
