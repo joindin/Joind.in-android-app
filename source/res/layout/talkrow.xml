@@ -3,11 +3,33 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="fill_parent"
               android:layout_height="?android:attr/listPreferredItemHeight"
-              android:padding="6dip"
               android:orientation="vertical"
               android:descendantFocusability="blocksDescendants">
 
+    <!-- header row -->
     <LinearLayout
+        android:id="@+id/sectionHeader"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:descendantFocusability="blocksDescendants">
+
+        <TextView
+            android:id="@+id/sectionText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/joindin_turquoise"
+            android:padding="6dp"
+            android:textSize="12sp"
+            android:textColor="@android:color/white" />
+
+    </LinearLayout>
+
+    <!-- talk content row -->
+    <LinearLayout
+        android:paddingTop="6dp"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -51,6 +73,8 @@
 
     <LinearLayout
         android:id="@+id/LinearLayout02"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent">
 
@@ -74,6 +98,9 @@
 
     <LinearLayout
         android:id="@+id/LinearLayout03"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
+        android:paddingBottom="6dp"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent">
 

@@ -14,6 +14,7 @@ import android.widget.CheckBox;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
@@ -28,12 +29,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimeZone;
 
-class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable {
+class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable, SectionIndexer {
     private ArrayList<JSONObject> items, filtered_items;
     private Context context;
     private TimeZone tz;
     private StarredFilter filter;
     private boolean isAuthenticated;
+    private String[] sections;
 
     public JITalkAdapter(Context context, int textViewResourceId, ArrayList<JSONObject> mTalks, TimeZone tz, boolean isAuthenticated) {
         super(context, textViewResourceId, mTalks);
@@ -50,6 +52,9 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable {
             LayoutInflater layoutInflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = layoutInflater.inflate(R.layout.talkrow, null);
             holder = new ViewHolder();
+
+            holder.section = (LinearLayout) convertView.findViewById(R.id.sectionHeader);
+            holder.sectionText = (TextView) convertView.findViewById(R.id.sectionText);
 
             holder.ratingImage = (ImageView) convertView.findViewById(R.id.TalkRowRating);
             holder.starredCheckBox = (CheckBox) convertView.findViewById(R.id.TalkRowStarred);
@@ -181,7 +186,83 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable {
             }
         });
 
+        // Headers if required
+        String dateFormat = context.getString(R.string.generalEventTalksSectionHeaderFormat);
+        String thisDate = "";
+        SimpleDateFormat dfOutput = new SimpleDateFormat(dateFormat), dfInput = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+        try {
+            thisDate = dfOutput.format(dfInput.parse(o.optString("start_date")));
+        } catch (ParseException e) {
+        }
+        if (position == 0) {
+            setSection(holder, thisDate);
+        } else {
+            JSONObject previousItem = items.get(position - 1);
+            String previousDate = "";
+            try {
+                previousDate = dfOutput.format(dfInput.parse(previousItem.optString("start_date")));
+            } catch (ParseException e) {
+            }
+            if (!thisDate.equals(previousDate)) {
+                setSection(holder, thisDate);
+            } else {
+                holder.section.setVisibility(View.GONE);
+            }
+        }
+
         return convertView;
+    }
+
+    private void setSection(ViewHolder holder, String label) {
+        holder.sectionText.setText(label.toUpperCase());
+        holder.section.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public Object[] getSections() {
+        ArrayList<String> tmpSections = new ArrayList<String>();
+        String dateFormat = context.getString(R.string.generalEventTalksSectionHeaderFormat);
+        for (JSONObject talk : items) {
+            // Get string date
+            SimpleDateFormat dfOutput = new SimpleDateFormat(dateFormat), dfInput = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+            try {
+                String thisDate = dfOutput.format(dfInput.parse(talk.optString("start_date")));
+                if (!tmpSections.contains(thisDate)) {
+                    tmpSections.add(thisDate);
+                }
+            } catch (ParseException e) {
+            }
+        }
+        sections = tmpSections.toArray(new String[tmpSections.size()]);
+
+        return sections;
+    }
+
+    @Override
+    public int getPositionForSection(int section) {
+        for (int i = 0; i < items.size(); i++) {
+            JSONObject talk = items.get(i);
+
+            // Get string date
+            String dateFormat = context.getString(R.string.generalEventTalksSectionHeaderFormat);
+            SimpleDateFormat dfOutput = new SimpleDateFormat(dateFormat), dfInput = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+            String thisDate = "";
+            try {
+                thisDate = dfOutput.format(dfInput.parse(talk.optString("start_date")));
+            } catch (ParseException e) {
+            }
+
+            if (sections[section].equals(thisDate)) {
+                return i;
+            }
+        }
+
+        return 0;
+    }
+
+    @Override
+    public int getSectionForPosition(int i) {
+        return 0;
     }
 
     /**
@@ -334,6 +415,15 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable {
      * Holder for each row
      */
     private class ViewHolder {
+        /**
+         * Section headers
+         */
+        LinearLayout section;
+        TextView sectionText;
+
+        /**
+         * Row data
+         */
         ImageView ratingImage;
         TextView captionText;
         TextView commentsText;

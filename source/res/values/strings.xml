@@ -95,6 +95,7 @@
 
     <string name="generalEventTalksSingular">%d event talk</string>
     <string name="generalEventTalksPlural">%d event talks</string>
+    <string name="generalEventTalksSectionHeaderFormat">d LLLL yyyy</string>
 
     <string name="generalEventTracksSingular">%d event track</string>
     <string name="generalEventTracksPlural">%d event tracks</string>
