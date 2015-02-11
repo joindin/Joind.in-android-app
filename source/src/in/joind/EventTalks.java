@@ -4,9 +4,7 @@ package in.joind;
  * Displays all talks from specified event.
  */
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.TimeZone;
 
 import org.json.JSONArray;
@@ -14,45 +12,35 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
-import android.text.TextUtils;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
 import android.widget.Filter;
-import android.widget.Filterable;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.markupartist.android.widget.PullToRefreshListView;
 
 public class EventTalks extends JIActivity implements OnClickListener {
-    private JITalkAdapter m_talkAdapter;    // adapter for listview
+    private JITalkAdapter m_talkAdapter;
     private JSONObject eventJSON;
     private JSONObject trackJSON = null;
     private int eventRowID = 0;
+    private int firstVisibleItem = 0;
     String trackURI;
 
     final private String FILTER_ALL = "";
     final private String FILTER_STARRED = "starred";
+    PullToRefreshListView talklist;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,14 +52,26 @@ public class EventTalks extends JIActivity implements OnClickListener {
         setContentView(R.layout.eventtalks);
     }
 
+    public void onPause() {
+        super.onPause();
+
+        // Save our current list index position for this event
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        String key = String.format(C.PREFS_TALK_LIST_INDEX, eventRowID);
+        editor.putInt(key, firstVisibleItem).apply();
+    }
+
     public void onResume() {
         super.onResume();
 
+        final Intent callingIntent = getIntent();
+
         // Get event ID from the intent scratch board
         try {
-            this.eventJSON = new JSONObject(getIntent().getStringExtra("eventJSON"));
+            this.eventJSON = new JSONObject(callingIntent.getStringExtra("eventJSON"));
             if (getIntent().hasExtra("eventTrack")) {
-                this.trackJSON = new JSONObject(getIntent().getStringExtra("eventTrack"));
+                this.trackJSON = new JSONObject(callingIntent.getStringExtra("eventTrack"));
             }
         } catch (JSONException e) {
             android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No event passed to activity", e);
@@ -99,7 +99,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
             tz = TimeZone.getDefault();
         }
         m_talkAdapter = new JITalkAdapter(this, R.layout.talkrow, m_talks, tz, isAuthenticated());
-        final PullToRefreshListView talklist = (PullToRefreshListView) findViewById(R.id.ListViewEventTalks);
+        talklist = (PullToRefreshListView) findViewById(R.id.ListViewEventTalks);
         talklist.setAdapter(m_talkAdapter);
 
         // Display cached talks, optionally filtered by a track (by URI)
@@ -111,9 +111,9 @@ public class EventTalks extends JIActivity implements OnClickListener {
                 // open talk detail activity with event and talk data
                 Intent myIntent = new Intent();
                 myIntent.setClass(getApplicationContext(), TalkDetail.class);
-                myIntent.putExtra("eventJSON", getIntent().getStringExtra("eventJSON"));
+                myIntent.putExtra("eventJSON", callingIntent.getStringExtra("eventJSON"));
                 myIntent.putExtra("talkJSON", parent.getAdapter().getItem(pos).toString());
-                startActivity(myIntent);
+                startActivityForResult(myIntent, C.EVENT_TALKS_SHOW_TALK_DETAILS);
             }
         });
         talklist.setOnRefreshListener(new PullToRefreshListView.OnRefreshListener() {
@@ -127,14 +127,34 @@ public class EventTalks extends JIActivity implements OnClickListener {
                 }
             }
         });
+        talklist.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView absListView, int i) {}
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                EventTalks.this.firstVisibleItem = firstVisibleItem;
+            }
+        });
 
         displayTalks(eventRowID, trackURI);
+        talklist.setSelection(firstVisibleItem);
 
         // Load new talks (in background)
         try {
             loadTalks(eventRowID, trackURI, eventJSON.getString("talks_uri"));
         } catch (JSONException e) {
             android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No talks URI available");
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == C.EVENT_TALKS_SHOW_TALK_DETAILS) {
+            // Resume state if we've been returned to
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            String key = String.format(C.PREFS_TALK_LIST_INDEX, eventRowID);
+            firstVisibleItem = sharedPreferences.getInt(key, 0);
         }
     }
 
