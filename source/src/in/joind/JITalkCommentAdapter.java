@@ -54,11 +54,10 @@ class JITalkCommentAdapter extends ArrayAdapter<JSONObject> {
         }
 
         holder.gravatarImage.setVisibility(View.GONE);
-
         if (o.optInt("user_id") > 0) {
             String filename = "user" + o.optString("user_id") + ".jpg";
             holder.gravatarImage.setTag(filename);
-            image_loader.displayImage("http://joind.in/inc/img/user_gravatar/", filename, (Activity) context, holder.gravatarImage);
+            image_loader.displayImage("https://joind.in/inc/img/user_gravatar/", filename, (Activity) context, holder.gravatarImage);
         }
 
         String commentDate = DateHelper.parseAndFormat(o.optString("created_date"), "d LLL yyyy");
