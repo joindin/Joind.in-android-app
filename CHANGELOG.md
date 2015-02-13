@@ -1,3 +1,8 @@
+# 2.0.8
+
+* Add talk listing day headers
+* Remember scroll position in talk listing (JOINDIN-542)
+
 # 2.0.7
 
 * Fix listing talks by track
