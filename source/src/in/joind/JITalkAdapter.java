@@ -191,6 +191,7 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable, Sect
         String thisDate = "";
         SimpleDateFormat dfOutput = new SimpleDateFormat(dateFormat), dfInput = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
         try {
+            dfOutput.setTimeZone(tz);
             thisDate = dfOutput.format(dfInput.parse(o.optString("start_date")));
         } catch (ParseException e) {
         }
