@@ -156,9 +156,8 @@ public class TalkDetail extends JIActivity implements OnClickListener {
                 talkIsStarred = !talkIsStarred;
                 break;
         }
-	//If we don't have an action here, hand it back up to the super
-	return super.onOptionsItemSelected(item);
 
+        return super.onOptionsItemSelected(item);
     }
 
     public void onClick(View v) {
