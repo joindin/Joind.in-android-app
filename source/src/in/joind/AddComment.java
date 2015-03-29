@@ -23,6 +23,8 @@ import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
+
 public class AddComment extends JIActivity implements OnClickListener {
     ProgressDialog saveDialog;
     private String commentType;
@@ -71,15 +73,8 @@ public class AddComment extends JIActivity implements OnClickListener {
                 android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No event passed to activity", e);
             }
 
-            // Set rating bar to invisible since it is not used while
-            // commenting on events
-            View v;
-            v = (View) findViewById(R.id.CommentRatingBar);
-            v.setVisibility(View.GONE);
-            v = (View) findViewById(R.id.TextViewRating);
-            v.setVisibility(View.GONE);
-
-            // and hide the private comment checkbox
+            // Hide the private comment checkbox
+            // (not used for events)
             privateComment.setVisibility(View.GONE);
         }
         else {
@@ -120,7 +115,13 @@ public class AddComment extends JIActivity implements OnClickListener {
                     runOnUiThread(new Runnable() {
                         public void run() {
                             // Display result from sendcomment()
-                            Toast toast = Toast.makeText(getApplicationContext(), result ? getString(R.string.generalSuccessPostComment) : lastError, Toast.LENGTH_LONG);
+                            int stringID;
+                            if (result) {
+                                stringID = R.string.generalSuccessPostComment;
+                            } else {
+                                stringID = R.string.generalFailPostComment;
+                            }
+                            Toast toast = Toast.makeText(getApplicationContext(), getString(stringID), Toast.LENGTH_LONG);
                             toast.show();
 
                             // If successful, close this activity and return
@@ -159,8 +160,10 @@ public class AddComment extends JIActivity implements OnClickListener {
 
         try {
             data.put("comment", comment);
+            data.put("rating", rating);
         } catch (JSONException e) {
-            // do nothing
+            Crashlytics.log("Couldn't add comment and rating to JSON object");
+            return false;
         }
 
         // Are we sending a talk comment?
@@ -171,14 +174,7 @@ public class AddComment extends JIActivity implements OnClickListener {
                 android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No talk passed to activity", e);
             }
 
-            // Talk comments have ratings
-            try {
-                data.put("rating", rating);
-            } catch (JSONException e) {
-                // do nothing
-            }
-
-            // and a private status
+            // Talk comments have a private status
             try {
                 data.put("private", privateComment);
             } catch (JSONException e) {
@@ -202,6 +198,7 @@ public class AddComment extends JIActivity implements OnClickListener {
         int result = rest.requestToFullURI(url, data, JIRest.METHOD_POST);
         if (result != JIRest.OK) {
             lastError = rest.getError();
+            Crashlytics.log(lastError);
         }
 
         // Remove progress bar
