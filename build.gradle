@@ -5,12 +5,12 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.9.+'
+        classpath 'com.android.tools.build:gradle:1.2.3'
         classpath 'com.crashlytics.tools.gradle:crashlytics-gradle:1.+'
     }
 }
 
-apply plugin: 'android'
+apply plugin: 'com.android.application'
 apply plugin: 'crashlytics'
 
 repositories {
@@ -18,8 +18,12 @@ repositories {
 }
 
 android {
-    compileSdkVersion 19
+    compileSdkVersion 22
     buildToolsVersion "19.1.0"
+
+    defaultConfig {
+        targetSdkVersion 22
+    }
 
     sourceSets {
         main {
@@ -39,7 +43,7 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:19.1.+'
+    compile 'com.android.support:appcompat-v7:22.0.0'
     compile 'com.crashlytics.android:crashlytics:1.+'
 }
 
