@@ -157,7 +157,7 @@ public class TalkDetail extends JIActivity implements OnClickListener {
                 break;
         }
 
-        return true;
+        return super.onOptionsItemSelected(item);
     }
 
     public void onClick(View v) {
