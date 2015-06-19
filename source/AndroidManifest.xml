@@ -4,7 +4,17 @@
       android:versionCode="9"
       android:versionName="2.0.8">
 
-    <uses-sdk android:minSdkVersion="9"  android:targetSdkVersion="15"/>
+    <!-- Target SDK version is handled in the build.gradle configuration -->
+    <uses-sdk android:minSdkVersion="9" />
+
+    <!-- Since we make requests over the Internet, we need the users permission for it. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- Account management. Used to store access tokens -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
 
 	<supports-screens
 		android:largeScreens="true"
@@ -12,12 +22,11 @@
 		android:smallScreens="true"
 		android:anyDensity="true" />
 
-    <!-- Application uses a light theme. I think it's much nicer than the standard
-         dark android layout. -->
     <application
       android:icon="@drawable/ic_launcher"
       android:label="@string/app_name"
-      android:theme="@style/JoindInActionBarTheme">
+      android:theme="@style/JoindInActionBarTheme"
+        android:allowBackup="true">
 
         <!-- Just a bunch of activities here. Needed otherwise android cannot launch them. -->
         <activity android:name="in.joind.Main"
@@ -107,13 +116,4 @@
         <meta-data android:name="com.crashlytics.ApiKey" android:value="2d4ca2fb1f0233b099fd8045815bbbe56496ef5a"/>
 
     </application>
-
-    <!-- Since we make requests over the Internet, we need the users permission for it. -->
-    <uses-permission android:name="android.permission.INTERNET" />
-
-    <!-- Account management. Used to store access tokens -->
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
-    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
-    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
 </manifest>
