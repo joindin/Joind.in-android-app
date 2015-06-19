@@ -43,7 +43,7 @@ public class JIActivity extends ActionBarActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Needed to show the circular progress animation in the top right corner.
-        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+        supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
         Crashlytics.start(this);
     }
@@ -67,7 +67,7 @@ public class JIActivity extends ActionBarActivity {
     public void displayProgressBarCircular(final boolean state) {
         runOnUiThread(new Runnable() {
             public void run() {
-                setProgressBarIndeterminateVisibility(state);
+                setSupportProgressBarIndeterminateVisibility(state);
             }
         });
     }
