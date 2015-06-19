@@ -106,6 +106,7 @@
     <string name="generalCommentSingular">%d comment</string>
     <string name="generalCommentPlural">%d comments</string>
     <string name="generalAnonymous">Anonymous</string>
+    <string name="generalFailPostComment">Warning: Couldn\'t post comment</string>
     <string name="generalSuccessPostComment">Comment posted successfully</string>
 
     <string name="generalSuccessFullyAttended">Successfully attended</string>
