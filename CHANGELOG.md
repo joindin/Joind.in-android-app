@@ -1,3 +1,7 @@
+# 2.0.9
+
+* Fix comment posting bug (JOINDIN-569)
+
 # 2.0.8
 
 * Add talk listing day headers
