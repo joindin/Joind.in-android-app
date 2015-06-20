@@ -1,8 +1,10 @@
 package in.joind;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
@@ -14,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Filter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -33,7 +36,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import in.joind.activity.SettingsActivity;
 import in.joind.fragment.FragmentLifecycle;
+import in.joind.fragment.LogInDialogFragment;
 
 /**
  * The list fragment that is shown in our tabbed view.
@@ -52,8 +57,10 @@ public class EventListFragment extends ListFragment implements EventListFragment
     int eventSortOrder = DataHelper.ORDER_DATE_ASC;
     Main parentActivity;
     JIRest rest;
+    LogInReceiver logInReceiver;
     ListView listView;
     LinearLayout notSignedInView;
+    Button signInButton;
     String eventType;
 
     public void onAttach(Activity activity) {
@@ -92,12 +99,12 @@ public class EventListFragment extends ListFragment implements EventListFragment
             notSignedInView = (LinearLayout) inflater.inflate(R.layout.event_list_not_signed_in, container, false);
             parent.addView(notSignedInView, matchParentParams);
             notSignedInView.setVisibility(View.GONE);
+            signInButton = (Button) notSignedInView.findViewById(R.id.myEventsSignInButton);
 
             // Populate our list adapter
             ArrayList<JSONObject> m_events = new ArrayList<>();
             m_eventAdapter = new JIEventAdapter(getActivity(), R.layout.eventrow, m_events);
             setListAdapter(m_eventAdapter);
-
         }
 
         return viewGroup;
@@ -119,6 +126,9 @@ public class EventListFragment extends ListFragment implements EventListFragment
     @Override
     public void onPause() {
         super.onPause();
+        if (logInReceiver != null && parentActivity != null) {
+            parentActivity.unregisterReceiver(logInReceiver);
+        }
         pauseLoading();
     }
 
@@ -132,6 +142,12 @@ public class EventListFragment extends ListFragment implements EventListFragment
 
     public void onResume() {
         super.onResume();
+
+        if (parentActivity != null) {
+            logInReceiver = new LogInReceiver();
+            IntentFilter intentFilter = new IntentFilter(SettingsActivity.ACTION_USER_LOGGED_IN);
+            parentActivity.registerReceiver(logInReceiver, intentFilter);
+        }
 
         if (getUserVisibleHint() && parentActivity != null) {
             performEventListUpdate();
@@ -160,7 +176,8 @@ public class EventListFragment extends ListFragment implements EventListFragment
 
     private void performEventListUpdate() {
         // My Events - check our signed-in status
-        boolean isAuthenticated = parentActivity.isAuthenticated();
+        // We explicitly request a refresh of the authenticated status
+        boolean isAuthenticated = parentActivity.isAuthenticated(true);
         if (eventType.equals(LIST_TYPE_MY_EVENTS)) {
             if (!isAuthenticated) {
                 listView.setVisibility(View.GONE);
@@ -212,6 +229,13 @@ public class EventListFragment extends ListFragment implements EventListFragment
             @Override
             public void onRefresh() {
                 loadEvents(eventType);
+            }
+        });
+        signInButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LogInDialogFragment dlg = new LogInDialogFragment();
+                dlg.show(getChildFragmentManager(), "login");
             }
         });
     }
@@ -382,6 +406,22 @@ public class EventListFragment extends ListFragment implements EventListFragment
                     displayEvents(eventType);
                 }
             });
+        }
+    }
+
+    /**
+     * Handle login intents
+     */
+    private class LogInReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (action == null) {
+                return;
+            }
+            if (action.equals(SettingsActivity.ACTION_USER_LOGGED_IN)) {
+                performEventListUpdate();
+            }
         }
     }
 }
