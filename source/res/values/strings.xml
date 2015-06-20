@@ -69,10 +69,7 @@
     <string name="activityMainEventsHot">Hot events</string>
     <string name="activityMainEventsPast">Past events</string>
     <string name="activityMainEventsUpcoming">Upcoming events</string>
-    <string name="activityMainEventsFavorites">Favorite events</string>
-    <string name="activityMainEventsHotTab">Hot</string>
-    <string name="activityMainEventsUpcomingTab">Upcoming</string>
-    <string name="activityMainEventsPastTab">Past</string>
+    <string name="activityMainEventsMyEvent">My events</string>
 
     <string name="activityTalkListFilteringByHeader">Filtering by starred talks</string>
 
