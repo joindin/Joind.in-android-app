@@ -17,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -52,6 +53,7 @@ public class EventListFragment extends ListFragment implements EventListFragment
     Main parentActivity;
     JIRest rest;
     ListView listView;
+    LinearLayout notSignedInView;
     String eventType;
 
     public void onAttach(Activity activity) {
@@ -70,6 +72,7 @@ public class EventListFragment extends ListFragment implements EventListFragment
 
         if (viewGroup != null) {
             View lvOld = viewGroup.findViewById(android.R.id.list);
+            FrameLayout.LayoutParams matchParentParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 
             // Use the pull-to-refresh ListView, instead of a normal ListView
             final PullToRefreshListView listView = new PullToRefreshListView(getActivity());
@@ -82,7 +85,13 @@ public class EventListFragment extends ListFragment implements EventListFragment
             parent.removeView(lvOld);
             lvOld.setVisibility(View.GONE);
 
-            parent.addView(listView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            parent.addView(listView, matchParentParams);
+            listView.setVisibility(View.GONE);
+
+            // Also add the "not signed in" view (used in My Events)
+            notSignedInView = (LinearLayout) inflater.inflate(R.layout.event_list_not_signed_in, container, false);
+            parent.addView(notSignedInView, matchParentParams);
+            notSignedInView.setVisibility(View.GONE);
 
             // Populate our list adapter
             ArrayList<JSONObject> m_events = new ArrayList<>();
@@ -150,6 +159,21 @@ public class EventListFragment extends ListFragment implements EventListFragment
     }
 
     private void performEventListUpdate() {
+        // My Events - check our signed-in status
+        boolean isAuthenticated = parentActivity.isAuthenticated();
+        if (eventType.equals(LIST_TYPE_MY_EVENTS)) {
+            if (!isAuthenticated) {
+                listView.setVisibility(View.GONE);
+                notSignedInView.setVisibility(View.VISIBLE);
+
+                // Not signed in, no need to carry on
+                return;
+            }
+
+            listView.setVisibility(View.VISIBLE);
+            notSignedInView.setVisibility(View.GONE);
+        }
+
         // If we don't have any events in the adapter, then try and load some
         if (m_eventAdapter != null && m_eventAdapter.getCount() == 0) {
             if (listView != null) {
@@ -197,6 +221,7 @@ public class EventListFragment extends ListFragment implements EventListFragment
      */
     public int displayEvents(String eventType) {
         if (listView != null) {
+            listView.setVisibility(View.VISIBLE);
             setListShown(true);
         }
 
