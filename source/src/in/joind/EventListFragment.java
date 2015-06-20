@@ -32,22 +32,36 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import in.joind.fragment.FragmentLifecycle;
+
 /**
  * The list fragment that is shown in our tabbed view.
  * Lists events depending on event type (in our case, the fragment's Tag value)
  */
-public class EventListFragment extends ListFragment implements EventListFragmentInterface {
+public class EventListFragment extends ListFragment implements EventListFragmentInterface, FragmentLifecycle {
+
+    final static public String ARG_LIST_TYPE_KEY = "listType";
+    final static public String LIST_TYPE_HOT = "hot";
+    final static public String LIST_TYPE_UPCOMING = "upcoming";
+    final static public String LIST_TYPE_MY_EVENTS = "my_events";
+    final static public String LIST_TYPE_PAST = "past";
 
     private JIEventAdapter m_eventAdapter;
-    private EventLoaderThread event_loader_thread;
+    private EventLoaderThread eventLoaderThread;
     int eventSortOrder = DataHelper.ORDER_DATE_ASC;
     Main parentActivity;
     JIRest rest;
     ListView listView;
+    String eventType;
 
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        parentActivity = (Main) activity;
+    }
+
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        eventType = getArguments().getString(ARG_LIST_TYPE_KEY);
     }
 
     @Override
@@ -81,50 +95,86 @@ public class EventListFragment extends ListFragment implements EventListFragment
     }
 
     @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        listView = getListView();
+        setupEvents();
+    }
+
+    @Override
     public void onActivityCreated(android.os.Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        listView = getListView();
+        parentActivity = (Main) getActivity();
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        pauseLoading();
+    }
 
-        if (event_loader_thread != null) {
-            event_loader_thread.stopThread();
+    public void pauseLoading() {
+        if (eventLoaderThread != null) {
+            eventLoaderThread.stopThread();
         }
-        event_loader_thread = null;
+        eventLoaderThread = null;
         listView = null;
     }
 
     public void onResume() {
         super.onResume();
 
-        if (listView != null) {
-            setListShown(false);
+        if (getUserVisibleHint() && parentActivity != null) {
+            performEventListUpdate();
         }
-        loadEvents(this.getTag());
-        setTitle(this.getTag());
+    }
 
-        setupEvents();
+    @Override
+    public void onPauseFragment() {
+        pauseLoading();
+    }
+
+    @Override
+    public void onResumeFragment() {
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (eventType == null) {
+            return;
+        }
+        if (isVisibleToUser && parentActivity != null) {
+            performEventListUpdate();
+        }
+    }
+
+    private void performEventListUpdate() {
+        // If we don't have any events in the adapter, then try and load some
+        if (m_eventAdapter != null && m_eventAdapter.getCount() == 0) {
+            if (listView != null) {
+                setListShown(false);
+            }
+
+            loadEvents(eventType);
+        }
     }
 
     void loadEvents(String type) {
-        if (event_loader_thread != null) {
+        if (eventLoaderThread != null) {
             // Stop event loading thread, we're going to start a new one
-            event_loader_thread.stopThread();
+            eventLoaderThread.stopThread();
         }
 
         // Create a event loader thread
-        event_loader_thread = new EventLoaderThread();
-        event_loader_thread.setDaemon(true);
-        event_loader_thread.setPriority(Thread.NORM_PRIORITY - 1);
-        event_loader_thread.startThread(type);
+        eventLoaderThread = new EventLoaderThread();
+        eventLoaderThread.setDaemon(true);
+        eventLoaderThread.setPriority(Thread.NORM_PRIORITY - 1);
+        eventLoaderThread.startThread(type, parentActivity);
     }
 
     protected void setupEvents() {
-        getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
                 Intent myIntent = new Intent();
                 myIntent.setClass(getActivity().getApplicationContext(), EventDetail.class);
@@ -134,16 +184,18 @@ public class EventListFragment extends ListFragment implements EventListFragment
                 startActivity(myIntent);
             }
         });
-        ((PullToRefreshListView) getListView()).setOnRefreshListener(new PullToRefreshListView.OnRefreshListener() {
+        ((PullToRefreshListView) listView).setOnRefreshListener(new PullToRefreshListView.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                loadEvents(EventListFragment.this.getTag());
+                loadEvents(eventType);
             }
         });
     }
 
-    // Display events by populating the m_eventAdapter (custom list) with items loaded from DB
-    public int displayEvents(final String eventType) {
+    /**
+     *  Display events by populating the m_eventAdapter (custom list) with items loaded from DB
+     */
+    public int displayEvents(String eventType) {
         if (listView != null) {
             setListShown(true);
         }
@@ -152,7 +204,7 @@ public class EventListFragment extends ListFragment implements EventListFragment
         m_eventAdapter.clear();
 
         // add events and return count
-        DataHelper dh = DataHelper.getInstance(getActivity());
+        DataHelper dh = DataHelper.getInstance(parentActivity);
         int count = dh.populateEvents(eventType, m_eventAdapter, eventSortOrder);
 
         // Tell the adapter that our data set has changed so it can update it
@@ -161,40 +213,34 @@ public class EventListFragment extends ListFragment implements EventListFragment
             ((PullToRefreshListView) getListView()).onRefreshComplete();
         }
 
-        parentActivity.setEventsCountTitle(count);
-
         return count;
     }
 
     public void setEventSortOrder(int sortOrder) {
-        this.eventSortOrder = sortOrder;
-        displayEvents(this.getTag());
+        eventSortOrder = sortOrder;
+        displayEvents(eventType);
     }
 
     public int getEventSortOrder() {
-        return this.eventSortOrder;
+        return eventSortOrder;
     }
 
     public void filterByString(CharSequence s) {
         m_eventAdapter.getFilter().filter(s);
     }
 
-    protected void setTitle(String eventType) {
-        String title = "";
-        if (eventType.equals(Main.TAB_HOT)) title = this.getString(R.string.activityMainEventsHot);
-        if (eventType.equals(Main.TAB_PAST)) title = this.getString(R.string.activityMainEventsPast);
-        if (eventType.equals(Main.TAB_UPCOMING)) title = this.getString(R.string.activityMainEventsUpcoming);
-
-        parentActivity.setEventsTitle(title, 0);
-    }
-
+    /**
+     * Inner class: The thread that loads events in, and updates the fragment accordingly
+     */
     class EventLoaderThread extends Thread {
         private volatile Thread runner;
 
-        private String event_type;
+        private String eventType;
+        private Main parentActivity;
 
-        public synchronized void startThread(String type) {
-            event_type = type;
+        public synchronized void startThread(String type, Main parentActivity) {
+            eventType = type;
+            this.parentActivity = parentActivity;
 
             if (runner == null) {
                 runner = new Thread(this);
@@ -216,17 +262,21 @@ public class EventListFragment extends ListFragment implements EventListFragment
         public void run() {
 
             // Get some event data from the joind.in API
-            rest = new JIRest(EventListFragment.this.getActivity());
+            rest = new JIRest(parentActivity);
             String urlPostfix = "events";
-            if (event_type.length() > 0) {
-                urlPostfix += "?filter=" + event_type;
+            if (eventType.equals(EventListFragment.LIST_TYPE_MY_EVENTS)) {
+                uiDisplayEvents();
+                return;
+            }
+            if (eventType.length() > 0) {
+                urlPostfix += "?filter=" + eventType;
             }
             String uriToUse = rest.makeFullURI(urlPostfix);
 
             JSONObject fullResponse;
             JSONObject metaObj;
-            DataHelper dh = DataHelper.getInstance(EventListFragment.this.getActivity());
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+            DataHelper dh = DataHelper.getInstance(parentActivity);
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(parentActivity.getApplicationContext());
             boolean isFirst = true;
             int error = JIRest.OK; // default
 
@@ -244,7 +294,7 @@ public class EventListFragment extends ListFragment implements EventListFragment
                         metaObj = fullResponse.getJSONObject("meta");
 
                         if (isFirst) {
-                            dh.deleteAllEventsFromType(event_type);
+                            dh.deleteAllEventsFromType(eventType);
                             isFirst = false;
                         }
                         JSONArray json = fullResponse.getJSONArray("events");
@@ -253,24 +303,22 @@ public class EventListFragment extends ListFragment implements EventListFragment
                             JSONObject json_event = json.getJSONObject(i);
 
                             // Don't add when we are adding to the Past AND we want to display "attended only"
-                            if (event_type.equals("past") && prefs.getBoolean("attendonly", false) && !json_event.optBoolean("user_attending")) {
+                            if (eventType.equals("past")
+                                    && prefs.getBoolean("attendonly", false)
+                                    && !json_event.optBoolean("user_attending")) {
                                 continue;
                             }
-                            dh.insertEvent(event_type, json_event);
+                            dh.insertEvent(eventType, json_event);
                         }
                         uriToUse = metaObj.getString("next_page");
 
                         // Yield to the view, so some display
-                        if (getActivity() != null) getActivity().runOnUiThread(new Runnable() {
-                            public void run() {
-                                displayEvents(event_type);
-                            }
-                        });
+                        uiDisplayEvents();
 
                         // If we're looking at "hot" events, this API call just
                         // returns events, and more events, and more events....
                         // so we'll just stop after the first round
-                        if (event_type.equals(Main.TAB_HOT)) {
+                        if (eventType.equals("hot")) {
                             break;
                         }
                     } else {
@@ -278,32 +326,37 @@ public class EventListFragment extends ListFragment implements EventListFragment
                     }
                 } while (Thread.currentThread() == runner && metaObj.getInt("count") > 0 && !interrupted());
             } catch (JSONException e) {
-                getActivity().runOnUiThread(new Runnable() {
-                    public void run() {
-                        displayEvents(event_type);
-                    }
-                });
+                uiDisplayEvents();
             }
 
             // Something bad happened? :(
             if (error != JIRest.OK) {
-                // We can only modify the UI in a UIThread, so we create another thread
-                getActivity().runOnUiThread(new Runnable() {
-                    public void run() {
-                        // Display result from the rest to the user
-                        Toast toast = Toast.makeText(getActivity().getApplicationContext(), rest.getError(), Toast.LENGTH_LONG);
-                        toast.show();
-                    }
-                });
+                if (parentActivity != null && rest.getError().length() > 0) {
+                    parentActivity.runOnUiThread(new Runnable() {
+                        public void run() {
+                            // Display result from the rest to the user
+                            Toast toast = Toast.makeText(parentActivity, rest.getError(), Toast.LENGTH_LONG);
+                            toast.show();
+                        }
+                    });
+                }
             }
 
             // Show the events
-            if (getActivity() != null) getActivity().runOnUiThread(new Runnable() {
+            uiDisplayEvents();
+            if (parentActivity != null) {
+                parentActivity.displayHorizontalProgress(false);
+            }
+        }
+    }
+
+    private void uiDisplayEvents() {
+        if (parentActivity != null) {
+            parentActivity.runOnUiThread(new Runnable() {
                 public void run() {
-                    displayEvents(event_type);
+                    displayEvents(eventType);
                 }
             });
-            parentActivity.displayHorizontalProgress(false);
         }
     }
 }
