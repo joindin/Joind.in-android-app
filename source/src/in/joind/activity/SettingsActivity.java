@@ -66,7 +66,7 @@ public class SettingsActivity extends JIActivity implements PreferenceListFragme
                     requestLoginDetails();
                 } else {
                     // Fire logout
-                    accountManager.removeAccount(thisAccount, null, null);
+                    accountManager.removeAccount(thisAccount, null, null, null);
                     loginLogoutText.setText(getString(R.string.prefAuthLoginTitle));
                     logInOutButton.setText(getString(R.string.prefAuthLogInButton));
                     gravatarImage.setVisibility(View.GONE);
