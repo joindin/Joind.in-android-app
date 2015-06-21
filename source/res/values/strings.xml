@@ -15,6 +15,10 @@
     <string name="oauthDeniedMessage">Couldn\'t authenticate with joind.in</string>
     <string name="oauthGenericErrorMessage">There was a problem authenticating you</string>
 
+    <!-- Titles -->
+    <string name="titleMain">joind.in</string>
+    <string name="titleSettings">Settings</string>
+
     <!-- Option menu strings -->
     <string name="OptionMenuSettings">Settings</string>
     <string name="OptionMenuClearCache">Clear cache</string>

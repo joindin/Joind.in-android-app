@@ -54,6 +54,8 @@ public class Main extends JIActivity implements SearchView.OnQueryTextListener {
         // Create instance of the database singleton. This needs a context
         DataHelper.createInstance(this.getApplicationContext());
 
+        setTitle(getString(R.string.titleMain));
+
         initialiseTabs();
     }
 
@@ -78,8 +80,6 @@ public class Main extends JIActivity implements SearchView.OnQueryTextListener {
 
                 FragmentLifecycle fragmentToHide = (FragmentLifecycle) pagerAdapter.getItem(currentPosition);
                 fragmentToHide.onPauseFragment();
-
-                setTitle(pagerAdapter.getPageTitle(newPosition));
 
                 currentPosition = newPosition;
             }

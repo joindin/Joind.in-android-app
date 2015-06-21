@@ -15,5 +15,6 @@
 
         <!-- Support library compatibility -->
         <item name="background">@color/joindin_turquoise</item>
+        <item name="elevation">0dp</item>
     </style>
 </resources>

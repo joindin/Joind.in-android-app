@@ -36,6 +36,8 @@ public class SettingsActivity extends JIActivity implements PreferenceListFragme
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_settings);
+
+        setTitle(getString(R.string.titleSettings));
     }
 
     public void onResume() {
