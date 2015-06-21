@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.SearchManager;
+import android.graphics.PorterDuff;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.SearchView;
@@ -19,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import in.joind.adapter.EventTypePagerAdapter;
 import in.joind.fragment.FragmentLifecycle;
@@ -41,6 +43,7 @@ public class Main extends JIActivity implements SearchView.OnQueryTextListener {
 
     ViewPager viewPager;
     EventTypePagerAdapter pagerAdapter;
+    ProgressBar progressBar;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,6 +105,12 @@ public class Main extends JIActivity implements SearchView.OnQueryTextListener {
             currentTabIndex = sp.getInt("currentTabIndex", 0);
         }
         viewPager.setCurrentItem(currentTabIndex);
+
+        // Tint the progress bar
+        int color = 0xFFFFFFFF;
+        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        progressBar.getIndeterminateDrawable().setColorFilter(color, PorterDuff.Mode.SRC_IN);
+        progressBar.getProgressDrawable().setColorFilter(color, PorterDuff.Mode.SRC_IN);
     }
 
     // Overriding the JIActivity add sort-items
