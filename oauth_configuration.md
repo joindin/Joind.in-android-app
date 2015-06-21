@@ -9,12 +9,12 @@ The Android app uses the OAuth2 "Client Credentials Flow" method of authenticati
 your client ID needs to be authorised by the API.
 
 ## Configuring the API
-In the API project, open up `src/config.php` and add an entry to the `password_client_ids` file:
+In the API project, open up `src/config.php` and add an entry to the `expirable_client_ids` file:
 
     $config =  array(
         'mode' => 'development',
         'oauth' => array(
-            'password_client_ids' => array(
+            'expirable_client_ids' => array(
                 // ...
                 'androidapp',
             )
@@ -23,11 +23,16 @@ In the API project, open up `src/config.php` and add an entry to the `password_c
 
 This will allow credentials access with a client ID of "androidapp".
 
+You'll need to create an entry in the `oauth_consumers` API database table, with
+a consumer key of `androidapp` and a secret - eg `androidappsecret`. Set the `enable_password_grant`
+field to 1. The API is now ready to go.
+
 ## Configuring the Android app
 In the Android app project, you'll need to create a file called ``oauth.properties`` and place it
 in ``res/raw``.  The content should be:
 
     client_id=androidapp
+    client_secret=androidappsecret
 
 Once you've placed this in, authentication via the app's settings page should work when you build
 the app and point it to your local API.
