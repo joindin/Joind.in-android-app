@@ -185,6 +185,11 @@ public class LogInDialogFragment extends DialogFragment {
             public void run() {
                 String username = DUMMY_USERNAME;
                 String gravatarHash = ""; // dummy?
+                String talksURI = "";
+                String attendedEventsURI = "";
+                String hostedEventsURI = "";
+                String talkCommentsURI = "";
+
                 JIRest rest = new JIRest(getActivity());
                 String verboseUserURI = userURI + "?verbose=yes"; // force verbose URI
                 int result = rest.getJSONFullURI(verboseUserURI);
@@ -199,6 +204,10 @@ public class LogInDialogFragment extends DialogFragment {
                         // Extract useful bits from the user's profile details
                         username = thisUser.getString("username");
                         gravatarHash = thisUser.getString(getActivity().getString(R.string.authGravatarHash));
+                        talksURI = thisUser.getString("talks_uri");
+                        attendedEventsURI = thisUser.getString("attended_events_uri");
+                        hostedEventsURI = thisUser.getString("hosted_events_uri");
+                        talkCommentsURI = thisUser.getString("talk_comments_uri");
                     } catch (Exception e) {
                         // do nothing
                     }
@@ -209,6 +218,10 @@ public class LogInDialogFragment extends DialogFragment {
                 accountManager.addAccountExplicitly(account, "", null);
                 accountManager.setAuthToken(account, getActivity().getString(R.string.authTokenType), authToken);
                 accountManager.setUserData(account, getActivity().getString(R.string.authGravatarHash), gravatarHash);
+                accountManager.setUserData(account, getActivity().getString(R.string.authUserURITalks), talksURI);
+                accountManager.setUserData(account, getActivity().getString(R.string.authUserURIAttendedEvents), attendedEventsURI);
+                accountManager.setUserData(account, getActivity().getString(R.string.authUserURIHostedEvents), hostedEventsURI);
+                accountManager.setUserData(account, getActivity().getString(R.string.authUserURITalkComments), talkCommentsURI);
 
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
