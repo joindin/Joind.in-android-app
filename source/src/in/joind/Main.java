@@ -1,5 +1,12 @@
 package in.joind;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.SearchManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
@@ -184,5 +191,25 @@ public class Main extends JIActivity implements SearchView.OnQueryTextListener {
                 v.setVisibility(state ? View.VISIBLE : View.GONE);
             }
         });
+    }
+
+    /**
+     * Retrieves account data for the signed-in account
+     * Returns null if there is no account (user not signed in)
+     *
+     * @param key
+     * @return
+     */
+    public String getAccountData(String key)
+    {
+        AccountManager accountManager = AccountManager.get(this);
+        Account[] accounts = accountManager.getAccountsByType(getString(R.string.authenticatorAccountType));
+        Account thisAccount = (accounts.length > 0 ? accounts[0] : null);
+
+        if (thisAccount == null || thisAccount.name.equals("")) {
+            return null;
+        }
+
+        return accountManager.getUserData(thisAccount, key);
     }
 }

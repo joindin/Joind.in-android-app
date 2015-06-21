@@ -311,16 +311,18 @@ public class EventListFragment extends ListFragment implements EventListFragment
         public void run() {
 
             // Get some event data from the joind.in API
+            String uriToUse;
             rest = new JIRest(parentActivity);
             String urlPostfix = "events";
-            if (eventType.equals(EventListFragment.LIST_TYPE_MY_EVENTS)) {
-                uiDisplayEvents();
-                return;
+            if (!eventType.equals(EventListFragment.LIST_TYPE_MY_EVENTS)) {
+                if (eventType.length() > 0) {
+                    urlPostfix += "?filter=" + eventType;
+                }
+                uriToUse = rest.makeFullURI(urlPostfix);
+            } else {
+                // Use the "attended_events_uri" property on the user metadata
+                uriToUse = parentActivity.getAccountData(getString(R.string.authUserURIAttendedEvents));
             }
-            if (eventType.length() > 0) {
-                urlPostfix += "?filter=" + eventType;
-            }
-            String uriToUse = rest.makeFullURI(urlPostfix);
 
             JSONObject fullResponse;
             JSONObject metaObj;
