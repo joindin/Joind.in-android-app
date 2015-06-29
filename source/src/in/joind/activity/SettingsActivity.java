@@ -13,7 +13,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import in.joind.C;
 import in.joind.ImageLoader;
 import in.joind.JIActivity;
 import in.joind.R;
@@ -21,6 +20,8 @@ import in.joind.fragment.LogInDialogFragment;
 import in.joind.fragment.PreferenceListFragment;
 
 public class SettingsActivity extends JIActivity implements PreferenceListFragment.OnPreferenceAttachedListener {
+
+    final public static String ACTION_USER_LOGGED_IN = "in.joind.UserLoggedIn_Action";
 
     TextView loginLogoutText;
     ImageView gravatarImage;
@@ -46,7 +47,7 @@ public class SettingsActivity extends JIActivity implements PreferenceListFragme
         configureAccounts();
 
         logInReceiver = new LogInReceiver();
-        IntentFilter intentFilter = new IntentFilter(C.USER_LOGGED_IN);
+        IntentFilter intentFilter = new IntentFilter(SettingsActivity.ACTION_USER_LOGGED_IN);
         registerReceiver(logInReceiver, intentFilter);
     }
 
@@ -130,7 +131,7 @@ public class SettingsActivity extends JIActivity implements PreferenceListFragme
             if (action == null) {
                 return;
             }
-            if (action.equals(C.USER_LOGGED_IN)) {
+            if (action.equals(SettingsActivity.ACTION_USER_LOGGED_IN)) {
                 configureAccounts();
             }
         }

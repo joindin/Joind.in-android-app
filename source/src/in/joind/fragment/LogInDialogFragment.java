@@ -21,11 +21,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import in.joind.C;
 import in.joind.JIActivity;
 import in.joind.JIRest;
 import in.joind.OAuthHelper;
 import in.joind.R;
+import in.joind.activity.SettingsActivity;
 
 public class LogInDialogFragment extends DialogFragment {
 
@@ -219,7 +219,7 @@ public class LogInDialogFragment extends DialogFragment {
                 });
 
                 // Announce the user has signed in
-                Intent intent = new Intent(C.USER_LOGGED_IN);
+                Intent intent = new Intent(SettingsActivity.ACTION_USER_LOGGED_IN);
                 getActivity().sendBroadcast(intent);
 
                 // and close the dialog

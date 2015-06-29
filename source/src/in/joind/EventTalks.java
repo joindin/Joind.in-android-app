@@ -31,6 +31,13 @@ import java.util.ArrayList;
 import java.util.TimeZone;
 
 public class EventTalks extends JIActivity implements OnClickListener {
+
+    private final static int EVENT_TALKS_SHOW_TALK_DETAILS = 1;
+    /**
+     * Preference keys
+     */
+    private final static String PREFS_TALK_LIST_INDEX = "TalkListIndex_%d";
+
     private JITalkAdapter m_talkAdapter;
     private JSONObject eventJSON;
     private JSONObject trackJSON = null;
@@ -58,7 +65,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
         // Save our current list index position for this event
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        String key = String.format(C.PREFS_TALK_LIST_INDEX, eventRowID);
+        String key = String.format(PREFS_TALK_LIST_INDEX, eventRowID);
         editor.putInt(key, firstVisibleItem).apply();
     }
 
@@ -113,7 +120,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
                 myIntent.setClass(getApplicationContext(), TalkDetail.class);
                 myIntent.putExtra("eventJSON", callingIntent.getStringExtra("eventJSON"));
                 myIntent.putExtra("talkJSON", parent.getAdapter().getItem(pos).toString());
-                startActivityForResult(myIntent, C.EVENT_TALKS_SHOW_TALK_DETAILS);
+                startActivityForResult(myIntent, EVENT_TALKS_SHOW_TALK_DETAILS);
             }
         });
         talklist.setOnRefreshListener(new PullToRefreshListView.OnRefreshListener() {
@@ -151,10 +158,10 @@ public class EventTalks extends JIActivity implements OnClickListener {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == C.EVENT_TALKS_SHOW_TALK_DETAILS) {
+        if (requestCode == EVENT_TALKS_SHOW_TALK_DETAILS) {
             // Resume state if we've been returned to
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-            String key = String.format(C.PREFS_TALK_LIST_INDEX, eventRowID);
+            String key = String.format(PREFS_TALK_LIST_INDEX, eventRowID);
             firstVisibleItem = sharedPreferences.getInt(key, 0);
         }
     }
