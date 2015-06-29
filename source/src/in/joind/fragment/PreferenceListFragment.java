@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.ListView;
 
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
@@ -31,17 +32,7 @@ public class PreferenceListFragment extends ListFragment {
     private static final int FIRST_REQUEST_CODE = 100;
 
     private static final int MSG_BIND_PREFERENCES = 0;
-    private Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-
-                case MSG_BIND_PREFERENCES:
-                    bindPreferences();
-                    break;
-            }
-        }
-    };
+    private preferenceHandler mHandler = new preferenceHandler(this);
     private ListView lv;
     private int xmlId;
 
@@ -245,5 +236,23 @@ public class PreferenceListFragment extends ListFragment {
 
     public interface OnPreferenceAttachedListener {
         void onPreferenceAttached(PreferenceScreen root, int xmlId);
+    }
+
+    static class preferenceHandler extends Handler {
+        private final WeakReference<PreferenceListFragment> mTarget;
+
+        public preferenceHandler(PreferenceListFragment context) {
+            mTarget = new WeakReference<>(context);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case MSG_BIND_PREFERENCES:
+                    PreferenceListFragment fragment = mTarget.get();
+                    if (fragment != null) fragment.bindPreferences();
+                    break;
+            }
+        }
     }
 }
