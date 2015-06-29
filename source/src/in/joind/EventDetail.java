@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.util.Linkify;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -43,7 +44,7 @@ public class EventDetail extends JIActivity implements OnClickListener {
             eventRowID = this.eventJSON.getInt("rowID");
         } catch (JSONException e) {
             // No JSON means we can't continue
-            android.util.Log.v(JIActivity.LOG_JOINDIN_APP, "No event JSON available to activity");
+            Log.v(JIActivity.LOG_JOINDIN_APP, "No event JSON available to activity");
             Crashlytics.setString("eventDetail_eventJSON", getIntent().getStringExtra("eventJSON"));
 
             // Tell the user
@@ -52,7 +53,7 @@ public class EventDetail extends JIActivity implements OnClickListener {
             return;
         }
         if (eventRowID == 0) {
-            android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "Event row ID is invalid");
+            Log.e(JIActivity.LOG_JOINDIN_APP, "Event row ID is invalid");
         }
 
         // Add handler to buttons
@@ -72,7 +73,7 @@ public class EventDetail extends JIActivity implements OnClickListener {
         try {
             loadDetails(eventRowID, eventJSON.getString("verbose_uri"));
         } catch (JSONException e) {
-            android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No verbose URI available");
+            Log.e(JIActivity.LOG_JOINDIN_APP, "No verbose URI available");
         }
     }
 
@@ -264,7 +265,7 @@ public class EventDetail extends JIActivity implements OnClickListener {
             try {
                 loadDetails(eventRowID, eventJSON.getString("verbose_uri"));
             } catch (JSONException e) {
-                android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No verbose URI available");
+                Log.e(JIActivity.LOG_JOINDIN_APP, "No verbose URI available");
             }
 
             if (initialState) {

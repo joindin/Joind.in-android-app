@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -45,7 +46,7 @@ public class EventComments extends JIActivity implements OnClickListener {
         try {
             this.eventJSON = new JSONObject(getIntent().getStringExtra("eventJSON"));
         } catch (JSONException e) {
-            android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No event passed to activity", e);
+            Log.e(JIActivity.LOG_JOINDIN_APP, "No event passed to activity", e);
         }
 
         // Set correct text in layout
@@ -71,7 +72,7 @@ public class EventComments extends JIActivity implements OnClickListener {
                 try {
                     loadEventComments(event_id, eventJSON.getString("comments_uri"));
                 } catch (JSONException e) {
-                    android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No comments URI available");
+                    Log.e(JIActivity.LOG_JOINDIN_APP, "No comments URI available");
                     eventcommentlist.onRefreshComplete();
                 }
             }
@@ -81,7 +82,7 @@ public class EventComments extends JIActivity implements OnClickListener {
         try {
             loadEventComments(event_id, this.eventJSON.getString("comments_uri"));
         } catch (JSONException e) {
-            android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No comments URI available");
+            Log.e(JIActivity.LOG_JOINDIN_APP, "No comments URI available");
         }
     }
 

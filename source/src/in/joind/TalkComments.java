@@ -6,6 +6,7 @@ package in.joind;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -21,7 +22,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class TalkComments extends JIActivity implements OnClickListener {
-    private JITalkCommentAdapter m_talkCommentAdapter;  // adapter for listview
+    private JITalkCommentAdapter m_talkCommentAdapter;  // adapter for listView
     private JSONObject talkJSON;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -39,7 +40,7 @@ public class TalkComments extends JIActivity implements OnClickListener {
             this.talkJSON = new JSONObject(getIntent().getStringExtra("talkJSON"));
             eventJSON = new JSONObject(getIntent().getStringExtra("eventJSON"));
         } catch (JSONException e) {
-            android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No talk passed to activity", e);
+            Log.e(JIActivity.LOG_JOINDIN_APP, "No talk passed to activity", e);
             Crashlytics.setString("talkComments_talkJSON", getIntent().getStringExtra("talkJSON"));
             Crashlytics.setString("talkComments_eventJSON", getIntent().getStringExtra("eventJSON"));
 
@@ -73,7 +74,7 @@ public class TalkComments extends JIActivity implements OnClickListener {
                 try {
                     loadTalkComments(talk_id, talkJSON.getString("comments_uri"));
                 } catch (JSONException e) {
-                    android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No comments URI available (talk comments)");
+                    Log.e(JIActivity.LOG_JOINDIN_APP, "No comments URI available (talk comments)");
                     talkcommentlist.onRefreshComplete();
                 }
             }
@@ -83,7 +84,7 @@ public class TalkComments extends JIActivity implements OnClickListener {
         try {
             loadTalkComments(talk_id, this.talkJSON.getString("comments_uri"));
         } catch (JSONException e) {
-            android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No comments URI available (talk comments)");
+            Log.e(JIActivity.LOG_JOINDIN_APP, "No comments URI available (talk comments)");
         }
     }
 

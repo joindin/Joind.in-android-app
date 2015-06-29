@@ -3,6 +3,7 @@ package in.joind;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,7 +45,7 @@ public class EventTracks extends JIActivity {
             this.eventJSON = new JSONObject(getIntent().getStringExtra("eventJSON"));
             eventRowID = this.eventJSON.getInt("rowID");
         } catch (JSONException e) {
-            android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No event passed to activity", e);
+            Log.e(JIActivity.LOG_JOINDIN_APP, "No event passed to activity", e);
             Crashlytics.setString("eventTracks_eventJSON", getIntent().getStringExtra("eventJSON"));
 
             // Tell the user
@@ -81,7 +82,7 @@ public class EventTracks extends JIActivity {
         try {
             loadTracks(eventRowID, eventJSON.getString("tracks_uri"));
         } catch (JSONException e) {
-            android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No tracks URI available");
+            Log.e(JIActivity.LOG_JOINDIN_APP, "No tracks URI available");
         }
     }
 

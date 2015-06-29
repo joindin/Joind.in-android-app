@@ -314,7 +314,7 @@ public final class DataHelper {
                     data.put("rowID", c.getInt(1));
                     adapter.add(data);
                 } catch (JSONException e) {
-                    android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "Could not add item to list", e);
+                    Log.e(JIActivity.LOG_JOINDIN_APP, "Could not add item to list", e);
                 }
             } while (c.moveToNext());
         }

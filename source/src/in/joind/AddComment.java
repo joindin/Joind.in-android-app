@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -68,7 +69,7 @@ public class AddComment extends JIActivity implements OnClickListener {
             try {
                 this.eventJSON = new JSONObject(getIntent().getStringExtra("eventJSON"));
             } catch (JSONException e) {
-                android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No event passed to activity", e);
+                Log.e(JIActivity.LOG_JOINDIN_APP, "No event passed to activity", e);
             }
 
             // Hide the private comment checkbox
@@ -168,7 +169,7 @@ public class AddComment extends JIActivity implements OnClickListener {
             try {
                 this.talkJSON = new JSONObject(getIntent().getStringExtra("talkJSON"));
             } catch (JSONException e) {
-                android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No talk passed to activity", e);
+                Log.e(JIActivity.LOG_JOINDIN_APP, "No talk passed to activity", e);
             }
 
             // Talk comments have a private status
@@ -185,7 +186,7 @@ public class AddComment extends JIActivity implements OnClickListener {
             try {
                 this.eventJSON = new JSONObject(getIntent().getStringExtra("eventJSON"));
             } catch (JSONException e) {
-                android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No event passed to activity", e);
+                Log.e(JIActivity.LOG_JOINDIN_APP, "No event passed to activity", e);
             }
 
             url = this.eventJSON.optString("comments_uri");

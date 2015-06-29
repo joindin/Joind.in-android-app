@@ -7,6 +7,7 @@ package in.joind;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Context;
+import android.util.Log;
 
 import org.apache.http.HttpStatus;
 import org.json.JSONException;
@@ -150,7 +151,7 @@ public class JIRest {
             return doMethodRequest(connection, null);
         }
 
-        android.util.Log.d(JIActivity.LOG_JOINDIN_APP, "Some error!!");
+        Log.d(JIActivity.LOG_JOINDIN_APP, "Some error!!");
         return ERROR;
     }
 

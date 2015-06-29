@@ -46,7 +46,7 @@ public class TalkDetail extends JIActivity implements OnClickListener {
             this.talkJSON = new JSONObject(getIntent().getStringExtra("talkJSON"));
             this.eventJSON = new JSONObject(getIntent().getStringExtra("eventJSON"));
         } catch (JSONException e) {
-            android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No talk and/or event passed to activity", e);
+            Log.e(JIActivity.LOG_JOINDIN_APP, "No talk and/or event passed to activity", e);
         }
 
         // Set correct text in layout

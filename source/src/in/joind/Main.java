@@ -23,11 +23,17 @@ import java.io.InputStreamReader;
  */
 public class Main extends JIActivity implements SearchView.OnQueryTextListener {
 
-    private String currentTab = "hot";                   // Current selected tab
-
     // Constants for dynamically added menu items
     private static final int MENU_SORT_DATE = 1;
     private static final int MENU_SORT_TITLE = 2;
+
+    private static final String TAB_HOT = "Hot";
+    private static final String TAB_UPCOMING = "Upcoming";
+    private static final String TAB_PAST = "Past";
+
+    private static final String CURRENT_TAB = "currentTab";
+
+    private String currentTab = TAB_HOT; // Current selected tab
 
     private FragmentTabHost tabHost;
 
@@ -50,15 +56,15 @@ public class Main extends JIActivity implements SearchView.OnQueryTextListener {
     protected void initialiseTabs() {
         tabHost = (FragmentTabHost) findViewById(R.id.tabHost);
         tabHost.setup(this, getSupportFragmentManager(), android.R.id.tabcontent);
-        tabHost.addTab(tabHost.newTabSpec("hot").setIndicator("Hot"), EventListFragment.class, null);
-        tabHost.addTab(tabHost.newTabSpec("upcoming").setIndicator("Upcoming"), EventListFragment.class, null);
-        tabHost.addTab(tabHost.newTabSpec("past").setIndicator("Past"), EventListFragment.class, null);
+        tabHost.addTab(tabHost.newTabSpec(TAB_HOT).setIndicator(TAB_HOT), EventListFragment.class, null);
+        tabHost.addTab(tabHost.newTabSpec(TAB_UPCOMING).setIndicator(TAB_UPCOMING), EventListFragment.class, null);
+        tabHost.addTab(tabHost.newTabSpec(TAB_PAST).setIndicator(TAB_PAST), EventListFragment.class, null);
         tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
             @Override
             public void onTabChanged(String tabId) {
-                SharedPreferences sp = getSharedPreferences(JIActivity.SHARED_PREF_NAME, Context.MODE_PRIVATE);
-                sp.edit().putString("currentTab", tabId).apply();
                 currentTab = tabId;
+                SharedPreferences sp = getSharedPreferences(JIActivity.SHARED_PREF_NAME, Context.MODE_PRIVATE);
+                sp.edit().putString(CURRENT_TAB, currentTab).apply();
             }
         });
     }
@@ -68,11 +74,11 @@ public class Main extends JIActivity implements SearchView.OnQueryTextListener {
         super.onResume();
 
         SharedPreferences sp = getSharedPreferences(JIActivity.SHARED_PREF_NAME, Context.MODE_PRIVATE);
-        if (sp.contains("currentTab")) {
-            currentTab = sp.getString("currentTab", "hot");
+        if (sp.contains(CURRENT_TAB)) {
+            currentTab = sp.getString(CURRENT_TAB, TAB_HOT);
             tabHost.setCurrentTabByTag(currentTab);
         } else {
-            currentTab = sp.getString("defaultEventTab", "hot");
+            currentTab = TAB_HOT;
             tabHost.setCurrentTabByTag(currentTab);
         }
     }

@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -73,16 +74,16 @@ public class EventTalks extends JIActivity implements OnClickListener {
                 this.trackJSON = new JSONObject(callingIntent.getStringExtra("eventTrack"));
             }
         } catch (JSONException e) {
-            android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No event passed to activity", e);
+            Log.e(JIActivity.LOG_JOINDIN_APP, "No event passed to activity", e);
         }
         try {
             eventRowID = this.eventJSON.getInt("rowID");
         } catch (JSONException e) {
-            android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No row ID in event JSON");
+            Log.e(JIActivity.LOG_JOINDIN_APP, "No row ID in event JSON");
         }
         if (eventRowID == 0) {
             // TODO alert and stop activity
-            android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "Event row ID is invalid");
+            Log.e(JIActivity.LOG_JOINDIN_APP, "Event row ID is invalid");
         }
 
         // Set titlebar
@@ -121,7 +122,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
                 try {
                     loadTalks(eventRowID, trackURI, eventJSON.getString("talks_uri"));
                 } catch (JSONException e) {
-                    android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No talks URI available");
+                    Log.e(JIActivity.LOG_JOINDIN_APP, "No talks URI available");
                     talklist.onRefreshComplete();
                 }
             }
@@ -144,7 +145,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
         try {
             loadTalks(eventRowID, trackURI, eventJSON.getString("talks_uri"));
         } catch (JSONException e) {
-            android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No talks URI available");
+            Log.e(JIActivity.LOG_JOINDIN_APP, "No talks URI available");
         }
     }
 
