@@ -27,7 +27,7 @@
             android:layout_marginBottom="16dp" />
 
         <EditText
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/authUsername"
             android:hint="@string/authHintUsername"
@@ -35,7 +35,7 @@
             android:layout_marginBottom="16dp" />
 
         <EditText
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/authPassword"
             android:hint="@string/authHintPassword"

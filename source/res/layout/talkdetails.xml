@@ -2,18 +2,18 @@
 <!-- Detailed information about a specific talk -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
-              android:layout_width="fill_parent"
-              android:layout_height="fill_parent">
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
 
     <LinearLayout
         android:id="@+id/LinearLayout01"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_weight="1"
-        android:layout_width="fill_parent">
+        android:layout_width="match_parent">
 
         <TextView
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:textSize="18dip"
             android:gravity="center_vertical|center_horizontal"
             android:layout_height="wrap_content"
@@ -22,23 +22,23 @@
 
         <TextView
             android:layout_height="wrap_content"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:text="Speaker: "
             android:gravity="center"
             android:id="@+id/TalkDetailSpeaker"></TextView>
 
         <ScrollView
             android:id="@+id/ScrollView01"
-            android:layout_height="fill_parent"
-            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
             android:background="#eeeeee">
 
             <TextView
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:padding="3px"
                 android:scrollbars="vertical"
                 android:id="@+id/TalkDetailDescription"
-                android:layout_height="fill_parent"
+                android:layout_height="match_parent"
                 android:background="#eeeeee"></TextView>
         </ScrollView>
     </LinearLayout>
@@ -46,7 +46,7 @@
     <LinearLayout
         android:id="@+id/LinearLayout02"
         android:layout_height="wrap_content"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_gravity="center"
         android:gravity="center">
 
