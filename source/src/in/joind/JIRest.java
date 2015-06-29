@@ -9,7 +9,6 @@ import android.accounts.AccountManager;
 import android.content.Context;
 import android.util.Log;
 
-import org.apache.http.HttpStatus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -89,21 +88,21 @@ public class JIRest {
             // indefinitely when the internet is kaput
 
             // Get response
-            InputStream instream = new BufferedInputStream(connection.getInputStream());
-            this.result = Main.convertStreamToString(instream);
+            InputStream inStream = new BufferedInputStream(connection.getInputStream());
+            this.result = Main.convertStreamToString(inStream);
             try {
                 this.jsonResult = new JSONObject(this.result);
             } catch (JSONException e) {
                 // Couldn't parse JSON result; leave as null
             }
-            instream.close();
+            inStream.close();
 
         } catch (SocketTimeoutException e) {
             // Socket timeout occurred
             this.error = this.context.getString(R.string.JIRestSocketTimeout);
             connection.disconnect();
 
-            return ERROR;
+            return TIMEOUT;
         } catch (IOException e) {
             // IO exception occurred
             this.error = String.format(this.context.getString(R.string.JIRestIOError), e.getMessage());
@@ -171,21 +170,21 @@ public class JIRest {
                 }
 
                 // Get response
-                InputStream instream = new BufferedInputStream(connection.getInputStream());
-                this.result = Main.convertStreamToString(instream);
+                InputStream inStream = new BufferedInputStream(connection.getInputStream());
+                this.result = Main.convertStreamToString(inStream);
                 try {
                     this.jsonResult = new JSONObject(this.result);
                 } catch (JSONException e) {
                     e.printStackTrace();
                     // Couldn't parse JSON result; leave as null
                 }
-                instream.close();
+                inStream.close();
 
                 int statusCode = connection.getResponseCode();
 
                 switch (statusCode) {
-                    case HttpStatus.SC_OK:
-                    case HttpStatus.SC_CREATED:
+                    case HttpURLConnection.HTTP_OK:
+                    case HttpURLConnection.HTTP_CREATED:
                         return OK;
                     default:
                         this.error = String.format(this.context.getString(R.string.JIRestUnknownError), statusCode);

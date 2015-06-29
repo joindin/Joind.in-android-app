@@ -3,6 +3,7 @@ package in.joind;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,7 +35,8 @@ public class EventTracks extends JIActivity {
         super.onCreate(savedInstanceState);
 
         // Allow ActionBar 'up' navigation
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
 
         // Set layout
         setContentView(R.layout.eventtracks);
@@ -101,14 +103,14 @@ public class EventTracks extends JIActivity {
         } else {
             tracksFound = String.format(getString(R.string.generalEventTracksPlural), trackCount);
         }
-        getSupportActionBar().setSubtitle(tracksFound);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) actionBar.setSubtitle(tracksFound);
         return trackCount;
     }
 
     public void loadTracks(final int eventRowID, final String trackVerboseURI) {
         // Display progress bar
         displayProgressBarCircular(true);
-
 
         new Thread() {
             public void run() {
@@ -126,7 +128,7 @@ public class EventTracks extends JIActivity {
                             // Fetch talk data from joind.in API
                             int error = rest.getJSONFullURI(uriToUse);
 
-                            // @TODO: We do not handle errors?
+                            // TODO: We do not handle errors?
 
                             if (error == JIRest.OK) {
                                 fullResponse = rest.getJSONResult();

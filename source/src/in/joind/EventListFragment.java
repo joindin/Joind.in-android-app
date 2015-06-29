@@ -54,25 +54,28 @@ public class EventListFragment extends ListFragment implements EventListFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup viewGroup = (ViewGroup) super.onCreateView(inflater, container, savedInstanceState);
 
-        View lvOld = viewGroup.findViewById(android.R.id.list);
+        if (viewGroup != null) {
+            View lvOld = viewGroup.findViewById(android.R.id.list);
 
-        // Use the pull-to-refresh ListView, instead of a normal ListView
-        final PullToRefreshListView listView = new PullToRefreshListView(getActivity());
-        listView.setId(android.R.id.list);
-        listView.setLayoutParams(new FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        listView.setDrawSelectorOnTop(false);
+            // Use the pull-to-refresh ListView, instead of a normal ListView
+            final PullToRefreshListView listView = new PullToRefreshListView(getActivity());
+            listView.setId(android.R.id.list);
+            listView.setLayoutParams(new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            listView.setDrawSelectorOnTop(false);
 
-        FrameLayout parent = (FrameLayout) lvOld.getParent();
-        parent.removeView(lvOld);
-        lvOld.setVisibility(View.GONE);
+            FrameLayout parent = (FrameLayout) lvOld.getParent();
+            parent.removeView(lvOld);
+            lvOld.setVisibility(View.GONE);
 
-        parent.addView(listView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            parent.addView(listView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
-        // Populate our list adapter
-        ArrayList<JSONObject> m_events = new ArrayList<>();
-        m_eventAdapter = new JIEventAdapter(getActivity(), R.layout.eventrow, m_events);
-        setListAdapter(m_eventAdapter);
+            // Populate our list adapter
+            ArrayList<JSONObject> m_events = new ArrayList<>();
+            m_eventAdapter = new JIEventAdapter(getActivity(), R.layout.eventrow, m_events);
+            setListAdapter(m_eventAdapter);
+
+        }
 
         return viewGroup;
     }
@@ -178,9 +181,9 @@ public class EventListFragment extends ListFragment implements EventListFragment
 
     protected void setTitle(String eventType) {
         String title = "";
-        if (eventType.equals("hot")) title = this.getString(R.string.activityMainEventsHot);
-        if (eventType.equals("past")) title = this.getString(R.string.activityMainEventsPast);
-        if (eventType.equals("upcoming")) title = this.getString(R.string.activityMainEventsUpcoming);
+        if (eventType.equals(Main.TAB_HOT)) title = this.getString(R.string.activityMainEventsHot);
+        if (eventType.equals(Main.TAB_PAST)) title = this.getString(R.string.activityMainEventsPast);
+        if (eventType.equals(Main.TAB_UPCOMING)) title = this.getString(R.string.activityMainEventsUpcoming);
 
         parentActivity.setEventsTitle(title, 0);
     }
@@ -267,7 +270,7 @@ public class EventListFragment extends ListFragment implements EventListFragment
                         // If we're looking at "hot" events, this API call just
                         // returns events, and more events, and more events....
                         // so we'll just stop after the first round
-                        if (event_type.equals("hot")) {
+                        if (event_type.equals(Main.TAB_HOT)) {
                             break;
                         }
                     } else {

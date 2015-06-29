@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTabHost;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,9 +28,9 @@ public class Main extends JIActivity implements SearchView.OnQueryTextListener {
     private static final int MENU_SORT_DATE = 1;
     private static final int MENU_SORT_TITLE = 2;
 
-    private static final String TAB_HOT = "Hot";
-    private static final String TAB_UPCOMING = "Upcoming";
-    private static final String TAB_PAST = "Past";
+    public static final String TAB_HOT = "Hot";
+    public static final String TAB_UPCOMING = "Upcoming";
+    public static final String TAB_PAST = "Past";
 
     private static final String CURRENT_TAB = "currentTab";
 
@@ -127,7 +128,6 @@ public class Main extends JIActivity implements SearchView.OnQueryTextListener {
         return super.onOptionsItemSelected(item);
     }
 
-
     // Converts input stream to a string.
     public static String convertStreamToString(InputStream is) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(is), 8192);
@@ -157,7 +157,8 @@ public class Main extends JIActivity implements SearchView.OnQueryTextListener {
         } else {
             subTitle = String.format(getString(R.string.generalEventCountPlural), eventCount);
         }
-        getSupportActionBar().setSubtitle(subTitle);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) actionBar.setSubtitle(subTitle);
     }
 
     public void setEventsTitle(String title, int count) {
@@ -189,7 +190,8 @@ public class Main extends JIActivity implements SearchView.OnQueryTextListener {
     }
 
     protected void setTabTitle(String title, int eventCount) {
-        getSupportActionBar().setTitle(title);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) actionBar.setSubtitle(title);
         setEventsCountTitle(eventCount);
     }
 }

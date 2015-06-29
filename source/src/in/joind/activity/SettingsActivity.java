@@ -135,6 +135,5 @@ public class SettingsActivity extends JIActivity implements PreferenceListFragme
                 configureAccounts();
             }
         }
-
     }
 }

@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,7 +38,8 @@ public class EventComments extends JIActivity implements OnClickListener {
         super.onCreate(savedInstanceState);
 
         // Allow ActionBar 'up' navigation
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
 
         // Set layout
         setContentView(R.layout.comments);
@@ -137,10 +139,13 @@ public class EventComments extends JIActivity implements OnClickListener {
         m_eventCommentAdapter.notifyDataSetChanged();
 
         // Update caption bar
-        if (count == 1) {
-            getSupportActionBar().setSubtitle(String.format(getString(R.string.generalCommentSingular), count));
-        } else {
-            getSupportActionBar().setSubtitle(String.format(getString(R.string.generalCommentPlural), count));
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            if (count == 1) {
+                actionBar.setSubtitle(String.format(getString(R.string.generalCommentSingular), count));
+            } else {
+                actionBar.setSubtitle(String.format(getString(R.string.generalCommentPlural), count));
+            }
         }
 
         ((PullToRefreshListView) findViewById(R.id.EventDetailComments)).onRefreshComplete();

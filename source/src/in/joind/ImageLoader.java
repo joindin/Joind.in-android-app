@@ -4,6 +4,15 @@ package in.joind;
  * Taken from fedorvlasov.lazylist
  */
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.preference.PreferenceManager;
+import android.view.View;
+import android.widget.ImageView;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -14,28 +23,18 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Stack;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.preference.PreferenceManager;
-import android.view.View;
-import android.widget.ImageView;
-
 public class ImageLoader {
-    protected HashMap<String, Bitmap> _cache = new HashMap<String, Bitmap>();
+    protected HashMap<String, Bitmap> _cache = new HashMap<>();
     protected File _cacheDir;
-    protected String _cacheDirName;
 
     public ImageLoader(Context context, String cacheDir) {
-        //Make the background thead low priority. This way it will not affect the UI performance
+        //Make the background thread low priority. This way it will not affect the UI performance
         photoLoaderThread.setPriority(Thread.NORM_PRIORITY - 1);
 
         //Find the dir to save cached images
         if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED)) {
             _cacheDir = new File(context.getCacheDir(), cacheDir);
-            // @TODO: Somehow the external cache dir is not writeable on the 1.6 emulator?
+            // TODO: Somehow the external cache dir is not writeable on the 1.6 emulator?
             //_cacheDir=new File(android.os.Environment.getExternalStorageDirectory(),"/Android/data/in.joind/cache/"+cacheDir);
         } else {
             _cacheDir = new File(context.getCacheDir(), cacheDir);
@@ -95,7 +94,7 @@ public class ImageLoader {
 
         // Fetch from the web
         try {
-            Bitmap bitmap = null;
+            Bitmap bitmap;
             InputStream is = new URL(url + filename).openStream();
             OutputStream os = new FileOutputStream(f);
             copyStream(is, os);
@@ -132,6 +131,7 @@ public class ImageLoader {
             o2.inSampleSize = scale;
             return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
         } catch (FileNotFoundException e) {
+            // do nothing
         }
         return null;
     }
@@ -157,7 +157,7 @@ public class ImageLoader {
 
     //stores list of photos to download
     class PhotosQueue {
-        private Stack<PhotoToLoad> photosToLoad = new Stack<PhotoToLoad>();
+        private final Stack<PhotoToLoad> photosToLoad = new Stack<>();
 
         //removes all instances of this ImageView
         public void Clean(ImageView image) {
@@ -245,8 +245,8 @@ public class ImageLoader {
                 os.write(bytes, 0, count);
             }
         } catch (Exception ex) {
+            // do nothing
         }
     }
-
 }
 

@@ -7,6 +7,7 @@ package in.joind;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
 import android.text.util.Linkify;
 import android.util.Log;
@@ -36,7 +37,8 @@ public class TalkDetail extends JIActivity implements OnClickListener {
         super.onCreate(savedInstanceState);
 
         // Allow ActionBar 'up' navigation
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
 
         // Set talk detail layout
         setContentView(R.layout.talkdetails);

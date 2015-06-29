@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -53,7 +54,8 @@ public class EventTalks extends JIActivity implements OnClickListener {
         super.onCreate(savedInstanceState);
 
         // Allow ActionBar 'up' navigation
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
 
         // Set layout
         setContentView(R.layout.eventtalks);
@@ -94,7 +96,8 @@ public class EventTalks extends JIActivity implements OnClickListener {
         }
 
         // Set titlebar
-        getSupportActionBar().setTitle(this.eventJSON.optString("name"));
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) actionBar.setTitle(this.eventJSON.optString("name"));
 
         // Initialize talk list
         ArrayList<JSONObject> m_talks = new ArrayList<>();
@@ -191,7 +194,8 @@ public class EventTalks extends JIActivity implements OnClickListener {
         } else {
             talksFound += String.format(getString(R.string.generalEventTalksPlural), talkCount);
         }
-        getSupportActionBar().setSubtitle(talksFound);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) actionBar.setSubtitle(talksFound);
 
         ((PullToRefreshListView) findViewById(R.id.ListViewEventTalks)).onRefreshComplete();
     }
@@ -200,7 +204,6 @@ public class EventTalks extends JIActivity implements OnClickListener {
     public void loadTalks(final int eventRowID, final String trackURI, final String talkVerboseURI) {
         // Display progress bar
         displayProgressBarCircular(true);
-
 
         new Thread() {
             public void run() {
@@ -217,7 +220,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
                         // Fetch talk data from joind.in API
                         int error = rest.getJSONFullURI(uriToUse);
 
-                        // @TODO: We do not handle errors?
+                        // TODO: We do not handle errors?
 
                         if (error == JIRest.OK) {
                             fullResponse = rest.getJSONResult();

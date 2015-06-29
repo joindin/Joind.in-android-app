@@ -7,6 +7,7 @@ package in.joind;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.text.util.Linkify;
 import android.util.Log;
 import android.view.View;
@@ -33,7 +34,8 @@ public class EventDetail extends JIActivity implements OnClickListener {
         super.onCreate(savedInstanceState);
 
         // Allow ActionBar 'up' navigation
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
 
         // Set layout
         setContentView(R.layout.eventdetail);
@@ -92,7 +94,8 @@ public class EventDetail extends JIActivity implements OnClickListener {
         if (event == null) return;
 
         // Set all the event information
-        getSupportActionBar().setTitle(event.optString("name"));
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) actionBar.setTitle(event.optString("name"));
 
         TextView t;
         t = (TextView) this.findViewById(R.id.EventDetailsEventLoc);
