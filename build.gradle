@@ -6,7 +6,7 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:1.2.3'
-        classpath 'com.crashlytics.tools.gradle:crashlytics-gradle:1.+'
+        classpath 'com.crashlytics.tools.gradle:crashlytics-gradle:1.16.0'
     }
 }
 
@@ -43,8 +43,8 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:22.0.0'
-    compile 'com.crashlytics.android:crashlytics:1.+'
+    compile 'com.android.support:appcompat-v7:22.2.0'
+    compile 'com.crashlytics.android:crashlytics:1.1.13'
 }
 
 // Custom task to create our oauth.properties file for release
@@ -53,8 +53,8 @@ task createOAuthProperties {
     if (!oauthProperties.exists()) {
         logger.info('Creating oauth.properties file from environment variables')
         ant.propertyfile(file: oauthProperties) {
-            entry( key: "client_id", value: System.getenv("oauth.client_id"))
-            entry( key: "client_secret", value: System.getenv("oauth.client_secret"))
+            entry(key: "client_id", value: System.getenv("oauth.client_id"))
+            entry(key: "client_secret", value: System.getenv("oauth.client_secret"))
         }
     }
 }

@@ -258,7 +258,7 @@ public class EventListFragment extends ListFragment implements EventListFragment
                         uriToUse = metaObj.getString("next_page");
 
                         // Yield to the view, so some display
-                        getActivity().runOnUiThread(new Runnable() {
+                        if (getActivity() != null) getActivity().runOnUiThread(new Runnable() {
                             public void run() {
                                 displayEvents(event_type);
                             }
@@ -295,7 +295,7 @@ public class EventListFragment extends ListFragment implements EventListFragment
             }
 
             // Show the events
-            getActivity().runOnUiThread(new Runnable() {
+            if (getActivity() != null) getActivity().runOnUiThread(new Runnable() {
                 public void run() {
                     displayEvents(event_type);
                 }
