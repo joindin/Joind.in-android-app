@@ -5,16 +5,12 @@ package in.joind;
  */
 
 import android.app.Activity;
-import android.content.Intent;
-import in.joind.R;
-import android.view.MenuItem;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -25,12 +21,14 @@ import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class AddComment extends JIActivity implements OnClickListener {
     ProgressDialog saveDialog;
     private String commentType;
     private JSONObject talkJSON;
     private JSONObject eventJSON;
-    private String lastError = "";
 
     final public static int CODE_COMMENT = 1;
 
@@ -76,8 +74,7 @@ public class AddComment extends JIActivity implements OnClickListener {
             // Hide the private comment checkbox
             // (not used for events)
             privateComment.setVisibility(View.GONE);
-        }
-        else {
+        } else {
             privateComment.setVisibility(View.VISIBLE);
         }
 
@@ -145,7 +142,7 @@ public class AddComment extends JIActivity implements OnClickListener {
         // Display progress bar
         displayProgressBarCircular(true);
 
-        lastError = "";
+        String lastError;
 
         // Get information from the layout
         RatingBar ratingbar = (RatingBar) findViewById(R.id.CommentRatingBar);
@@ -178,6 +175,7 @@ public class AddComment extends JIActivity implements OnClickListener {
             try {
                 data.put("private", privateComment);
             } catch (JSONException e) {
+                // do nothing
             }
 
             url = this.talkJSON.optString("comments_uri");

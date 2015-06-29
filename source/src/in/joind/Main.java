@@ -1,24 +1,22 @@
 package in.joind;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
 import android.app.SearchManager;
-import android.support.v4.app.FragmentTabHost;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.widget.SearchView;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v4.app.FragmentTabHost;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TabHost;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 /**
  * Main activity - contains the tab host, which we'll load our list fragments into
@@ -59,7 +57,7 @@ public class Main extends JIActivity implements SearchView.OnQueryTextListener {
             @Override
             public void onTabChanged(String tabId) {
                 SharedPreferences sp = getSharedPreferences(JIActivity.SHARED_PREF_NAME, Context.MODE_PRIVATE);
-                sp.edit().putString("currentTab", tabId).commit();
+                sp.edit().putString("currentTab", tabId).apply();
                 currentTab = tabId;
             }
         });
@@ -129,10 +127,10 @@ public class Main extends JIActivity implements SearchView.OnQueryTextListener {
         BufferedReader reader = new BufferedReader(new InputStreamReader(is), 8192);
         StringBuilder sb = new StringBuilder();
 
-        String line = null;
+        String line;
         try {
             while ((line = reader.readLine()) != null) {
-                sb.append(line + "\n");
+                sb.append(line).append("\n");
             }
         } catch (IOException e) {
             // ignored

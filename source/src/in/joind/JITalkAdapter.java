@@ -27,10 +27,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable, SectionIndexer {
-    private ArrayList<JSONObject> items, filtered_items;
+    private final ArrayList<JSONObject> items;
+    private ArrayList<JSONObject> filtered_items;
     private Context context;
     private TimeZone tz;
     private StarredFilter filter;
@@ -50,7 +52,7 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable, Sect
         ViewHolder holder;
         if (convertView == null) {
             LayoutInflater layoutInflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = layoutInflater.inflate(R.layout.talkrow, null);
+            convertView = layoutInflater.inflate(R.layout.talkrow, parent, false);
             holder = new ViewHolder();
 
             holder.section = (LinearLayout) convertView.findViewById(R.id.sectionHeader);
@@ -78,10 +80,10 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable, Sect
         Date talkDate = null;
         SimpleDateFormat outputTalkDateFormat = null;
         try {
-            SimpleDateFormat inputTalkDateFormat = new SimpleDateFormat(context.getString(R.string.apiDateFormat));
+            SimpleDateFormat inputTalkDateFormat = new SimpleDateFormat(context.getString(R.string.apiDateFormat), Locale.US);
             talkDate = inputTalkDateFormat.parse(o.getString("start_date"));
             String fmt = Build.VERSION.SDK_INT <= 8 ? "E d MMM yyyy" : "E d LLL yyyy";
-            outputTalkDateFormat = new SimpleDateFormat(fmt + ", HH:mm");
+            outputTalkDateFormat = new SimpleDateFormat(fmt + ", HH:mm", Locale.US);
             outputTalkDateFormat.setTimeZone(tz);
         } catch (Exception e) {
             e.printStackTrace();
@@ -112,13 +114,18 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable, Sect
             // Ignore if no track is available
         }
 
+        String time = "";
+        if (outputTalkDateFormat != null) {
+            time = outputTalkDateFormat.format(talkDate);
+        }
+
         holder.captionText.setText(o.optString("talk_title"));
         holder.commentsText.setText(t2Text);
-        holder.timeText.setText(outputTalkDateFormat.format(talkDate));
+        holder.timeText.setText(time);
         holder.trackText.setText(track);
 
         // Speaker details
-        ArrayList<String> speakerNames = new ArrayList<String>();
+        ArrayList<String> speakerNames = new ArrayList<>();
         try {
             JSONArray speakerEntries = o.getJSONArray("speakers");
             for (int i = 0; i < speakerEntries.length(); i++) {
@@ -189,11 +196,13 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable, Sect
         // Headers if required
         String dateFormat = context.getString(R.string.generalEventTalksSectionHeaderFormat);
         String thisDate = "";
-        SimpleDateFormat dfOutput = new SimpleDateFormat(dateFormat), dfInput = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+        SimpleDateFormat dfOutput = new SimpleDateFormat(dateFormat, Locale.US),
+                dfInput = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US);
         try {
             dfOutput.setTimeZone(tz);
             thisDate = dfOutput.format(dfInput.parse(o.optString("start_date")));
         } catch (ParseException e) {
+            // do nothing
         }
         if (position == 0) {
             setSection(holder, thisDate);
@@ -203,6 +212,7 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable, Sect
             try {
                 previousDate = dfOutput.format(dfInput.parse(previousItem.optString("start_date")));
             } catch (ParseException e) {
+                // do nothing
             }
             if (!thisDate.equals(previousDate)) {
                 setSection(holder, thisDate);
@@ -221,17 +231,19 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable, Sect
 
     @Override
     public Object[] getSections() {
-        ArrayList<String> tmpSections = new ArrayList<String>();
+        ArrayList<String> tmpSections = new ArrayList<>();
         String dateFormat = context.getString(R.string.generalEventTalksSectionHeaderFormat);
         for (JSONObject talk : items) {
             // Get string date
-            SimpleDateFormat dfOutput = new SimpleDateFormat(dateFormat), dfInput = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+            SimpleDateFormat dfOutput = new SimpleDateFormat(dateFormat, Locale.US),
+                    dfInput = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US);
             try {
                 String thisDate = dfOutput.format(dfInput.parse(talk.optString("start_date")));
                 if (!tmpSections.contains(thisDate)) {
                     tmpSections.add(thisDate);
                 }
             } catch (ParseException e) {
+                // do nothing
             }
         }
         sections = tmpSections.toArray(new String[tmpSections.size()]);
@@ -246,11 +258,13 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable, Sect
 
             // Get string date
             String dateFormat = context.getString(R.string.generalEventTalksSectionHeaderFormat);
-            SimpleDateFormat dfOutput = new SimpleDateFormat(dateFormat), dfInput = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+            SimpleDateFormat dfOutput = new SimpleDateFormat(dateFormat, Locale.US),
+                    dfInput = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US);
             String thisDate = "";
             try {
                 thisDate = dfOutput.format(dfInput.parse(talk.optString("start_date")));
             } catch (ParseException e) {
+                // do nothing
             }
 
             if (sections[section].equals(thisDate)) {
@@ -269,7 +283,7 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable, Sect
     /**
      * Mark the talk as starred - update the icon and submit the request
      *
-     * @param isStarred
+     * @param isStarred Is it starred?
      */
     protected void markTalkStarred(final View parentRow, final String starredURI, final boolean isStarred) {
         final CheckBox starredImageButton = (CheckBox) parentRow.findViewById(R.id.TalkRowStarred);
@@ -290,9 +304,9 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable, Sect
      * CALLED FROM SEPARATE THREAD
      * This shows/hides the progressbar and the checkbox alternately.
      *
-     * @param progressBar
-     * @param starredImageButton
-     * @param showProgress
+     * @param progressBar        Progress bar
+     * @param starredImageButton Starred image button
+     * @param showProgress       Show progress?
      */
     private void updateProgressStatus(final ProgressBar progressBar, final CheckBox starredImageButton, final boolean showProgress) {
         progressBar.post(new Runnable() {
@@ -312,8 +326,8 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable, Sect
     /**
      * Post/delete the starred status from this talk
      *
-     * @param initialState
-     * @return
+     * @param initialState Initial state
+     * @return Return message
      */
     private String doStarTalk(boolean initialState, String starredURI) {
         JIRest rest = new JIRest(context);
@@ -365,7 +379,7 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable, Sect
 
         protected FilterResults performFiltering(CharSequence match) {
             FilterResults results = new FilterResults();
-            ArrayList<JSONObject> i = new ArrayList<JSONObject>();
+            ArrayList<JSONObject> i = new ArrayList<>();
 
             // Multiple filters here
             if (checkStarredStatus || (match != null && match.length() > 0)) {

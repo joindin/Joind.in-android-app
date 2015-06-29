@@ -8,6 +8,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,6 +37,7 @@ public class LogInDialogFragment extends DialogFragment {
     TextView errorView;
 
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         accountManager = AccountManager.get(getActivity());
@@ -44,19 +46,19 @@ public class LogInDialogFragment extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
         builder.setView(inflater.inflate(R.layout.dialog_login, null))
-            .setPositiveButton(R.string.authSignInButton, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    // Do nothing here
-                    // We want the ability to prevent dismiss if required,
-                    // so the main logic is handled by the onClick listener that
-                    // we add in the onStart() method below
-                }
-            })
-            .setNegativeButton(R.string.authCancelButton, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    LogInDialogFragment.this.getDialog().cancel();
-                }
-            })
+                .setPositiveButton(R.string.authSignInButton, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // Do nothing here
+                        // We want the ability to prevent dismiss if required,
+                        // so the main logic is handled by the onClick listener that
+                        // we add in the onStart() method below
+                    }
+                })
+                .setNegativeButton(R.string.authCancelButton, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        LogInDialogFragment.this.getDialog().cancel();
+                    }
+                })
         ;
 
         return builder.create();
@@ -127,23 +129,20 @@ public class LogInDialogFragment extends DialogFragment {
     /**
      * Loads in the OAuth configuration details, ready to authenticate
      *
-     * @return
+     * @return OAuth details.
      */
     protected boolean getOAuthDetails() {
 
         oauthClientID = OAuthHelper.getClientID(getActivity());
         oauthClientSecret = OAuthHelper.getClientSecret(getActivity());
-        if (oauthClientID == null || oauthClientSecret == null) {
-            return false;
-        }
+        return !(oauthClientID == null || oauthClientSecret == null);
 
-        return true;
     }
 
     /**
      * Shows an error to the user
      *
-     * @param rawErrorMessage
+     * @param rawErrorMessage Error message.
      */
     protected void showError(final String rawErrorMessage) {
         getActivity().runOnUiThread(new Runnable() {
@@ -189,9 +188,7 @@ public class LogInDialogFragment extends DialogFragment {
                 JIRest rest = new JIRest(getActivity());
                 String verboseUserURI = userURI + "?verbose=yes"; // force verbose URI
                 int result = rest.getJSONFullURI(verboseUserURI);
-                if (result != JIRest.OK) {
-                    // A problem retrieving the user's details
-                } else {
+                if (result == JIRest.OK) { // No problem retrieving the user's details
                     // We've got the user's profile data back
                     // Try and extract their username
                     try {
@@ -203,6 +200,7 @@ public class LogInDialogFragment extends DialogFragment {
                         username = thisUser.getString("username");
                         gravatarHash = thisUser.getString(getActivity().getString(R.string.authGravatarHash));
                     } catch (Exception e) {
+                        // do nothing
                     }
                 }
 

@@ -23,8 +23,5 @@ public class SettingsFragment extends PreferenceListFragment implements SharedPr
 
     @Override
     public void onPreferenceAttached(PreferenceScreen root, int xmlId) {
-        if (root == null) {
-            return;
-        }
     }
 }

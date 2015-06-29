@@ -4,9 +4,16 @@ package in.joind;
  * Communication with joind.in API
  */
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.content.Context;
+
+import org.apache.http.HttpStatus;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -16,31 +23,15 @@ import java.net.ProtocolException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.security.GeneralSecurityException;
-import java.security.cert.X509Certificate;
-
-import android.accounts.Account;
-import android.accounts.AccountManager;
-import in.joind.R;
-
-import org.apache.http.HttpStatus;
-
-import android.content.Context;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 
 public class JIRest {
     // Number of times to attempt a connection
     // This is partially to work around a bug in HTTPUrlConnection
     private static final int MAX_RETRIES = 5;
-    private int numberOfTries = 0;
 
     public static final int OK = 0;
     public static final int TIMEOUT = 1;
@@ -54,17 +45,16 @@ public class JIRest {
     private String error = "";
     private String result = "";
     private JSONObject jsonResult = null;
-    private int timeoutLength = 30000; // time in ms
 
     private Context context;
 
-    public JIRest (Context context) {
+    public JIRest(Context context) {
         this.context = context;
         JOINDIN_URL = context.getResources().getString(R.string.apiURL);
     }
 
     // Return the last communication result
-    public String getResult () {
+    public String getResult() {
         return this.result;
     }
 
@@ -73,7 +63,7 @@ public class JIRest {
     }
 
     // Return last communication error
-    public String getError () {
+    public String getError() {
         return this.error;
     }
 
@@ -109,19 +99,19 @@ public class JIRest {
 
         } catch (SocketTimeoutException e) {
             // Socket timeout occurred
-            this.error = String.format(this.context.getString(R.string.JIRestSocketTimeout));
+            this.error = this.context.getString(R.string.JIRestSocketTimeout);
             connection.disconnect();
 
             return ERROR;
         } catch (IOException e) {
             // IO exception occurred
-            this.error = String.format (this.context.getString(R.string.JIRestIOError), e.getMessage());
+            this.error = String.format(this.context.getString(R.string.JIRestIOError), e.getMessage());
             connection.disconnect();
 
             return ERROR;
         } catch (Exception e) {
             // Something else happened
-            this.error  = String.format (this.context.getString(R.string.JIRestUnknownError), e.getMessage());
+            this.error = String.format(this.context.getString(R.string.JIRestUnknownError), e.getMessage());
             connection.disconnect();
 
             return ERROR;
@@ -132,8 +122,7 @@ public class JIRest {
         return OK;
     }
 
-    public int requestToFullURI(String fullURI, JSONObject json, String method)
-    {
+    public int requestToFullURI(String fullURI, JSONObject json, String method) {
         HttpURLConnection connection = getConnection(fullURI);
         if (method.equals(METHOD_POST)) {
             if (json != null) {
@@ -171,7 +160,7 @@ public class JIRest {
         connection = addAuthDetailsToRequest(connection);
 
         int resultCode = ERROR;
-        numberOfTries = 0;
+        int numberOfTries = 0;
         while (numberOfTries < MAX_RETRIES) {
             try {
                 if (content != null) {
@@ -198,12 +187,12 @@ public class JIRest {
                     case HttpStatus.SC_CREATED:
                         return OK;
                     default:
-                        this.error = String.format (this.context.getString(R.string.JIRestUnknownError), statusCode);
+                        this.error = String.format(this.context.getString(R.string.JIRestUnknownError), statusCode);
                         return ERROR;
                 }
             } catch (SocketTimeoutException e) {
                 // Socket timeout occurred
-                this.error = String.format(this.context.getString(R.string.JIRestSocketTimeout));
+                this.error = this.context.getString(R.string.JIRestSocketTimeout);
             } catch (IOException e) {
                 e.printStackTrace();
                 // IO exception occurred. Get the result anyway
@@ -213,7 +202,7 @@ public class JIRest {
             } catch (Exception e) {
                 // Something else happened
                 e.printStackTrace();
-                this.error  = String.format (this.context.getString(R.string.JIRestUnknownError), e.getMessage());
+                this.error = String.format(this.context.getString(R.string.JIRestUnknownError), e.getMessage());
             } finally {
                 connection.disconnect();
             }
@@ -238,15 +227,15 @@ public class JIRest {
         return connection;
     }
 
-    protected HttpURLConnection getConnection(String hostURL)
-    {
+    protected HttpURLConnection getConnection(String hostURL) {
         try {
             final URL url = new URL(hostURL);
+            int timeoutLength = 30000;
             if (url.getProtocol().equals("https")) {
                 HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
                     @Override
                     public boolean verify(String hostname, SSLSession session) {
-                    return hostname.equals(url.getHost());
+                        return hostname.equals(url.getHost());
                     }
                 });
 

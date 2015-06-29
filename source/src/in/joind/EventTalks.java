@@ -4,19 +4,11 @@ package in.joind;
  * Displays all talks from specified event.
  */
 
-import java.util.ArrayList;
-import java.util.TimeZone;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,10 +17,17 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.Filter;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Filter;
 
 import com.markupartist.android.widget.PullToRefreshListView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.TimeZone;
 
 public class EventTalks extends JIActivity implements OnClickListener {
     private JITalkAdapter m_talkAdapter;
@@ -90,7 +89,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
         getSupportActionBar().setTitle(this.eventJSON.optString("name"));
 
         // Initialize talk list
-        ArrayList<JSONObject> m_talks = new ArrayList<JSONObject>();
+        ArrayList<JSONObject> m_talks = new ArrayList<>();
         TimeZone tz;
         try {
             String tz_string = this.eventJSON.getString("tz_continent") + '/' + this.eventJSON.getString("tz_place");
@@ -129,7 +128,8 @@ public class EventTalks extends JIActivity implements OnClickListener {
         });
         talklist.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
-            public void onScrollStateChanged(AbsListView absListView, int i) {}
+            public void onScrollStateChanged(AbsListView absListView, int i) {
+            }
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
@@ -311,7 +311,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
     /**
      * Configure the filter based on track URI and starred preference
      *
-     * @param filterType
+     * @param filterType Filter type
      */
     protected void applyStarredFilter(String filterType) {
         boolean showFilterHeader = false;
@@ -341,7 +341,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
      * Save the user's current filter preference to shared preferences
      * for this event
      *
-     * @param filterType
+     * @param filterType Filter type
      */
     protected void saveFilterPreference(String filterType) {
         String prefKey = "filter_" + eventRowID;

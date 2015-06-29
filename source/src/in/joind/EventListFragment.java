@@ -30,6 +30,7 @@ import org.json.JSONObject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * The list fragment that is shown in our tabbed view.
@@ -69,7 +70,7 @@ public class EventListFragment extends ListFragment implements EventListFragment
         parent.addView(listView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
         // Populate our list adapter
-        ArrayList<JSONObject> m_events = new ArrayList<JSONObject>();
+        ArrayList<JSONObject> m_events = new ArrayList<>();
         m_eventAdapter = new JIEventAdapter(getActivity(), R.layout.eventrow, m_events);
         setListAdapter(m_eventAdapter);
 
@@ -306,7 +307,7 @@ public class EventListFragment extends ListFragment implements EventListFragment
 
 
 class JIEventAdapter extends ArrayAdapter<JSONObject> {
-    private ArrayList<JSONObject> all_items;
+    private final ArrayList<JSONObject> all_items;
     private ArrayList<JSONObject> filtered_items;
     private Context context;
     LayoutInflater inflater;
@@ -333,7 +334,7 @@ class JIEventAdapter extends ArrayAdapter<JSONObject> {
     // This function will create a custom row with our event data.
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
-            convertView = this.inflater.inflate(R.layout.eventrow, null);
+            convertView = this.inflater.inflate(R.layout.eventrow, parent, false);
         }
 
         // Get the (JSON) data we need
@@ -353,8 +354,7 @@ class JIEventAdapter extends ArrayAdapter<JSONObject> {
             String filename = o.optString("icon");
             el.setTag(filename);
             image_loader.displayImage("http://joind.in/inc/img/event_icons/", filename, (Activity) context, el);
-        }
-        else {
+        } else {
             el.setImageResource(R.drawable.event_icon_none);
         }
         el.setVisibility(View.VISIBLE);
@@ -363,9 +363,10 @@ class JIEventAdapter extends ArrayAdapter<JSONObject> {
         long event_start = 0;
         long event_end = 0;
         try {
-            event_start = new SimpleDateFormat(context.getString(R.string.apiDateFormat)).parse(o.optString("start_date")).getTime();
-            event_end = new SimpleDateFormat(context.getString(R.string.apiDateFormat)).parse(o.optString("end_date")).getTime();
+            event_start = new SimpleDateFormat(context.getString(R.string.apiDateFormat), Locale.US).parse(o.optString("start_date")).getTime();
+            event_end = new SimpleDateFormat(context.getString(R.string.apiDateFormat), Locale.US).parse(o.optString("end_date")).getTime();
         } catch (ParseException e) {
+            // do nothing
         }
         long cts = System.currentTimeMillis() / 1000;
         if (event_start <= cts && cts <= event_end) {
@@ -421,7 +422,7 @@ class JIEventAdapter extends ArrayAdapter<JSONObject> {
 
         protected FilterResults performFiltering(CharSequence prefix) {
             FilterResults results = new FilterResults();
-            ArrayList<JSONObject> i = new ArrayList<JSONObject>();
+            ArrayList<JSONObject> i = new ArrayList<>();
 
             if (prefix != null && prefix.toString().length() > 0) {
 

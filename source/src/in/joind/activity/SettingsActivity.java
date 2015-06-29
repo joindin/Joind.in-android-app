@@ -103,8 +103,7 @@ public class SettingsActivity extends JIActivity implements PreferenceListFragme
     /**
      * Look up accounts
      */
-    protected void configureAccounts()
-    {
+    protected void configureAccounts() {
         accountManager = AccountManager.get(this);
         Account[] accounts = accountManager.getAccountsByType(getString(R.string.authenticatorAccountType));
         thisAccount = (accounts.length > 0 ? accounts[0] : null);
@@ -128,7 +127,7 @@ public class SettingsActivity extends JIActivity implements PreferenceListFragme
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            if (action.equals(null)) {
+            if (action == null) {
                 return;
             }
             if (action.equals(C.USER_LOGGED_IN)) {

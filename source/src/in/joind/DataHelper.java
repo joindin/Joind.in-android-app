@@ -12,17 +12,16 @@ package in.joind;
  * outside this class.
  */
 
-import android.util.Log;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 import android.widget.ArrayAdapter;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 public final class DataHelper {
@@ -104,6 +103,8 @@ public final class DataHelper {
             json = new JSONObject(c.getString(0));
         } catch (Exception e) {
             json = new JSONObject();
+        } finally {
+            if (!c.isClosed()) c.close();
         }
         return json;
     }
@@ -119,6 +120,8 @@ public final class DataHelper {
             eventID = c.getLong(0);
         } catch (Exception e) {
             eventID = 0;
+        } finally {
+            if (!c.isClosed()) c.close();
         }
         return eventID;
     }
@@ -183,7 +186,7 @@ public final class DataHelper {
     /**
      * Remove the specified type from the event.
      *
-     * @param event_type
+     * @param event_type Event type.
      */
     public void deleteAllEventsFromType(String event_type) {
         db.execSQL("DELETE FROM event_types WHERE event_type=?", new String[]{event_type});
@@ -260,8 +263,10 @@ public final class DataHelper {
 
     public int getTalkCountForEvent(int event_id) {
         Cursor c = this.db.rawQuery("SELECT json,_rowid_ FROM talks WHERE event_id = " + event_id, null);
+        int count = c.getCount();
+        c.close();
 
-        return c.getCount();
+        return count;
     }
 
     // Populates a talk comment adapter and returns the number of items populated
@@ -282,8 +287,10 @@ public final class DataHelper {
 
     public int getTrackCountForEvent(int event_id) {
         Cursor c = this.db.rawQuery("SELECT json,_rowid_ FROM tracks WHERE event_id = " + event_id, null);
+        int count = c.getCount();
+        c.close();
 
-        return c.getCount();
+        return count;
     }
 
     public int populateTracks(int event_id, JITrackAdapter m_trackAdapter) {
@@ -312,7 +319,7 @@ public final class DataHelper {
             } while (c.moveToNext());
         }
         // Close cursor
-        if (c != null && !c.isClosed()) c.close();
+        if (!c.isClosed()) c.close();
     }
 
 
