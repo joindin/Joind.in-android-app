@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- A single row with talk information. Used in the listviews -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="fill_parent"
+              android:layout_width="match_parent"
               android:layout_height="?android:attr/listPreferredItemHeight"
               android:orientation="vertical"
               android:descendantFocusability="blocksDescendants">
@@ -9,7 +9,7 @@
     <!-- header row -->
     <LinearLayout
         android:id="@+id/sectionHeader"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:descendantFocusability="blocksDescendants">
@@ -52,7 +52,7 @@
             <TextView
                 android:id="@+id/TalkRowSpeaker"
                 android:layout_height="wrap_content"
-                android:layout_width="fill_parent" />
+                android:layout_width="match_parent" />
 
         </LinearLayout>
 
@@ -76,7 +76,7 @@
         android:paddingLeft="6dp"
         android:paddingRight="6dp"
         android:layout_height="wrap_content"
-        android:layout_width="fill_parent">
+        android:layout_width="match_parent">
 
         <ImageView
             android:background="@drawable/rating_0"
@@ -102,7 +102,7 @@
         android:paddingRight="6dp"
         android:paddingBottom="6dp"
         android:layout_height="wrap_content"
-        android:layout_width="fill_parent">
+        android:layout_width="match_parent">
 
         <TextView
             android:layout_width="wrap_content"

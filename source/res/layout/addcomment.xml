@@ -2,17 +2,17 @@
 <!-- This is the layout for adding a new comment. This could either be a event or talk comment -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
     <LinearLayout
         android:id="@+id/LinearLayout02"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_width="fill_parent">
+        android:layout_width="match_parent">
         <TextView
             android:layout_height="wrap_content"
-            android:text="Your rating:"
-            android:layout_width="fill_parent"
+            android:text="@string/your_rating"
+            android:layout_width="match_parent"
             android:id="@+id/TextViewRating"></TextView>
         <RatingBar
             android:id="@+id/CommentRatingBar"
@@ -34,7 +34,7 @@
     <TableRow
         android:id="@+id/TableRow01"
         android:layout_height="wrap_content"
-        android:layout_width="fill_parent">
+        android:layout_width="match_parent">
 
         <EditText
             android:id="@+id/CommentText"
@@ -58,8 +58,8 @@
 
     <LinearLayout
         android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:weightSum="2">
 
         <Button

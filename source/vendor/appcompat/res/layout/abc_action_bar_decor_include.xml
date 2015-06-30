@@ -18,19 +18,19 @@
 
     <android.support.v7.internal.widget.ActionBarContainer
         android:id="@+id/action_bar_container"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="?attr/actionBarStyle">
 
         <android.support.v7.internal.widget.ActionBarView
             android:id="@+id/action_bar"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="?attr/actionBarStyle" />
 
         <android.support.v7.internal.widget.ActionBarContextView
             android:id="@+id/action_context_bar"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone"
             style="?attr/actionModeStyle" />
@@ -38,7 +38,7 @@
 
     <FrameLayout
         android:id="@id/action_bar_activity_content"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="0dip"
         android:layout_weight="1"
         android:foregroundGravity="fill_horizontal|top"
@@ -46,7 +46,7 @@
 
     <android.support.v7.internal.widget.ActionBarContainer
         android:id="@+id/split_action_bar"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="?attr/actionBarSplitStyle"
         android:visibility="gone"

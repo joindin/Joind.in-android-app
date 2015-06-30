@@ -148,5 +148,6 @@
     <string name="pull_to_refresh_release_label">Release to refresh…</string>
     <string name="pull_to_refresh_refreshing_label">Loading…</string>
     <string name="pull_to_refresh_tap_label">Tap to refresh…</string>
+    <string name="your_rating">Your rating:</string>
 
 </resources>

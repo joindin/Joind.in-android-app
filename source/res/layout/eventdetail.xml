@@ -2,18 +2,18 @@
 <!-- Detailed information about an event -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
-              android:layout_width="fill_parent"
-              android:layout_height="fill_parent">
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
 
     <TableLayout
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:stretchColumns="0,1"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginTop="5dp">
         <TableRow
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp">
 
@@ -25,14 +25,14 @@
 
             <TextView
                 android:layout_height="wrap_content"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:id="@+id/EventDetailsEventLoc"
                 android:layout_gravity="left"></TextView>
 
         </TableRow>
 
         <TableRow
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
             android:id="@+id/EventDetailsHashtagsRow">
@@ -55,7 +55,7 @@
 
     <ScrollView
         android:id="@+id/ScrollView01"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:minHeight="80px"
         android:layout_height="80px"
         android:layout_weight="2"
@@ -67,8 +67,8 @@
             android:id="@+id/EventDetailsDescription"
             android:ellipsize="none"
             android:textSize="14dip"
-            android:layout_height="fill_parent"
-            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
             android:background="#ffffff"
             android:paddingRight="5dp"
             android:paddingLeft="5dp"></TextView>
@@ -77,13 +77,13 @@
     <TableLayout
         android:id="@+id/TableLayout02"
         android:layout_height="wrap_content"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:background="#eeeeee">
 
         <TableRow
             android:id="@+id/TableRow01"
             android:layout_height="wrap_content"
-            android:layout_width="fill_parent">
+            android:layout_width="match_parent">
 
             <Button
                 android:gravity="center_vertical|center_horizontal"
@@ -108,7 +108,7 @@
         <TableRow
             android:id="@+id/TableRow02"
             android:layout_height="wrap_content"
-            android:layout_width="fill_parent">
+            android:layout_width="match_parent">
 
             <Button
                 android:id="@+id/ButtonEventDetailsViewComments"

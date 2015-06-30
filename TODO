@@ -25,6 +25,11 @@ v2:
 [X] Different sorts (name, date)
 [ ] Add user/speaker detail
 [ ] Adding more info on the main-page (if cfp is available, currently busy, already passed etc) 
+[ ] Restructure the project (as an android project) in order to be easier to develop and implement unit testing
+[ ] Don't load all the events on the past tab (possibility of being too much data)
+[ ] Replace ActionBarActivity for AppCompatActivity
+[ ] Get the correct assets for all resolutions
+
 
 * Cache dir is not correct on v1.6
 
