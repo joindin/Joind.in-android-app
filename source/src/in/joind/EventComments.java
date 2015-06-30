@@ -154,7 +154,6 @@ public class EventComments extends JIActivity implements OnClickListener {
         return count;
     }
 
-
     // Load all event comments from joind.in API and display them
     public void loadEventComments(final int eventRowID, final String commentsURI) {
         // Display progress bar

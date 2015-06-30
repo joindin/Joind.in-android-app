@@ -62,7 +62,6 @@ public class AddComment extends JIActivity implements OnClickListener {
             }
         });
 
-
         // Are we commenting on an event?
         CheckBox privateComment = (CheckBox) findViewById(R.id.CommentPrivate);
         privateComment.setChecked(false); // default
@@ -137,7 +136,7 @@ public class AddComment extends JIActivity implements OnClickListener {
         }
     }
 
-    // Sendcomment() will do 2 things. Sending comments for talks AND sending comments
+    // SendComment() will do 2 things. Sending comments for talks AND sending comments
     // for events.
     public boolean sendComment() {
         String url;

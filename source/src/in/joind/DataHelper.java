@@ -25,7 +25,7 @@ import org.json.JSONObject;
 
 
 public final class DataHelper {
-    private static DataHelper DHinstance = null;
+    private static DataHelper DHInstance = null;
 
     private static final String DATABASE_NAME = "joindin.db";
     private static final int DATABASE_VERSION = 13;  // Increasing this version number will result in automatic call to onUpgrade()
@@ -43,16 +43,16 @@ public final class DataHelper {
     }
 
     public static DataHelper createInstance(Context context) {
-        if (DHinstance == null) {
+        if (DHInstance == null) {
             reinitialise(context);
         }
 
-        return DHinstance;
+        return DHInstance;
     }
 
     public static DataHelper getInstance() {
-        if (DHinstance == null) return null;
-        return DHinstance;
+        if (DHInstance == null) return null;
+        return DHInstance;
     }
 
     public static DataHelper getInstance(Context context) {
@@ -60,7 +60,7 @@ public final class DataHelper {
     }
 
     public static void reinitialise(Context context) {
-        DHinstance = new DataHelper(context);
+        DHInstance = new DataHelper(context);
     }
 
     // Updates a event
