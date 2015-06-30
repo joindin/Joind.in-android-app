@@ -3,9 +3,7 @@ gen
 build
 .settings
 source/res/values/com_crashlytics_export_strings.xml
-.idea/
-*.iml
-*.iws
+
 gradlew
 gradlew.bat
 local.properties
