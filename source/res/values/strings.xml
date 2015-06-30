@@ -60,7 +60,7 @@
     <string name="activityAddCommentSpinnerThreeStars">Three stars</string>
     <string name="activityAddCommentSpinnerFourStars">Four stars</string>
     <string name="activityAddCommentSpinnerFiveStars">Five stars</string>
-    <string name="activityAddCommentSendingComment">Sending comment...</string>
+    <string name="activityAddCommentSendingComment">Sending comment…</string>
     <string name="activityAddCommentPrivateCommentLabel">Mark this comment as private</string>
 
     <string name="activityEventDetailTitle">Event details</string>
@@ -70,6 +70,9 @@
     <string name="activityMainEventsPast">Past events</string>
     <string name="activityMainEventsUpcoming">Upcoming events</string>
     <string name="activityMainEventsFavorites">Favorite events</string>
+    <string name="activityMainEventsHotTab">Hot</string>
+    <string name="activityMainEventsUpcomingTab">Upcoming</string>
+    <string name="activityMainEventsPastTab">Past</string>
 
     <string name="activityTalkListFilteringByHeader">Filtering by starred talks</string>
 

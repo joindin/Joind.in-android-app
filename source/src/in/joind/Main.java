@@ -1,35 +1,40 @@
 package in.joind;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
 import android.app.SearchManager;
-import android.support.v4.app.FragmentTabHost;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.widget.SearchView;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v4.app.FragmentTabHost;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TabHost;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 /**
  * Main activity - contains the tab host, which we'll load our list fragments into
  */
 public class Main extends JIActivity implements SearchView.OnQueryTextListener {
 
-    private String currentTab = "hot";                   // Current selected tab
-
     // Constants for dynamically added menu items
     private static final int MENU_SORT_DATE = 1;
     private static final int MENU_SORT_TITLE = 2;
+
+    public static final String TAB_HOT = "Hot";
+    public static final String TAB_UPCOMING = "Upcoming";
+    public static final String TAB_PAST = "Past";
+
+    private static final String CURRENT_TAB = "currentTab";
+
+    private String currentTab = TAB_HOT; // Current selected tab
 
     private FragmentTabHost tabHost;
 
@@ -52,15 +57,18 @@ public class Main extends JIActivity implements SearchView.OnQueryTextListener {
     protected void initialiseTabs() {
         tabHost = (FragmentTabHost) findViewById(R.id.tabHost);
         tabHost.setup(this, getSupportFragmentManager(), android.R.id.tabcontent);
-        tabHost.addTab(tabHost.newTabSpec("hot").setIndicator("Hot"), EventListFragment.class, null);
-        tabHost.addTab(tabHost.newTabSpec("upcoming").setIndicator("Upcoming"), EventListFragment.class, null);
-        tabHost.addTab(tabHost.newTabSpec("past").setIndicator("Past"), EventListFragment.class, null);
+        tabHost.addTab(tabHost.newTabSpec(TAB_HOT).setIndicator(getString(R.string.activityMainEventsHotTab)),
+                EventListFragment.class, null);
+        tabHost.addTab(tabHost.newTabSpec(TAB_UPCOMING).setIndicator(getString(R.string.activityMainEventsUpcomingTab)),
+                EventListFragment.class, null);
+        tabHost.addTab(tabHost.newTabSpec(TAB_PAST).setIndicator(getString(R.string.activityMainEventsPastTab)),
+                EventListFragment.class, null);
         tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
             @Override
             public void onTabChanged(String tabId) {
-                SharedPreferences sp = getSharedPreferences(JIActivity.SHARED_PREF_NAME, Context.MODE_PRIVATE);
-                sp.edit().putString("currentTab", tabId).commit();
                 currentTab = tabId;
+                SharedPreferences sp = getSharedPreferences(JIActivity.SHARED_PREF_NAME, Context.MODE_PRIVATE);
+                sp.edit().putString(CURRENT_TAB, currentTab).apply();
             }
         });
     }
@@ -70,11 +78,11 @@ public class Main extends JIActivity implements SearchView.OnQueryTextListener {
         super.onResume();
 
         SharedPreferences sp = getSharedPreferences(JIActivity.SHARED_PREF_NAME, Context.MODE_PRIVATE);
-        if (sp.contains("currentTab")) {
-            currentTab = sp.getString("currentTab", "hot");
+        if (sp.contains(CURRENT_TAB)) {
+            currentTab = sp.getString(CURRENT_TAB, TAB_HOT);
             tabHost.setCurrentTabByTag(currentTab);
         } else {
-            currentTab = sp.getString("defaultEventTab", "hot");
+            currentTab = TAB_HOT;
             tabHost.setCurrentTabByTag(currentTab);
         }
     }
@@ -123,16 +131,15 @@ public class Main extends JIActivity implements SearchView.OnQueryTextListener {
         return super.onOptionsItemSelected(item);
     }
 
-
     // Converts input stream to a string.
     public static String convertStreamToString(InputStream is) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(is), 8192);
         StringBuilder sb = new StringBuilder();
 
-        String line = null;
+        String line;
         try {
             while ((line = reader.readLine()) != null) {
-                sb.append(line + "\n");
+                sb.append(line).append("\n");
             }
         } catch (IOException e) {
             // ignored
@@ -153,7 +160,8 @@ public class Main extends JIActivity implements SearchView.OnQueryTextListener {
         } else {
             subTitle = String.format(getString(R.string.generalEventCountPlural), eventCount);
         }
-        getSupportActionBar().setSubtitle(subTitle);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) actionBar.setSubtitle(subTitle);
     }
 
     public void setEventsTitle(String title, int count) {
@@ -185,7 +193,8 @@ public class Main extends JIActivity implements SearchView.OnQueryTextListener {
     }
 
     protected void setTabTitle(String title, int eventCount) {
-        getSupportActionBar().setTitle(title);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) actionBar.setSubtitle(title);
         setEventsCountTitle(eventCount);
     }
 }

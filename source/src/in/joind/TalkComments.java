@@ -4,51 +4,45 @@ package in.joind;
  * Displays detailed information about a talk (info, comments etc)
  */
 
-import java.util.ArrayList;
-
-import in.joind.R;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.util.Linkify;
-import android.view.LayoutInflater;
+import android.support.v7.app.ActionBar;
+import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.markupartist.android.widget.PullToRefreshListView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
 public class TalkComments extends JIActivity implements OnClickListener {
-    private JITalkCommentAdapter m_talkCommentAdapter;  // adapter for listview
-    private JSONObject talkJSON, eventJSON;
+    private JITalkCommentAdapter m_talkCommentAdapter;  // adapter for listView
+    private JSONObject talkJSON;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // Allow ActionBar 'up' navigation
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
 
         // Set comment layout
         setContentView(R.layout.comments);
 
         // Get info from the intent scratch board
+        JSONObject eventJSON;
         try {
             this.talkJSON = new JSONObject(getIntent().getStringExtra("talkJSON"));
-            this.eventJSON = new JSONObject(getIntent().getStringExtra("eventJSON"));
+            eventJSON = new JSONObject(getIntent().getStringExtra("eventJSON"));
         } catch (JSONException e) {
-            android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No talk passed to activity", e);
+            Log.e(JIActivity.LOG_JOINDIN_APP, "No talk passed to activity", e);
             Crashlytics.setString("talkComments_talkJSON", getIntent().getStringExtra("talkJSON"));
             Crashlytics.setString("talkComments_eventJSON", getIntent().getStringExtra("eventJSON"));
 
@@ -67,7 +61,7 @@ public class TalkComments extends JIActivity implements OnClickListener {
         button.setOnClickListener(this);
 
         // Initialize comment list
-        ArrayList<JSONObject> m_talkcomments = new ArrayList<JSONObject>();
+        ArrayList<JSONObject> m_talkcomments = new ArrayList<>();
         m_talkCommentAdapter = new JITalkCommentAdapter(this, R.layout.talkrow, m_talkcomments);
         final PullToRefreshListView talkcommentlist = (PullToRefreshListView) findViewById(R.id.EventDetailComments);
         talkcommentlist.setAdapter(m_talkCommentAdapter);
@@ -82,7 +76,7 @@ public class TalkComments extends JIActivity implements OnClickListener {
                 try {
                     loadTalkComments(talk_id, talkJSON.getString("comments_uri"));
                 } catch (JSONException e) {
-                    android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No comments URI available (talk comments)");
+                    Log.e(JIActivity.LOG_JOINDIN_APP, "No comments URI available (talk comments)");
                     talkcommentlist.onRefreshComplete();
                 }
             }
@@ -92,20 +86,19 @@ public class TalkComments extends JIActivity implements OnClickListener {
         try {
             loadTalkComments(talk_id, this.talkJSON.getString("comments_uri"));
         } catch (JSONException e) {
-            android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No comments URI available (talk comments)");
+            Log.e(JIActivity.LOG_JOINDIN_APP, "No comments URI available (talk comments)");
         }
     }
 
     public void onResume() {
         super.onResume();
 
-        Button button = (Button)findViewById(R.id.ButtonNewComment);
+        Button button = (Button) findViewById(R.id.ButtonNewComment);
 
         // Button is only present if we're authenticated
         if (!isAuthenticated()) {
             button.setVisibility(View.GONE);
-        }
-        else {
+        } else {
             button.setVisibility(View.VISIBLE);
         }
     }
@@ -219,5 +212,3 @@ public class TalkComments extends JIActivity implements OnClickListener {
         }
     }
 }
-
-

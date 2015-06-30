@@ -4,20 +4,14 @@ package in.joind;
  * Displays all talks from specified event.
  */
 
-import java.util.ArrayList;
-import java.util.TimeZone;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.preference.PreferenceManager;
+import android.support.v7.app.ActionBar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -25,12 +19,26 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.Filter;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Filter;
 
 import com.markupartist.android.widget.PullToRefreshListView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.TimeZone;
+
 public class EventTalks extends JIActivity implements OnClickListener {
+
+    private final static int EVENT_TALKS_SHOW_TALK_DETAILS = 1;
+    /**
+     * Preference keys
+     */
+    private final static String PREFS_TALK_LIST_INDEX = "TalkListIndex_%d";
+
     private JITalkAdapter m_talkAdapter;
     private JSONObject eventJSON;
     private JSONObject trackJSON = null;
@@ -46,7 +54,8 @@ public class EventTalks extends JIActivity implements OnClickListener {
         super.onCreate(savedInstanceState);
 
         // Allow ActionBar 'up' navigation
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
 
         // Set layout
         setContentView(R.layout.eventtalks);
@@ -58,7 +67,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
         // Save our current list index position for this event
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        String key = String.format(C.PREFS_TALK_LIST_INDEX, eventRowID);
+        String key = String.format(PREFS_TALK_LIST_INDEX, eventRowID);
         editor.putInt(key, firstVisibleItem).apply();
     }
 
@@ -74,23 +83,24 @@ public class EventTalks extends JIActivity implements OnClickListener {
                 this.trackJSON = new JSONObject(callingIntent.getStringExtra("eventTrack"));
             }
         } catch (JSONException e) {
-            android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No event passed to activity", e);
+            Log.e(JIActivity.LOG_JOINDIN_APP, "No event passed to activity", e);
         }
         try {
             eventRowID = this.eventJSON.getInt("rowID");
         } catch (JSONException e) {
-            android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No row ID in event JSON");
+            Log.e(JIActivity.LOG_JOINDIN_APP, "No row ID in event JSON");
         }
         if (eventRowID == 0) {
             // TODO alert and stop activity
-            android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "Event row ID is invalid");
+            Log.e(JIActivity.LOG_JOINDIN_APP, "Event row ID is invalid");
         }
 
         // Set titlebar
-        getSupportActionBar().setTitle(this.eventJSON.optString("name"));
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) actionBar.setTitle(this.eventJSON.optString("name"));
 
         // Initialize talk list
-        ArrayList<JSONObject> m_talks = new ArrayList<JSONObject>();
+        ArrayList<JSONObject> m_talks = new ArrayList<>();
         TimeZone tz;
         try {
             String tz_string = this.eventJSON.getString("tz_continent") + '/' + this.eventJSON.getString("tz_place");
@@ -113,7 +123,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
                 myIntent.setClass(getApplicationContext(), TalkDetail.class);
                 myIntent.putExtra("eventJSON", callingIntent.getStringExtra("eventJSON"));
                 myIntent.putExtra("talkJSON", parent.getAdapter().getItem(pos).toString());
-                startActivityForResult(myIntent, C.EVENT_TALKS_SHOW_TALK_DETAILS);
+                startActivityForResult(myIntent, EVENT_TALKS_SHOW_TALK_DETAILS);
             }
         });
         talklist.setOnRefreshListener(new PullToRefreshListView.OnRefreshListener() {
@@ -122,14 +132,15 @@ public class EventTalks extends JIActivity implements OnClickListener {
                 try {
                     loadTalks(eventRowID, trackURI, eventJSON.getString("talks_uri"));
                 } catch (JSONException e) {
-                    android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No talks URI available");
+                    Log.e(JIActivity.LOG_JOINDIN_APP, "No talks URI available");
                     talklist.onRefreshComplete();
                 }
             }
         });
         talklist.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
-            public void onScrollStateChanged(AbsListView absListView, int i) {}
+            public void onScrollStateChanged(AbsListView absListView, int i) {
+            }
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
@@ -144,16 +155,16 @@ public class EventTalks extends JIActivity implements OnClickListener {
         try {
             loadTalks(eventRowID, trackURI, eventJSON.getString("talks_uri"));
         } catch (JSONException e) {
-            android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No talks URI available");
+            Log.e(JIActivity.LOG_JOINDIN_APP, "No talks URI available");
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == C.EVENT_TALKS_SHOW_TALK_DETAILS) {
+        if (requestCode == EVENT_TALKS_SHOW_TALK_DETAILS) {
             // Resume state if we've been returned to
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-            String key = String.format(C.PREFS_TALK_LIST_INDEX, eventRowID);
+            String key = String.format(PREFS_TALK_LIST_INDEX, eventRowID);
             firstVisibleItem = sharedPreferences.getInt(key, 0);
         }
     }
@@ -183,7 +194,8 @@ public class EventTalks extends JIActivity implements OnClickListener {
         } else {
             talksFound += String.format(getString(R.string.generalEventTalksPlural), talkCount);
         }
-        getSupportActionBar().setSubtitle(talksFound);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) actionBar.setSubtitle(talksFound);
 
         ((PullToRefreshListView) findViewById(R.id.ListViewEventTalks)).onRefreshComplete();
     }
@@ -192,7 +204,6 @@ public class EventTalks extends JIActivity implements OnClickListener {
     public void loadTalks(final int eventRowID, final String trackURI, final String talkVerboseURI) {
         // Display progress bar
         displayProgressBarCircular(true);
-
 
         new Thread() {
             public void run() {
@@ -209,7 +220,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
                         // Fetch talk data from joind.in API
                         int error = rest.getJSONFullURI(uriToUse);
 
-                        // @TODO: We do not handle errors?
+                        // TODO: We do not handle errors?
 
                         if (error == JIRest.OK) {
                             fullResponse = rest.getJSONResult();
@@ -311,7 +322,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
     /**
      * Configure the filter based on track URI and starred preference
      *
-     * @param filterType
+     * @param filterType Filter type
      */
     protected void applyStarredFilter(String filterType) {
         boolean showFilterHeader = false;
@@ -341,7 +352,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
      * Save the user's current filter preference to shared preferences
      * for this event
      *
-     * @param filterType
+     * @param filterType Filter type
      */
     protected void saveFilterPreference(String filterType) {
         String prefKey = "filter_" + eventRowID;

@@ -5,16 +5,14 @@ package in.joind;
  */
 
 import android.app.Activity;
-import android.content.Intent;
-import in.joind.R;
-import android.view.MenuItem;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -25,12 +23,14 @@ import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class AddComment extends JIActivity implements OnClickListener {
     ProgressDialog saveDialog;
     private String commentType;
     private JSONObject talkJSON;
     private JSONObject eventJSON;
-    private String lastError = "";
 
     final public static int CODE_COMMENT = 1;
 
@@ -38,7 +38,8 @@ public class AddComment extends JIActivity implements OnClickListener {
         super.onCreate(savedInstanceState);
 
         // Allow ActionBar 'up' navigation
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
 
         // Set layout
         setContentView(R.layout.addcomment);
@@ -61,7 +62,6 @@ public class AddComment extends JIActivity implements OnClickListener {
             }
         });
 
-
         // Are we commenting on an event?
         CheckBox privateComment = (CheckBox) findViewById(R.id.CommentPrivate);
         privateComment.setChecked(false); // default
@@ -70,14 +70,13 @@ public class AddComment extends JIActivity implements OnClickListener {
             try {
                 this.eventJSON = new JSONObject(getIntent().getStringExtra("eventJSON"));
             } catch (JSONException e) {
-                android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No event passed to activity", e);
+                Log.e(JIActivity.LOG_JOINDIN_APP, "No event passed to activity", e);
             }
 
             // Hide the private comment checkbox
             // (not used for events)
             privateComment.setVisibility(View.GONE);
-        }
-        else {
+        } else {
             privateComment.setVisibility(View.VISIBLE);
         }
 
@@ -137,7 +136,7 @@ public class AddComment extends JIActivity implements OnClickListener {
         }
     }
 
-    // Sendcomment() will do 2 things. Sending comments for talks AND sending comments
+    // SendComment() will do 2 things. Sending comments for talks AND sending comments
     // for events.
     public boolean sendComment() {
         String url;
@@ -145,7 +144,7 @@ public class AddComment extends JIActivity implements OnClickListener {
         // Display progress bar
         displayProgressBarCircular(true);
 
-        lastError = "";
+        String lastError;
 
         // Get information from the layout
         RatingBar ratingbar = (RatingBar) findViewById(R.id.CommentRatingBar);
@@ -171,13 +170,14 @@ public class AddComment extends JIActivity implements OnClickListener {
             try {
                 this.talkJSON = new JSONObject(getIntent().getStringExtra("talkJSON"));
             } catch (JSONException e) {
-                android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No talk passed to activity", e);
+                Log.e(JIActivity.LOG_JOINDIN_APP, "No talk passed to activity", e);
             }
 
             // Talk comments have a private status
             try {
                 data.put("private", privateComment);
             } catch (JSONException e) {
+                // do nothing
             }
 
             url = this.talkJSON.optString("comments_uri");
@@ -187,7 +187,7 @@ public class AddComment extends JIActivity implements OnClickListener {
             try {
                 this.eventJSON = new JSONObject(getIntent().getStringExtra("eventJSON"));
             } catch (JSONException e) {
-                android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No event passed to activity", e);
+                Log.e(JIActivity.LOG_JOINDIN_APP, "No event passed to activity", e);
             }
 
             url = this.eventJSON.optString("comments_uri");

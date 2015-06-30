@@ -9,24 +9,23 @@ package in.joind;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import com.crashlytics.android.Crashlytics;
-import in.joind.R;
-import in.joind.activity.SettingsActivity;
-import in.joind.fragment.LogInDialogFragment;
-
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.NavUtils;
-import android.support.v4.app.TaskStackBuilder;
-import android.support.v7.app.ActionBarActivity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
+import android.support.v4.app.TaskStackBuilder;
+import android.support.v7.app.ActionBarActivity;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.Window;
 import android.widget.Toast;
+
+import com.crashlytics.android.Crashlytics;
+
+import in.joind.activity.SettingsActivity;
 
 public class JIActivity extends ActionBarActivity {
 
@@ -35,9 +34,9 @@ public class JIActivity extends ActionBarActivity {
     final public static String LOG_JOINDIN_APP = "JoindInApp";
     final public static String SHARED_PREF_NAME = "in.joind";
 
-	public static void setCommentHistory(String comment) {
-		_comment_history = comment;
-	}
+    public static void setCommentHistory(String comment) {
+        _comment_history = comment;
+    }
 
     // Automatically called by all activities.
     public void onCreate(Bundle savedInstanceState) {
@@ -48,8 +47,7 @@ public class JIActivity extends ActionBarActivity {
         Crashlytics.start(this);
     }
 
-    public void onResume()
-    {
+    public void onResume() {
         super.onResume();
 
         // Get account details
@@ -92,7 +90,7 @@ public class JIActivity extends ActionBarActivity {
                     TaskStackBuilder.create(this)
                             // Add all of this activity's parents to the back stack
                             .addNextIntentWithParentStack(upIntent)
-                            // Navigate up to the closest parent
+                                    // Navigate up to the closest parent
                             .startActivities();
                 } else {
                     // This activity is part of this app's task, so simply
@@ -129,7 +127,8 @@ public class JIActivity extends ActionBarActivity {
     }
 
     protected void showToast(String message, int duration) {
-        Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.activityEventDetailFailedJSON), duration);
+        if (TextUtils.isEmpty(message)) message = getString(R.string.activityEventDetailFailedJSON);
+        Toast toast = Toast.makeText(getApplicationContext(), message, duration);
         toast.show();
     }
 }

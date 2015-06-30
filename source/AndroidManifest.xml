@@ -1,103 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="in.joind"
-      android:versionCode="10"
-      android:versionName="2.0.9">
+<manifest
+    package="in.joind"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:versionCode="10"
+    android:versionName="2.0.9">
 
     <!-- Target SDK version is handled in the build.gradle configuration -->
-    <uses-sdk android:minSdkVersion="9" />
+    <uses-sdk android:minSdkVersion="9"/>
 
     <!-- Since we make requests over the Internet, we need the users permission for it. -->
-    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <!-- Account management. Used to store access tokens -->
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
-    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
-    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.USE_CREDENTIALS"/>
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS"/>
 
-	<supports-screens
-		android:largeScreens="true"
-		android:normalScreens="true"
-		android:smallScreens="true"
-		android:anyDensity="true" />
+    <supports-screens
+        android:anyDensity="true"
+        android:largeScreens="true"
+        android:normalScreens="true"
+        android:smallScreens="true"/>
 
     <application
-      android:icon="@drawable/ic_launcher"
-      android:label="@string/app_name"
-      android:theme="@style/JoindInActionBarTheme"
-        android:allowBackup="true">
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/JoindInActionBarTheme">
 
         <!-- Just a bunch of activities here. Needed otherwise android cannot launch them. -->
-        <activity android:name="in.joind.Main"
+        <activity
+            android:name="in.joind.Main"
             android:label="@string/app_name">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-            <meta-data android:name="android.app.searchable"
-                android:resource="@xml/searchable" />
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable"/>
         </activity>
         <activity
             android:name=".EventDetail"
-            android:launchMode="singleTop"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="in.joind.Main" />
+                android:value="in.joind.Main"/>
         </activity>
         <activity
             android:name=".EventTalks"
-            android:launchMode="singleTop"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="in.joind.EventDetail" />
+                android:value="in.joind.EventDetail"/>
         </activity>
         <activity
             android:name=".EventComments"
-            android:launchMode="singleTop"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="in.joind.EventDetail" />
+                android:value="in.joind.EventDetail"/>
         </activity>
         <activity
             android:name=".EventTracks"
-            android:launchMode="singleTop"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="in.joind.EventDetail" />
+                android:value="in.joind.EventDetail"/>
         </activity>
         <activity
             android:name=".TalkDetail"
-            android:launchMode="singleTop"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="in.joind.EventTalks" />
+                android:value="in.joind.EventTalks"/>
         </activity>
-            <activity
+        <activity
             android:name=".TalkComments"
-            android:launchMode="singleTop"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="in.joind.TalkDetail" />
+                android:value="in.joind.TalkDetail"/>
         </activity>
         <activity
             android:name=".AddComment"
-            android:launchMode="singleTop"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:launchMode="singleTop">
         </activity>
         <activity
             android:name=".activity.SettingsActivity"
-            android:launchMode="singleTop"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="in.joind.Main" />
+                android:value="in.joind.Main"/>
         </activity>
 
         <!-- Authentication service. Used to store details of a user's joind.in account -->
@@ -106,14 +109,16 @@
             android:exported="false">
             <intent-filter>
                 <action
-                    android:name="android.accounts.AccountAuthenticator" />
+                    android:name="android.accounts.AccountAuthenticator"/>
             </intent-filter>
             <meta-data
                 android:name="android.accounts.AccountAuthenticator"
-                android:resource="@xml/authenticator" />
+                android:resource="@xml/authenticator"/>
         </service>
 
-        <meta-data android:name="com.crashlytics.ApiKey" android:value="2d4ca2fb1f0233b099fd8045815bbbe56496ef5a"/>
+        <meta-data
+            android:name="com.crashlytics.ApiKey"
+            android:value="2d4ca2fb1f0233b099fd8045815bbbe56496ef5a"/>
 
     </application>
 </manifest>
