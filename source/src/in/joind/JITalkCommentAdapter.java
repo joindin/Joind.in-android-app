@@ -9,13 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 import org.json.JSONObject;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 class JITalkCommentAdapter extends ArrayAdapter<JSONObject> {
@@ -34,7 +31,7 @@ class JITalkCommentAdapter extends ArrayAdapter<JSONObject> {
         ViewHolder holder;
         if (convertView == null) {
             LayoutInflater layoutInflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = layoutInflater.inflate(R.layout.commentrow, null);
+            convertView = layoutInflater.inflate(R.layout.commentrow, parent, false);
             holder = new ViewHolder();
 
             holder.gravatarImage = (ImageView) convertView.findViewById(R.id.CommentRowGravatar);

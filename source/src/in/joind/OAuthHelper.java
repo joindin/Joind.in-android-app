@@ -2,7 +2,6 @@ package in.joind;
 
 import android.content.Context;
 import android.content.res.Resources;
-import in.joind.R;
 
 import java.io.InputStream;
 import java.util.Properties;

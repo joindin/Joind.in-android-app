@@ -30,6 +30,7 @@ import org.json.JSONObject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * The list fragment that is shown in our tabbed view.
@@ -53,25 +54,28 @@ public class EventListFragment extends ListFragment implements EventListFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup viewGroup = (ViewGroup) super.onCreateView(inflater, container, savedInstanceState);
 
-        View lvOld = viewGroup.findViewById(android.R.id.list);
+        if (viewGroup != null) {
+            View lvOld = viewGroup.findViewById(android.R.id.list);
 
-        // Use the pull-to-refresh ListView, instead of a normal ListView
-        final PullToRefreshListView listView = new PullToRefreshListView(getActivity());
-        listView.setId(android.R.id.list);
-        listView.setLayoutParams(new FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        listView.setDrawSelectorOnTop(false);
+            // Use the pull-to-refresh ListView, instead of a normal ListView
+            final PullToRefreshListView listView = new PullToRefreshListView(getActivity());
+            listView.setId(android.R.id.list);
+            listView.setLayoutParams(new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            listView.setDrawSelectorOnTop(false);
 
-        FrameLayout parent = (FrameLayout) lvOld.getParent();
-        parent.removeView(lvOld);
-        lvOld.setVisibility(View.GONE);
+            FrameLayout parent = (FrameLayout) lvOld.getParent();
+            parent.removeView(lvOld);
+            lvOld.setVisibility(View.GONE);
 
-        parent.addView(listView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            parent.addView(listView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
-        // Populate our list adapter
-        ArrayList<JSONObject> m_events = new ArrayList<JSONObject>();
-        m_eventAdapter = new JIEventAdapter(getActivity(), R.layout.eventrow, m_events);
-        setListAdapter(m_eventAdapter);
+            // Populate our list adapter
+            ArrayList<JSONObject> m_events = new ArrayList<>();
+            m_eventAdapter = new JIEventAdapter(getActivity(), R.layout.eventrow, m_events);
+            setListAdapter(m_eventAdapter);
+
+        }
 
         return viewGroup;
     }
@@ -177,9 +181,9 @@ public class EventListFragment extends ListFragment implements EventListFragment
 
     protected void setTitle(String eventType) {
         String title = "";
-        if (eventType.equals("hot")) title = this.getString(R.string.activityMainEventsHot);
-        if (eventType.equals("past")) title = this.getString(R.string.activityMainEventsPast);
-        if (eventType.equals("upcoming")) title = this.getString(R.string.activityMainEventsUpcoming);
+        if (eventType.equals(Main.TAB_HOT)) title = this.getString(R.string.activityMainEventsHot);
+        if (eventType.equals(Main.TAB_PAST)) title = this.getString(R.string.activityMainEventsPast);
+        if (eventType.equals(Main.TAB_UPCOMING)) title = this.getString(R.string.activityMainEventsUpcoming);
 
         parentActivity.setEventsTitle(title, 0);
     }
@@ -257,7 +261,7 @@ public class EventListFragment extends ListFragment implements EventListFragment
                         uriToUse = metaObj.getString("next_page");
 
                         // Yield to the view, so some display
-                        getActivity().runOnUiThread(new Runnable() {
+                        if (getActivity() != null) getActivity().runOnUiThread(new Runnable() {
                             public void run() {
                                 displayEvents(event_type);
                             }
@@ -266,7 +270,7 @@ public class EventListFragment extends ListFragment implements EventListFragment
                         // If we're looking at "hot" events, this API call just
                         // returns events, and more events, and more events....
                         // so we'll just stop after the first round
-                        if (event_type.equals("hot")) {
+                        if (event_type.equals(Main.TAB_HOT)) {
                             break;
                         }
                     } else {
@@ -294,7 +298,7 @@ public class EventListFragment extends ListFragment implements EventListFragment
             }
 
             // Show the events
-            getActivity().runOnUiThread(new Runnable() {
+            if (getActivity() != null) getActivity().runOnUiThread(new Runnable() {
                 public void run() {
                     displayEvents(event_type);
                 }
@@ -306,7 +310,7 @@ public class EventListFragment extends ListFragment implements EventListFragment
 
 
 class JIEventAdapter extends ArrayAdapter<JSONObject> {
-    private ArrayList<JSONObject> all_items;
+    private final ArrayList<JSONObject> all_items;
     private ArrayList<JSONObject> filtered_items;
     private Context context;
     LayoutInflater inflater;
@@ -333,7 +337,7 @@ class JIEventAdapter extends ArrayAdapter<JSONObject> {
     // This function will create a custom row with our event data.
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
-            convertView = this.inflater.inflate(R.layout.eventrow, null);
+            convertView = this.inflater.inflate(R.layout.eventrow, parent, false);
         }
 
         // Get the (JSON) data we need
@@ -353,8 +357,7 @@ class JIEventAdapter extends ArrayAdapter<JSONObject> {
             String filename = o.optString("icon");
             el.setTag(filename);
             image_loader.displayImage("http://joind.in/inc/img/event_icons/", filename, (Activity) context, el);
-        }
-        else {
+        } else {
             el.setImageResource(R.drawable.event_icon_none);
         }
         el.setVisibility(View.VISIBLE);
@@ -363,9 +366,10 @@ class JIEventAdapter extends ArrayAdapter<JSONObject> {
         long event_start = 0;
         long event_end = 0;
         try {
-            event_start = new SimpleDateFormat(context.getString(R.string.apiDateFormat)).parse(o.optString("start_date")).getTime();
-            event_end = new SimpleDateFormat(context.getString(R.string.apiDateFormat)).parse(o.optString("end_date")).getTime();
+            event_start = new SimpleDateFormat(context.getString(R.string.apiDateFormat), Locale.US).parse(o.optString("start_date")).getTime();
+            event_end = new SimpleDateFormat(context.getString(R.string.apiDateFormat), Locale.US).parse(o.optString("end_date")).getTime();
         } catch (ParseException e) {
+            // do nothing
         }
         long cts = System.currentTimeMillis() / 1000;
         if (event_start <= cts && cts <= event_end) {
@@ -421,7 +425,7 @@ class JIEventAdapter extends ArrayAdapter<JSONObject> {
 
         protected FilterResults performFiltering(CharSequence prefix) {
             FilterResults results = new FilterResults();
-            ArrayList<JSONObject> i = new ArrayList<JSONObject>();
+            ArrayList<JSONObject> i = new ArrayList<>();
 
             if (prefix != null && prefix.toString().length() > 0) {
 

@@ -5,16 +5,12 @@ package in.joind;
  */
 
 
-import android.text.TextUtils;
-import android.util.Log;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.text.TextUtils;
 import android.text.util.Linkify;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -23,6 +19,10 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -37,7 +37,8 @@ public class TalkDetail extends JIActivity implements OnClickListener {
         super.onCreate(savedInstanceState);
 
         // Allow ActionBar 'up' navigation
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
 
         // Set talk detail layout
         setContentView(R.layout.talkdetails);
@@ -47,7 +48,7 @@ public class TalkDetail extends JIActivity implements OnClickListener {
             this.talkJSON = new JSONObject(getIntent().getStringExtra("talkJSON"));
             this.eventJSON = new JSONObject(getIntent().getStringExtra("eventJSON"));
         } catch (JSONException e) {
-            android.util.Log.e(JIActivity.LOG_JOINDIN_APP, "No talk and/or event passed to activity", e);
+            Log.e(JIActivity.LOG_JOINDIN_APP, "No talk and/or event passed to activity", e);
         }
 
         // Set correct text in layout
@@ -56,10 +57,10 @@ public class TalkDetail extends JIActivity implements OnClickListener {
 
         TextView t;
         t = (TextView) this.findViewById(R.id.TalkDetailCaption);
-        t.setText (this.talkJSON.optString("talk_title"));
+        t.setText(this.talkJSON.optString("talk_title"));
         t = (TextView) this.findViewById(R.id.TalkDetailSpeaker);
 
-        ArrayList<String> speakerNames = new ArrayList<String>();
+        ArrayList<String> speakerNames = new ArrayList<>();
         try {
             JSONArray speakerEntries = this.talkJSON.getJSONArray("speakers");
             for (int i = 0; i < speakerEntries.length(); i++) {
@@ -71,12 +72,10 @@ public class TalkDetail extends JIActivity implements OnClickListener {
         }
         if (speakerNames.size() == 1) {
             t.setText("Speaker: " + speakerNames.get(0));
-        }
-        else if (speakerNames.size() > 1) {
+        } else if (speakerNames.size() > 1) {
             String allSpeakers = TextUtils.join(", ", speakerNames);
             t.setText("Speakers: " + allSpeakers);
-        }
-        else {
+        } else {
             t.setText("");
         }
         t = (TextView) this.findViewById(R.id.TalkDetailDescription);
@@ -85,37 +84,37 @@ public class TalkDetail extends JIActivity implements OnClickListener {
         // adding talks. It doesn't really look nice when viewing.
         s = s.replace("\n", "");
         s = s.replace("  ", "");
-        t.setText (s);
+        t.setText(s);
         Linkify.addLinks(t, Linkify.ALL);
 
         // Update view X comments button
         buttonCommentCount(this.talkJSON.optInt("comment_count"));
 
         // Add handlers to button
-        Button button = (Button)findViewById(R.id.ButtonNewComment);
+        Button button = (Button) findViewById(R.id.ButtonNewComment);
         button.setOnClickListener(this);
-        button = (Button)findViewById(R.id.ButtonViewComment);
+        button = (Button) findViewById(R.id.ButtonViewComment);
         button.setOnClickListener(this);
     }
 
     public void onResume() {
         super.onResume();
 
-        Button button = (Button)findViewById(R.id.ButtonNewComment);
+        Button button = (Button) findViewById(R.id.ButtonNewComment);
 
         // Button is only present if we're authenticated
         if (!isAuthenticated()) {
             button.setVisibility(View.GONE);
-        }
-        else {
+        } else {
             button.setVisibility(View.VISIBLE);
         }
     }
 
     /**
      * Talk detail allows a user to star talks
-     * @param menu
-     * @return
+     *
+     * @param menu Menu
+     * @return Display menu?
      */
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -132,8 +131,8 @@ public class TalkDetail extends JIActivity implements OnClickListener {
     /**
      * Handle menu clicks
      * Essentially this is just the "star talk" option
-     * @param item
-     * @return
+     *
+     * @param item Menu item
      */
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -163,7 +162,7 @@ public class TalkDetail extends JIActivity implements OnClickListener {
     public void onClick(View v) {
         if (v == findViewById(R.id.ButtonNewComment)) {
             // Goto comment activity and add new comment to this talk
-            Intent myIntent = new Intent ();
+            Intent myIntent = new Intent();
             myIntent.setClass(getApplicationContext(), AddComment.class);
 
             myIntent.putExtra("commentType", "talk");
@@ -173,18 +172,18 @@ public class TalkDetail extends JIActivity implements OnClickListener {
         }
         if (v == findViewById(R.id.ButtonViewComment)) {
             // Goto talk comments activity and display all comments about this talk
-            Intent myIntent = new Intent ();
+            Intent myIntent = new Intent();
             myIntent.setClass(getApplicationContext(), TalkComments.class);
 
             myIntent.putExtra("talkJSON", this.talkJSON.toString());
             myIntent.putExtra("eventJSON", this.eventJSON.toString());
             startActivity(myIntent);
         }
-    };
+    }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch(requestCode) {
+        switch (requestCode) {
             case AddComment.CODE_COMMENT:
                 if (resultCode == RESULT_OK) {
                     // reload the comments
@@ -205,12 +204,12 @@ public class TalkDetail extends JIActivity implements OnClickListener {
             JSONObject fullResponse = rest.getJSONResult();
             JSONArray json = fullResponse.getJSONArray("talks");
             if (json.length() != 1) {
-                // error, we were expecting a single talk
+                // TODO: error, we were expecting a single talk
             }
 
             DataHelper dh = DataHelper.getInstance(this);
             JSONObject thisTalk = json.getJSONObject(0);
-            dh.insertTalk (talkID, thisTalk);
+            dh.insertTalk(talkID, thisTalk);
             this.talkJSON = thisTalk;
 
             buttonCommentCount(this.talkJSON.optInt("comment_count"));
@@ -219,7 +218,7 @@ public class TalkDetail extends JIActivity implements OnClickListener {
 
     protected void buttonCommentCount(int commentCount) {
         Button b = (Button) this.findViewById(R.id.ButtonViewComment);
-        if (commentCount == 1){
+        if (commentCount == 1) {
             b.setText(String.format(getString(R.string.generalViewCommentSingular), commentCount));
         } else {
             b.setText(String.format(getString(R.string.generalViewCommentPlural), commentCount));
@@ -228,7 +227,8 @@ public class TalkDetail extends JIActivity implements OnClickListener {
 
     /**
      * Mark the talk as starred - update the icon and submit the request
-     * @param isStarred
+     *
+     * @param isStarred Is it starred?
      */
     protected void markTalkStarred(final boolean isStarred) {
         updateStarredIcon(isStarred);
@@ -242,7 +242,7 @@ public class TalkDetail extends JIActivity implements OnClickListener {
                 runOnUiThread(new Runnable() {
                     public void run() {
                         Toast toast = Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG);
-                        toast.show ();
+                        toast.show();
                     }
                 });
 
@@ -254,7 +254,7 @@ public class TalkDetail extends JIActivity implements OnClickListener {
     /**
      * Update the starred icon to a set state
      *
-     * @param isStarred
+     * @param isStarred Is it starred?
      */
     protected void updateStarredIcon(boolean isStarred) {
         int iconID = (isStarred) ? R.drawable.ic_star_active : R.drawable.ic_star;
@@ -264,12 +264,13 @@ public class TalkDetail extends JIActivity implements OnClickListener {
     /**
      * Post/delete the starred status from this talk
      *
-     * @param initialState
-     * @return
+     * @param initialState Initial state.
+     * @return Return message.
      */
     private String doStarTalk(boolean initialState) {
         JIRest rest = new JIRest(this);
-        int error = rest.requestToFullURI(this.talkJSON.optString("starred_uri"), null, initialState ? JIRest.METHOD_POST : JIRest.METHOD_DELETE);
+        int error = rest.requestToFullURI(this.talkJSON.optString("starred_uri"), null,
+                initialState ? JIRest.METHOD_POST : JIRest.METHOD_DELETE);
 
         if (error != JIRest.OK) {
             return String.format(getString(R.string.generalStarringError), rest.getError());

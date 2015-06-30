@@ -1,7 +1,9 @@
 package in.joind;
 
 public interface EventListFragmentInterface {
-    public void setEventSortOrder(int sortOrder);
-    public int getEventSortOrder();
-    public void filterByString(CharSequence s);
+    void setEventSortOrder(int sortOrder);
+
+    int getEventSortOrder();
+
+    void filterByString(CharSequence s);
 }
