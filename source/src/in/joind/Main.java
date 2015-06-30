@@ -57,9 +57,12 @@ public class Main extends JIActivity implements SearchView.OnQueryTextListener {
     protected void initialiseTabs() {
         tabHost = (FragmentTabHost) findViewById(R.id.tabHost);
         tabHost.setup(this, getSupportFragmentManager(), android.R.id.tabcontent);
-        tabHost.addTab(tabHost.newTabSpec(TAB_HOT).setIndicator(TAB_HOT), EventListFragment.class, null);
-        tabHost.addTab(tabHost.newTabSpec(TAB_UPCOMING).setIndicator(TAB_UPCOMING), EventListFragment.class, null);
-        tabHost.addTab(tabHost.newTabSpec(TAB_PAST).setIndicator(TAB_PAST), EventListFragment.class, null);
+        tabHost.addTab(tabHost.newTabSpec(TAB_HOT).setIndicator(getString(R.string.activityMainEventsHotTab)),
+                EventListFragment.class, null);
+        tabHost.addTab(tabHost.newTabSpec(TAB_UPCOMING).setIndicator(getString(R.string.activityMainEventsUpcomingTab)),
+                EventListFragment.class, null);
+        tabHost.addTab(tabHost.newTabSpec(TAB_PAST).setIndicator(getString(R.string.activityMainEventsPastTab)),
+                EventListFragment.class, null);
         tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
             @Override
             public void onTabChanged(String tabId) {
