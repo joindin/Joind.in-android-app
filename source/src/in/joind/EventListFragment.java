@@ -39,6 +39,7 @@ import java.util.Locale;
 import in.joind.activity.SettingsActivity;
 import in.joind.fragment.FragmentLifecycle;
 import in.joind.fragment.LogInDialogFragment;
+import in.joind.user.UserManager;
 
 /**
  * The list fragment that is shown in our tabbed view.
@@ -278,6 +279,25 @@ public class EventListFragment extends ListFragment implements EventListFragment
         m_eventAdapter.getFilter().filter(s);
     }
 
+    private void checkForUserData(JSONObject jsonResult)
+    {
+        JSONObject metaBlock = jsonResult.optJSONObject("meta");
+        if (metaBlock == null || metaBlock.length() == 0) {
+            return;
+        }
+
+        String userURI = metaBlock.optString("user_uri");
+        if (userURI == null || userURI.length() == 0) {
+            return;
+        }
+
+        UserManager userManager = new UserManager(getActivity());
+        if (!userManager.accountRequiresFurtherDetails()) {
+            return;
+        }
+        userManager.updateSavedUserDetails(userURI);
+    }
+
     /**
      * Inner class: The thread that loads events in, and updates the fragment accordingly
      */
@@ -347,6 +367,9 @@ public class EventListFragment extends ListFragment implements EventListFragment
                         if (isFirst) {
                             dh.deleteAllEventsFromType(eventType);
                             isFirst = false;
+
+                            // Update user details on first hit if we need to
+                            checkForUserData(fullResponse);
                         }
                         JSONArray json = fullResponse.getJSONArray("events");
 

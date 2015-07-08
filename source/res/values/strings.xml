@@ -137,6 +137,7 @@
     <string name="authSignInProgressText">Signing you in to joind.in…</string>
     <string name="authTokenType">oauth2</string>
     <string name="authGravatarHash">gravatar_hash</string>
+    <string name="authUserURI">uri</string>
     <string name="authUserURITalks">talk_uri</string>
     <string name="authUserURIAttendedEvents">attended_events_uri</string>
     <string name="authUserURIHostedEvents">hosted_events_uri</string>

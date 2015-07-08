@@ -23,6 +23,33 @@ public class UserManager {
         this.accountManager = AccountManager.get(context);
     }
 
+    public boolean accountRequiresFurtherDetails()
+    {
+        Account account = getCurrentAccount();
+        if (account == null) {
+            return false;
+        }
+
+        // Check some core items against the account - if they're missing, return true
+        String[] items = {
+                context.getString(R.string.authGravatarHash),
+                context.getString(R.string.authUserURI),
+                context.getString(R.string.authUserURITalks),
+                context.getString(R.string.authUserURITalkComments),
+                context.getString(R.string.authUserURIHostedEvents),
+                context.getString(R.string.authUserURIAttendedEvents)
+        };
+        for (String item : items) {
+            String data = accountManager.getUserData(account, item);
+            if (data == null || data.length() == 0) {
+                return true;
+            }
+        }
+
+        // Everything seems good
+        return false;
+    }
+
     public void updateSavedUserDetails(String userURI)
     {
         Account account = getCurrentAccount();
@@ -49,6 +76,7 @@ public class UserManager {
 
                 // Extract useful bits from the user's profile details
                 username = thisUser.getString("username");
+                userURI = thisUser.getString("uri");
                 gravatarHash = thisUser.getString(context.getString(R.string.authGravatarHash));
                 talksURI = thisUser.getString("talks_uri");
                 attendedEventsURI = thisUser.getString("attended_events_uri");
@@ -73,6 +101,7 @@ public class UserManager {
             accountManager.setAuthToken(account, context.getString(R.string.authTokenType), authToken);
         }
 
+        accountManager.setUserData(account, context.getString(R.string.authUserURI), userURI);
         accountManager.setUserData(account, context.getString(R.string.authGravatarHash), gravatarHash);
         accountManager.setUserData(account, context.getString(R.string.authUserURITalks), talksURI);
         accountManager.setUserData(account, context.getString(R.string.authUserURIAttendedEvents), attendedEventsURI);
