@@ -95,7 +95,7 @@ public class UserManager {
             String authToken = accountManager.peekAuthToken(account, context.getString(R.string.authTokenType));
 
             // Remove and add again
-            accountManager.removeAccountExplicitly(account);
+            accountManager.removeAccount(account, null, null);
             account = new Account(username, context.getString(R.string.authenticatorAccountType));
             accountManager.addAccountExplicitly(account, "", null);
             accountManager.setAuthToken(account, context.getString(R.string.authTokenType), authToken);
