@@ -13,7 +13,7 @@
             android:layout_height="wrap_content"
             android:text="@string/your_rating"
             android:layout_width="match_parent"
-            android:id="@+id/TextViewRating"></TextView>
+            android:id="@+id/TextViewRating" />
         <RatingBar
             android:id="@+id/CommentRatingBar"
             android:layout_width="wrap_content"
@@ -22,14 +22,13 @@
             android:rating="0"
             android:stepSize="1"
             style="@style/joindinRatingBar"
-            android:layout_margin="5dp"
-            ></RatingBar>
+            android:layout_margin="5dp" />
     </LinearLayout>
     <TextView
         android:id="@+id/TextView01"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Your comment:"></TextView>
+        android:text="Your comment:" />
 
     <TableRow
         android:id="@+id/TableRow01"
@@ -44,10 +43,10 @@
             android:maxLength="1024"
             android:gravity="top"
             android:layout_width="wrap_content"
-            android:layout_gravity="right"
+            android:layout_gravity="end"
             android:layout_weight="1"
             android:maxLines="4"
-            android:minLines="4"></EditText>
+            android:minLines="4" />
     </TableRow>
 
     <CheckBox
@@ -68,7 +67,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_width="wrap_content"
             android:id="@+id/ButtonAddCommentSend"
-            android:layout_weight="1"></Button>
+            android:layout_weight="1" />
 
         <Button
             android:layout_height="wrap_content"
@@ -76,7 +75,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_width="wrap_content"
             android:id="@+id/ButtonAddCommentCancel"
-            android:layout_weight="1"></Button>
+            android:layout_weight="1" />
     </LinearLayout>
 
 </LinearLayout>

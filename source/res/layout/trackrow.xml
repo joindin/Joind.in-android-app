@@ -10,22 +10,22 @@
         android:layout_height="wrap_content"
         android:textStyle="bold"
         android:id="@+id/TrackRowCaption"
-        android:textSize="18dip"
+        android:textSize="18sp"
         android:ellipsize="end"
         android:singleLine="true"
         android:layout_width="match_parent"
-        android:text=""></TextView>
+        android:text="" />
 
     <TextView
         android:layout_width="wrap_content"
         android:id="@+id/TrackRowDescription"
         android:layout_height="match_parent"
-        android:text=""></TextView>
+        android:text="" />
 
     <TextView
         android:layout_height="wrap_content"
         android:id="@+id/TrackRowTalkCount"
         android:layout_width="match_parent"
-        android:gravity="right"
-        android:text=""></TextView>
+        android:gravity="end"
+        android:text="" />
 </LinearLayout>
