@@ -55,7 +55,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:id="@+id/ButtonViewComment"
-            android:text="View 0 comments " />
+            android:text="@string/generalViewCommentNoCount" />
 
         <Button
             android:layout_width="wrap_content"

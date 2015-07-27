@@ -48,6 +48,11 @@
     <string name="TalkDetailSubtitle">Talk details</string>
     <string name="TalkDetailSpeakerLabel">Speaker: </string>
 
+    <!-- Comment strings -->
+    <string name="CommentYourCommentLabel">Your comment:</string>
+    <string name="CommentButtonSend">Send</string>
+    <string name="CommentButtonCancel">Cancel</string>
+
     <!-- Preference activity strings -->
     <string name="prefAuthLoginTitle">Sign me into joind.in</string>
     <string name="prefAuthLoggedInAs">Signed in as %s</string>
@@ -77,6 +82,8 @@
     <string name="activityMainEventsUpcoming">Upcoming events</string>
     <string name="activityMainEventsMyEvent">My events</string>
 
+    <string name="activityMainNoEventsToList">No events to list</string>
+
     <string name="activityTalkListFilteringByHeader">Filtering by starred talks</string>
 
     <string name="activityTalkDetailAuthRequiredForStarring">You must be signed in to star a talk</string>
@@ -91,9 +98,11 @@
     <string name="generalPleaseWait">Please wait…</string>
     <string name="generalViewCommentSingular">Comment (%d)</string>
     <string name="generalViewCommentPlural">Comments (%d)</string>
+    <string name="generalViewCommentNoCount">Comments</string>
 
     <string name="generalViewTrackSingular">Track (%d)</string>
     <string name="generalViewTrackPlural">Tracks (%d)</string>
+    <string name="generalViewTrackNoCount">Tracks</string>
 
     <string name="generalViewTalkSingular">Talk (%d)</string>
     <string name="generalViewTalkPlural">Talks (%d)</string>
@@ -137,6 +146,8 @@
     <string name="authHintPassword">joind.in password</string>
     <string name="authSignInButton">Sign in</string>
     <string name="authCancelButton">Cancel</string>
+    <string name="authNotSignedIn">You\'re not signed in</string>
+    <string name="authSignInToJoindIn">Sign in to joind.in</string>
     <string name="authSignInProgressText">Signing you in to joind.in…</string>
     <string name="authTokenType">oauth2</string>
     <string name="authGravatarHash">gravatar_hash</string>

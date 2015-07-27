@@ -93,7 +93,7 @@
                 android:layout_width="0px"
                 android:layout_weight=".50"
                 android:layout_gravity="bottom"
-                android:text="View talks" />
+                android:text="@string/generalViewTalkNoCount" />
 
             <Button
                 android:layout_height="wrap_content"
@@ -101,7 +101,7 @@
                 android:layout_marginTop="2dp"
                 android:layout_width="0px"
                 android:layout_weight=".50"
-                android:text="View tracks (0)"
+                android:text="@string/generalViewTrackNoCount"
                 android:layout_gravity="bottom" />
         </TableRow>
 
@@ -116,7 +116,7 @@
                 android:layout_height="wrap_content"
                 android:layout_width="0px"
                 android:layout_weight=".50"
-                android:text="View comments (0)"
+                android:text="@string/generalViewCommentNoCount"
                 android:layout_gravity="bottom" />
 
             <CheckBox

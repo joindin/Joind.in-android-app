@@ -24,7 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text="No events to list"
+            android:text="@string/activityMainNoEventsToList"
             android:layout_marginBottom="20dp"
             />
 
@@ -42,14 +42,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text="You're not signed in"
+            android:text="@string/authNotSignedIn"
             android:layout_marginBottom="20dp"
             />
 
         <Button
             android:id="@+id/myEventsSignInButton"
             android:layout_gravity="center"
-            android:text="Sign in to joind.in"
+            android:text="@string/authSignInToJoindIn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
