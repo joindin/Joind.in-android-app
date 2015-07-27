@@ -5,6 +5,5 @@
         android:id="@+id/starTalk"
         android:title=""
         android:icon="@drawable/ic_star"
-        android:showAsAction="always"
         app:showAsAction="always" />
 </menu>
