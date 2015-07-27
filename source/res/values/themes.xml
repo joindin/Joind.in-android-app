@@ -2,8 +2,7 @@
 <resources>
     <!-- the theme applied to the application or activity -->
     <style name="JoindInActionBarTheme"
-           parent="@style/Theme.AppCompat.Light">
-        <item name="android:actionBarStyle">@style/JoindInActionBar</item>
+           parent="@style/Theme.AppCompat.Light.DarkActionBar">
 
         <!-- Support library compatibility -->
         <item name="actionBarStyle">@style/JoindInActionBar</item>
@@ -11,10 +10,11 @@
 
     <!-- ActionBar styles -->
     <style name="JoindInActionBar"
-           parent="@style/Widget.AppCompat.Light.ActionBar">
-        <item name="android:background">@color/joindin_lightblue</item>
+           parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">@color/joindin_turquoise</item>
 
         <!-- Support library compatibility -->
-        <item name="background">@color/joindin_lightblue</item>
+        <item name="background">@color/joindin_turquoise</item>
+        <item name="elevation">0dp</item>
     </style>
 </resources>

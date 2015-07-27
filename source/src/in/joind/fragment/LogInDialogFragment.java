@@ -26,6 +26,7 @@ import in.joind.JIRest;
 import in.joind.OAuthHelper;
 import in.joind.R;
 import in.joind.activity.SettingsActivity;
+import in.joind.user.UserManager;
 
 public class LogInDialogFragment extends DialogFragment {
 
@@ -184,31 +185,13 @@ public class LogInDialogFragment extends DialogFragment {
         new Thread() {
             public void run() {
                 String username = DUMMY_USERNAME;
-                String gravatarHash = ""; // dummy?
-                JIRest rest = new JIRest(getActivity());
-                String verboseUserURI = userURI + "?verbose=yes"; // force verbose URI
-                int result = rest.getJSONFullURI(verboseUserURI);
-                if (result == JIRest.OK) { // No problem retrieving the user's details
-                    // We've got the user's profile data back
-                    // Try and extract their username
-                    try {
-                        JSONObject jsonResult = rest.getJSONResult();
-                        JSONArray allUsers = jsonResult.getJSONArray("users");
-                        JSONObject thisUser = allUsers.getJSONObject(0);
 
-                        // Extract useful bits from the user's profile details
-                        username = thisUser.getString("username");
-                        gravatarHash = thisUser.getString(getActivity().getString(R.string.authGravatarHash));
-                    } catch (Exception e) {
-                        // do nothing
-                    }
-                }
-
-                // Add the account details
                 final Account account = new Account(username, getActivity().getString(R.string.authenticatorAccountType));
                 accountManager.addAccountExplicitly(account, "", null);
                 accountManager.setAuthToken(account, getActivity().getString(R.string.authTokenType), authToken);
-                accountManager.setUserData(account, getActivity().getString(R.string.authGravatarHash), gravatarHash);
+
+                UserManager userManager = new UserManager(getActivity());
+                userManager.updateSavedUserDetails(userURI);
 
                 getActivity().runOnUiThread(new Runnable() {
                     @Override

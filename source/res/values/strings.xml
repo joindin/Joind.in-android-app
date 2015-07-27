@@ -15,6 +15,10 @@
     <string name="oauthDeniedMessage">Couldn\'t authenticate with joind.in</string>
     <string name="oauthGenericErrorMessage">There was a problem authenticating you</string>
 
+    <!-- Titles -->
+    <string name="titleMain">joind.in</string>
+    <string name="titleSettings">Settings</string>
+
     <!-- Option menu strings -->
     <string name="OptionMenuSettings">Settings</string>
     <string name="OptionMenuClearCache">Clear cache</string>
@@ -69,10 +73,7 @@
     <string name="activityMainEventsHot">Hot events</string>
     <string name="activityMainEventsPast">Past events</string>
     <string name="activityMainEventsUpcoming">Upcoming events</string>
-    <string name="activityMainEventsFavorites">Favorite events</string>
-    <string name="activityMainEventsHotTab">Hot</string>
-    <string name="activityMainEventsUpcomingTab">Upcoming</string>
-    <string name="activityMainEventsPastTab">Past</string>
+    <string name="activityMainEventsMyEvent">My events</string>
 
     <string name="activityTalkListFilteringByHeader">Filtering by starred talks</string>
 
@@ -136,6 +137,11 @@
     <string name="authSignInProgressText">Signing you in to joind.in…</string>
     <string name="authTokenType">oauth2</string>
     <string name="authGravatarHash">gravatar_hash</string>
+    <string name="authUserURI">uri</string>
+    <string name="authUserURITalks">talk_uri</string>
+    <string name="authUserURIAttendedEvents">attended_events_uri</string>
+    <string name="authUserURIHostedEvents">hosted_events_uri</string>
+    <string name="authUserURITalkComments">talk_comments_uri</string>
     <string name="authOAuthPropertiesNotFound">Some configuration is missing. Try reinstalling?</string>
     <string name="authSignedInOK">Signed in!</string>
 

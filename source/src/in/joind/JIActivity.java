@@ -50,14 +50,23 @@ public class JIActivity extends ActionBarActivity {
     public void onResume() {
         super.onResume();
 
-        // Get account details
-        AccountManager am = AccountManager.get(this);
-        Account[] accounts = am.getAccountsByType(this.getString(R.string.authenticatorAccountType));
-        Account thisAccount = (accounts.length > 0 ? accounts[0] : null);
-        isAuthenticated = (thisAccount != null);
+        isAuthenticated = isAuthenticated(true);
     }
 
     public boolean isAuthenticated() {
+        return isAuthenticated;
+    }
+
+    public boolean isAuthenticated(boolean refreshAuthenticated)
+    {
+        if (refreshAuthenticated) {
+            // Get account details
+            AccountManager am = AccountManager.get(this);
+            Account[] accounts = am.getAccountsByType(this.getString(R.string.authenticatorAccountType));
+            Account thisAccount = (accounts.length > 0 ? accounts[0] : null);
+            isAuthenticated = (thisAccount != null);
+        }
+
         return isAuthenticated;
     }
 

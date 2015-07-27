@@ -28,6 +28,8 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSession;
 
+import in.joind.user.UserManager;
+
 public class JIRest {
     // Number of times to attempt a connection
     // This is partially to work around a bug in HTTPUrlConnection
