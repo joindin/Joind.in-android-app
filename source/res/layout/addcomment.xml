@@ -38,8 +38,7 @@
         <EditText
             android:id="@+id/CommentText"
             android:layout_height="wrap_content"
-            android:editable="true"
-            android:autoText="true"
+            android:inputType="textAutoComplete"
             android:maxLength="1024"
             android:gravity="top"
             android:layout_width="wrap_content"
