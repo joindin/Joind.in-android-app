@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
                 android:id="@+id/EventDetailsEventLoc"
-                android:layout_gravity="left"></TextView>
+                android:layout_gravity="start" />
 
         </TableRow>
 
@@ -46,8 +46,8 @@
             <TextView
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:layout_gravity="left"
-                android:id="@+id/EventDetailsStub"></TextView>
+                android:layout_gravity="start"
+                android:id="@+id/EventDetailsStub" />
 
         </TableRow>
 
@@ -55,9 +55,9 @@
 
     <ScrollView
         android:id="@+id/ScrollView01"
+        android:minHeight="80dp"
         android:layout_width="match_parent"
-        android:minHeight="80px"
-        android:layout_height="80px"
+        android:layout_height="0dp"
         android:layout_weight="2"
         android:background="#ffffff"
         android:layout_marginBottom="5dp">
@@ -66,12 +66,12 @@
             android:text=""
             android:id="@+id/EventDetailsDescription"
             android:ellipsize="none"
-            android:textSize="14dip"
-            android:layout_height="match_parent"
+            android:textSize="14sp"
+            android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:background="#ffffff"
             android:paddingRight="5dp"
-            android:paddingLeft="5dp"></TextView>
+            android:paddingLeft="5dp" />
     </ScrollView>
 
     <TableLayout
@@ -88,21 +88,21 @@
             <Button
                 android:gravity="center_vertical|center_horizontal"
                 android:id="@+id/ButtonEventDetailsViewTalks"
-                android:layout_marginTop="2px"
+                android:layout_marginTop="2dp"
                 android:layout_height="wrap_content"
                 android:layout_width="0px"
                 android:layout_weight=".50"
                 android:layout_gravity="bottom"
-                android:text="View talks"></Button>
+                android:text="View talks" />
 
             <Button
                 android:layout_height="wrap_content"
                 android:id="@+id/ButtonEventDetailsViewTracks"
-                android:layout_marginTop="2px"
+                android:layout_marginTop="2dp"
                 android:layout_width="0px"
                 android:layout_weight=".50"
                 android:text="View tracks (0)"
-                android:layout_gravity="bottom"></Button>
+                android:layout_gravity="bottom" />
         </TableRow>
 
         <TableRow
@@ -112,20 +112,20 @@
 
             <Button
                 android:id="@+id/ButtonEventDetailsViewComments"
-                android:layout_marginTop="2px"
+                android:layout_marginTop="2dp"
                 android:layout_height="wrap_content"
                 android:layout_width="0px"
                 android:layout_weight=".50"
                 android:text="View comments (0)"
-                android:layout_gravity="bottom"></Button>
+                android:layout_gravity="bottom" />
 
             <CheckBox
                 android:layout_height="wrap_content"
-                android:text="I'm attending"
+                android:text="@string/EventDetailsImAttending"
                 android:id="@+id/CheckBoxEventDetailsAttending"
                 android:layout_width="0px"
                 android:layout_weight=".50"
-                android:layout_gravity="bottom"></CheckBox>
+                android:layout_gravity="bottom" />
         </TableRow>
     </TableLayout>
 </LinearLayout>

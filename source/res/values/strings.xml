@@ -42,9 +42,11 @@
     <!-- Event details strings -->
     <string name="EventDetailsEventLocLabel">Venue:</string>
     <string name="EventDetailsEventHashtagsLabel">Hashtags:</string>
+    <string name="EventDetailsImAttending">I'm attending</string>
 
     <!-- Talk details strings -->
     <string name="TalkDetailSubtitle">Talk details</string>
+    <string name="TalkDetailSpeakerLabel">Speaker: </string>
 
     <!-- Preference activity strings -->
     <string name="prefAuthLoginTitle">Sign me into joind.in</string>
@@ -110,6 +112,7 @@
     <string name="generalCommentSingular">%d comment</string>
     <string name="generalCommentPlural">%d comments</string>
     <string name="generalAnonymous">Anonymous</string>
+    <string name="generalAddComment">Add new comment</string>
     <string name="generalFailPostComment">Warning: Couldn\'t post comment</string>
     <string name="generalSuccessPostComment">Comment posted successfully</string>
 

@@ -7,25 +7,25 @@
 
     <LinearLayout
         android:id="@+id/LinearLayout01"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:orientation="vertical"
         android:layout_weight="1"
         android:layout_width="match_parent">
 
         <TextView
             android:layout_width="match_parent"
-            android:textSize="18dip"
+            android:textSize="18sp"
             android:gravity="center_vertical|center_horizontal"
             android:layout_height="wrap_content"
             android:text=""
-            android:id="@+id/TalkDetailCaption"></TextView>
+            android:id="@+id/TalkDetailCaption" />
 
         <TextView
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:text="Speaker: "
+            android:text="@string/TalkDetailSpeakerLabel"
             android:gravity="center"
-            android:id="@+id/TalkDetailSpeaker"></TextView>
+            android:id="@+id/TalkDetailSpeaker" />
 
         <ScrollView
             android:id="@+id/ScrollView01"
@@ -35,11 +35,11 @@
 
             <TextView
                 android:layout_width="match_parent"
-                android:padding="3px"
+                android:padding="3dp"
                 android:scrollbars="vertical"
                 android:id="@+id/TalkDetailDescription"
-                android:layout_height="match_parent"
-                android:background="#eeeeee"></TextView>
+                android:layout_height="wrap_content"
+                android:background="#eeeeee" />
         </ScrollView>
     </LinearLayout>
 
@@ -55,13 +55,13 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:id="@+id/ButtonViewComment"
-            android:text="View 0 comments "></Button>
+            android:text="View 0 comments " />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add new comment"
+            android:text="@string/generalAddComment"
             android:layout_gravity="center"
-            android:id="@+id/ButtonNewComment"></Button>
+            android:id="@+id/ButtonNewComment" />
     </LinearLayout>
 </LinearLayout>
