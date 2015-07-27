@@ -42,7 +42,7 @@
     <!-- Event details strings -->
     <string name="EventDetailsEventLocLabel">Venue:</string>
     <string name="EventDetailsEventHashtagsLabel">Hashtags:</string>
-    <string name="EventDetailsImAttending">I'm attending</string>
+    <string name="EventDetailsImAttending">I\'m attending</string>
 
     <!-- Talk details strings -->
     <string name="TalkDetailSubtitle">Talk details</string>
