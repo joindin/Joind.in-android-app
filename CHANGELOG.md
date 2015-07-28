@@ -1,3 +1,8 @@
+# 2.0.10
+
+* Add "My Events" feature (JOINDIN-336)
+* Start of design update
+
 # 2.0.9
 
 * Fix comment posting bug (JOINDIN-569)
