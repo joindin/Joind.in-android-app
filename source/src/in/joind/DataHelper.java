@@ -28,7 +28,7 @@ public final class DataHelper {
     private static DataHelper DHInstance = null;
 
     private static final String DATABASE_NAME = "joindin.db";
-    private static final int DATABASE_VERSION = 13;  // Increasing this version number will result in automatic call to onUpgrade()
+    private static final int DATABASE_VERSION = 14;  // Increasing this version number will result in automatic call to onUpgrade()
 
     public static final int ORDER_DATE_ASC = 1;
     public static final int ORDER_DATE_DESC = 2;
@@ -332,7 +332,7 @@ public final class DataHelper {
         public void onCreate(SQLiteDatabase db) {
             db.execSQL("CREATE TABLE [events]    ([event_uri] VARCHAR COLLATE NOCASE, [event_title] VARCHAR COLLATE NOCASE, [event_start] INTEGER, [json] VARCHAR)");
             db.execSQL("CREATE TABLE [event_types] ([event_id] INTEGER, [event_type] VARCHAR COLLATE NOCASE)");
-            db.execSQL("CREATE TABLE [talks]     ([event_id] INTEGER, [uri] VARCHAR, [track_id] INTEGER, [json] VARCHAR)");
+            db.execSQL("CREATE TABLE [talks]     ([event_id] INTEGER, [uri] VARCHAR, [track_id] INTEGER, [starred] INTEGER DEFAULT 0, [json] VARCHAR)");
             db.execSQL("CREATE TABLE [tracks]     ([event_id] INTEGER, [uri] VARCHAR, [json] VARCHAR)");
             db.execSQL("CREATE TABLE [ecomments] ([event_id] INTEGER, [json] VARCHAR)");
             db.execSQL("CREATE TABLE [tcomments] ([talk_id] INTEGER, [json] VARCHAR)");
@@ -344,6 +344,7 @@ public final class DataHelper {
             db.execSQL("DROP TABLE IF EXISTS events");
             db.execSQL("DROP TABLE IF EXISTS event_types");
             db.execSQL("DROP TABLE IF EXISTS talks");
+            db.execSQL("DROP TABLE IF EXISTS tracks");
             db.execSQL("DROP TABLE IF EXISTS ecomments");
             db.execSQL("DROP TABLE IF EXISTS tcomments");
 
