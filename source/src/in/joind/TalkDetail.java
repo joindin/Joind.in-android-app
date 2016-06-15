@@ -273,7 +273,7 @@ public class TalkDetail extends JIActivity implements OnClickListener {
                 initialState ? JIRest.METHOD_POST : JIRest.METHOD_DELETE);
 
         if (error != JIRest.OK) {
-            return String.format(getString(R.string.generalStarringError), rest.getError());
+            return getString(R.string.generalCouldntUpdateStarredStatus);
         }
 
         // Everything went as expected
