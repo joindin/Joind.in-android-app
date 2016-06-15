@@ -185,6 +185,19 @@ public final class DataHelper {
     }
 
     /**
+     * Set a talk's starred value
+     *
+     * @param talkURI
+     * @param isStarred
+     * @return
+     */
+    public void markTalkStarred(String talkURI, boolean isStarred) {
+        ContentValues values = new ContentValues();
+        values.put("starred", isStarred ? 1 : 0);
+        db.update("talks", values, "uri=?", new String[]{talkURI});
+    }
+
+    /**
      * Remove the specified type from the event.
      *
      * @param event_type Event type.

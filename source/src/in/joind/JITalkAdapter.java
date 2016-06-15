@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -189,7 +190,7 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable, Sect
         holder.starredCheckBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                markTalkStarred(finalV, o.optString("starred_uri"), ((CheckBox) view).isChecked());
+                markTalkStarred(finalV, o.optString("uri"), o.optString("starred_uri"), ((CheckBox) view).isChecked());
             }
         });
 
@@ -285,7 +286,7 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable, Sect
      *
      * @param isStarred Is it starred?
      */
-    protected void markTalkStarred(final View parentRow, final String starredURI, final boolean isStarred) {
+    protected void markTalkStarred(final View parentRow, final String talkURI, final String starredURI, final boolean isStarred) {
         final CheckBox starredImageButton = (CheckBox) parentRow.findViewById(R.id.TalkRowStarred);
         final ProgressBar progressBar = (ProgressBar) parentRow.findViewById(R.id.TalkRowProgress);
 
@@ -293,7 +294,18 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable, Sect
             public void run() {
                 updateProgressStatus(progressBar, starredImageButton, true);
 
-                final String result = doStarTalk(isStarred, starredURI);
+                boolean result = doStarTalk(isStarred, starredURI);
+                if (result) {
+                    DataHelper.getInstance().markTalkStarred(talkURI, isStarred);
+                } else {
+                    starredImageButton.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            starredImageButton.setChecked(!isStarred);
+                            Toast.makeText(context, context.getString(R.string.generalCouldntUpdateStarredStatus), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
 
                 updateProgressStatus(progressBar, starredImageButton, false);
             }
@@ -329,20 +341,11 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable, Sect
      * @param initialState Initial state
      * @return Return message
      */
-    private String doStarTalk(boolean initialState, String starredURI) {
+    private boolean doStarTalk(boolean initialState, String starredURI) {
         JIRest rest = new JIRest(context);
         int error = rest.requestToFullURI(starredURI, null, initialState ? JIRest.METHOD_POST : JIRest.METHOD_DELETE);
 
-        if (error != JIRest.OK) {
-            return String.format(context.getString(R.string.generalStarringError), rest.getError());
-        }
-
-        // Everything went as expected
-        if (initialState) {
-            return context.getString(R.string.generalSuccessStarred);
-        } else {
-            return context.getString(R.string.generalSuccessUnstarred);
-        }
+        return error == JIRest.OK;
     }
 
     public Filter getFilter() {
