@@ -149,6 +149,7 @@ public final class DataHelper {
 
         values.put("uri", uri);
         values.put("track_id", track_id);
+        values.put("starred", talk.optBoolean("starred", false) ? 1 : 0);
         values.put("json", talk.toString());
 
         db.delete("talks", "uri=?", new String[]{uri});
@@ -254,10 +255,10 @@ public final class DataHelper {
     public int populateTalks(int event_id, JITalkAdapter m_talkAdapter) {
         Cursor c;
 
-        c = this.db.rawQuery("SELECT json,_rowid_ FROM talks WHERE event_id = " + event_id, null);
+        c = this.db.rawQuery("SELECT json,_rowid_,starred FROM talks WHERE event_id = " + event_id, null);
 
         int count = c.getCount();
-        populate(c, m_talkAdapter);
+        populateTalks(c, m_talkAdapter);
         return count;
     }
 
@@ -322,6 +323,35 @@ public final class DataHelper {
         if (!c.isClosed()) c.close();
     }
 
+    /**
+     * Slightly different population method for talks
+     * as they have a 'starred' field which also needs populating into each JSON object
+     *
+     * @param c
+     * @param adapter
+     */
+    private void populateTalks(Cursor c, ArrayAdapter<JSONObject> adapter) {
+        if (c == null) return;
+
+        // Start with first item
+        if (c.moveToFirst()) {
+            do {
+                try {
+                    // Add JSON data to the adapter
+                    JSONObject data = new JSONObject(c.getString(0));
+                    data.put("rowID", c.getInt(1));
+
+                    // Talks have a 'starred' field, expected to be boolean by the adapter
+                    data.put("starred", c.getInt(2) == 1);
+                    adapter.add(data);
+                } catch (JSONException e) {
+                    Log.e(JIActivity.LOG_JOINDIN_APP, "Could not add talk to list", e);
+                }
+            } while (c.moveToNext());
+        }
+
+        if (!c.isClosed()) c.close();
+    }
 
     private static class OpenHelper extends SQLiteOpenHelper {
         OpenHelper(Context context) {
