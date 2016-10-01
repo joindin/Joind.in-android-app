@@ -5,6 +5,7 @@ package in.joind;
  */
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -233,18 +234,35 @@ public class TalkDetail extends JIActivity implements OnClickListener {
     protected void markTalkStarred(final boolean isStarred) {
         updateStarredIcon(isStarred);
 
+        final Context context = this;
         new Thread() {
             public void run() {
                 displayProgressBarCircular(true);
 
-                final String result = doStarTalk(isStarred);
+                String talkURI = TalkDetail.this.talkJSON.optString("uri");
+                boolean result = doStarTalk(isStarred);
+                if (result) {
+                    DataHelper.getInstance().markTalkStarred(talkURI, isStarred);
 
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        Toast toast = Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG);
-                        toast.show();
-                    }
-                });
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            String toastMessage = context.getString(R.string.generalSuccessStarred);
+                            if (!isStarred) {
+                                toastMessage = context.getString(R.string.generalSuccessUnstarred);
+                            }
+                            Toast toast = Toast.makeText(getApplicationContext(), toastMessage, Toast.LENGTH_LONG);
+                            toast.show();
+                        }
+                    });
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            updateStarredIcon(!isStarred);
+                            Toast.makeText(context, context.getString(R.string.generalCouldntUpdateStarredStatus), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
 
                 displayProgressBarCircular(false);
             }
@@ -265,22 +283,12 @@ public class TalkDetail extends JIActivity implements OnClickListener {
      * Post/delete the starred status from this talk
      *
      * @param initialState Initial state.
-     * @return Return message.
+     * @return
      */
-    private String doStarTalk(boolean initialState) {
+    private boolean doStarTalk(boolean initialState) {
         JIRest rest = new JIRest(this);
-        int error = rest.requestToFullURI(this.talkJSON.optString("starred_uri"), null,
-                initialState ? JIRest.METHOD_POST : JIRest.METHOD_DELETE);
+        int error = rest.requestToFullURI(this.talkJSON.optString("starred_uri"), null, initialState ? JIRest.METHOD_POST : JIRest.METHOD_DELETE);
 
-        if (error != JIRest.OK) {
-            return String.format(getString(R.string.generalStarringError), rest.getError());
-        }
-
-        // Everything went as expected
-        if (initialState) {
-            return getString(R.string.generalSuccessStarred);
-        } else {
-            return getString(R.string.generalSuccessUnstarred);
-        }
+        return error == JIRest.OK;
     }
 }

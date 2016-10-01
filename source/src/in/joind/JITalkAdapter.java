@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -189,7 +190,7 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable, Sect
         holder.starredCheckBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                markTalkStarred(finalV, o.optString("starred_uri"), ((CheckBox) view).isChecked());
+                markTalkStarred(finalV, o.optString("uri"), o.optString("starred_uri"), ((CheckBox) view).isChecked());
             }
         });
 
@@ -207,7 +208,7 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable, Sect
         if (position == 0) {
             setSection(holder, thisDate);
         } else {
-            JSONObject previousItem = items.get(position - 1);
+            JSONObject previousItem = filtered_items.get(position - 1);
             String previousDate = "";
             try {
                 previousDate = dfOutput.format(dfInput.parse(previousItem.optString("start_date")));
@@ -285,7 +286,7 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable, Sect
      *
      * @param isStarred Is it starred?
      */
-    protected void markTalkStarred(final View parentRow, final String starredURI, final boolean isStarred) {
+    protected void markTalkStarred(final View parentRow, final String talkURI, final String starredURI, final boolean isStarred) {
         final CheckBox starredImageButton = (CheckBox) parentRow.findViewById(R.id.TalkRowStarred);
         final ProgressBar progressBar = (ProgressBar) parentRow.findViewById(R.id.TalkRowProgress);
 
@@ -293,7 +294,18 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable, Sect
             public void run() {
                 updateProgressStatus(progressBar, starredImageButton, true);
 
-                final String result = doStarTalk(isStarred, starredURI);
+                boolean result = doStarTalk(isStarred, starredURI);
+                if (result) {
+                    DataHelper.getInstance().markTalkStarred(talkURI, isStarred);
+                } else {
+                    starredImageButton.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            starredImageButton.setChecked(!isStarred);
+                            Toast.makeText(context, context.getString(R.string.generalCouldntUpdateStarredStatus), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
 
                 updateProgressStatus(progressBar, starredImageButton, false);
             }
@@ -329,20 +341,11 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable, Sect
      * @param initialState Initial state
      * @return Return message
      */
-    private String doStarTalk(boolean initialState, String starredURI) {
+    private boolean doStarTalk(boolean initialState, String starredURI) {
         JIRest rest = new JIRest(context);
         int error = rest.requestToFullURI(starredURI, null, initialState ? JIRest.METHOD_POST : JIRest.METHOD_DELETE);
 
-        if (error != JIRest.OK) {
-            return String.format(context.getString(R.string.generalStarringError), rest.getError());
-        }
-
-        // Everything went as expected
-        if (initialState) {
-            return context.getString(R.string.generalSuccessStarred);
-        } else {
-            return context.getString(R.string.generalSuccessUnstarred);
-        }
+        return error == JIRest.OK;
     }
 
     public Filter getFilter() {
@@ -379,14 +382,32 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable, Sect
 
         protected FilterResults performFiltering(CharSequence match) {
             FilterResults results = new FilterResults();
-            ArrayList<JSONObject> i = new ArrayList<>();
+            ArrayList<JSONObject> trackFiltered = new ArrayList<>();
+            ArrayList<JSONObject> finalFiltered = new ArrayList<>();
+
+            // TODO Fix this:
+            // TODO * It assumes at least 1 track is always present for an event
+            // TODO * This isn't always the case - so we shouldn't match against that if there isn't one
+
+            if ((match == null || match.length() == 0) && !checkStarredStatus) {
+                // No filters
+                synchronized (items) {
+                    results.values = items;
+                    results.count = items.size();
+                }
+
+                return results;
+            }
 
             // Multiple filters here
-            if (checkStarredStatus || (match != null && match.length() > 0)) {
+            // Filter by track first
+            if (match != null && match.length() > 0) {
                 for (int index = 0; index < items.size(); index++) {
                     JSONObject json = items.get(index);
                     JSONArray tracks = json.optJSONArray("tracks");
                     if (tracks.length() == 0) {
+                        // No tracks, just use all items
+                        trackFiltered = items;
                         continue;
                     }
 
@@ -394,33 +415,37 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable, Sect
                     for (int j = 0; j < tracksLength; j++) {
                         JSONObject track = tracks.optJSONObject(j);
                         if (track == null) {
+                            android.util.Log.d("JOINDIN", "Null track");
                             continue;
                         }
 
                         // Add to the filtered result list when the match is present in the URI
                         // If we need to check starred status as well, let's do that too
-                        if (match.toString().length() > 0) {
-                            // We have a track to match against, this happens first
-                            if (track.optString("track_uri").equals(match.toString())) {
-                                if ((checkStarredStatus && json.optBoolean("starred")) || !checkStarredStatus) {
-                                    i.add(json);
-                                    break;
-                                }
-                            }
-                        } else if (checkStarredStatus && json.optBoolean("starred")) {
-                            i.add(json);
-                            break;
+                        if (match.toString().length() > 0
+                                && track.optString("track_uri").equals(match.toString())) {
+                            trackFiltered.add(json);
                         }
                     }
                 }
-                results.values = i;
-                results.count = i.size();
             } else {
-                synchronized (items) {
-                    results.values = items;
-                    results.count = items.size();
-                }
+                trackFiltered = items;
             }
+
+            // Filter by starred
+            if (checkStarredStatus) {
+                for (int index = 0; index < trackFiltered.size(); index++) {
+                    JSONObject json = trackFiltered.get(index);
+                    if (json.optBoolean("starred")) {
+                        android.util.Log.d("JOINDIN", "Checking starred status, matches");
+                        finalFiltered.add(json);
+                    }
+                }
+            } else {
+                finalFiltered = trackFiltered;
+            }
+
+            results.values = finalFiltered;
+            results.count = finalFiltered.size();
 
             return results;
         }

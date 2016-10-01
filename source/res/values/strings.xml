@@ -131,7 +131,7 @@
 
     <string name="generalSuccessStarred">Successfully starred</string>
     <string name="generalSuccessUnstarred">Successfully unstarred</string>
-    <string name="generalStarringError">Starring error: %s</string>
+    <string name="generalCouldntUpdateStarredStatus">Couldn\'t update talk starred status</string>
 
     <string name="generalAboutTitle">About…</string>
     <string name="generalAboutButtonCaption">Close</string>

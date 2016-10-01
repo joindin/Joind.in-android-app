@@ -28,7 +28,7 @@ public final class DataHelper {
     private static DataHelper DHInstance = null;
 
     private static final String DATABASE_NAME = "joindin.db";
-    private static final int DATABASE_VERSION = 13;  // Increasing this version number will result in automatic call to onUpgrade()
+    private static final int DATABASE_VERSION = 14;  // Increasing this version number will result in automatic call to onUpgrade()
 
     public static final int ORDER_DATE_ASC = 1;
     public static final int ORDER_DATE_DESC = 2;
@@ -149,6 +149,7 @@ public final class DataHelper {
 
         values.put("uri", uri);
         values.put("track_id", track_id);
+        values.put("starred", talk.optBoolean("starred", false) ? 1 : 0);
         values.put("json", talk.toString());
 
         db.delete("talks", "uri=?", new String[]{uri});
@@ -181,6 +182,19 @@ public final class DataHelper {
         values.put("event_id", eventRowID);
         values.put("json", eventComment.toString());
         return db.insert("ecomments", "", values);
+    }
+
+    /**
+     * Set a talk's starred value
+     *
+     * @param talkURI
+     * @param isStarred
+     * @return
+     */
+    public void markTalkStarred(String talkURI, boolean isStarred) {
+        ContentValues values = new ContentValues();
+        values.put("starred", isStarred ? 1 : 0);
+        db.update("talks", values, "uri=?", new String[]{talkURI});
     }
 
     /**
@@ -254,10 +268,10 @@ public final class DataHelper {
     public int populateTalks(int event_id, JITalkAdapter m_talkAdapter) {
         Cursor c;
 
-        c = this.db.rawQuery("SELECT json,_rowid_ FROM talks WHERE event_id = " + event_id, null);
+        c = this.db.rawQuery("SELECT json,_rowid_,starred FROM talks WHERE event_id = " + event_id, null);
 
         int count = c.getCount();
-        populate(c, m_talkAdapter);
+        populateTalks(c, m_talkAdapter);
         return count;
     }
 
@@ -322,6 +336,35 @@ public final class DataHelper {
         if (!c.isClosed()) c.close();
     }
 
+    /**
+     * Slightly different population method for talks
+     * as they have a 'starred' field which also needs populating into each JSON object
+     *
+     * @param c
+     * @param adapter
+     */
+    private void populateTalks(Cursor c, ArrayAdapter<JSONObject> adapter) {
+        if (c == null) return;
+
+        // Start with first item
+        if (c.moveToFirst()) {
+            do {
+                try {
+                    // Add JSON data to the adapter
+                    JSONObject data = new JSONObject(c.getString(0));
+                    data.put("rowID", c.getInt(1));
+
+                    // Talks have a 'starred' field, expected to be boolean by the adapter
+                    data.put("starred", c.getInt(2) == 1);
+                    adapter.add(data);
+                } catch (JSONException e) {
+                    Log.e(JIActivity.LOG_JOINDIN_APP, "Could not add talk to list", e);
+                }
+            } while (c.moveToNext());
+        }
+
+        if (!c.isClosed()) c.close();
+    }
 
     private static class OpenHelper extends SQLiteOpenHelper {
         OpenHelper(Context context) {
@@ -332,7 +375,7 @@ public final class DataHelper {
         public void onCreate(SQLiteDatabase db) {
             db.execSQL("CREATE TABLE [events]    ([event_uri] VARCHAR COLLATE NOCASE, [event_title] VARCHAR COLLATE NOCASE, [event_start] INTEGER, [json] VARCHAR)");
             db.execSQL("CREATE TABLE [event_types] ([event_id] INTEGER, [event_type] VARCHAR COLLATE NOCASE)");
-            db.execSQL("CREATE TABLE [talks]     ([event_id] INTEGER, [uri] VARCHAR, [track_id] INTEGER, [json] VARCHAR)");
+            db.execSQL("CREATE TABLE [talks]     ([event_id] INTEGER, [uri] VARCHAR, [track_id] INTEGER, [starred] INTEGER DEFAULT 0, [json] VARCHAR)");
             db.execSQL("CREATE TABLE [tracks]     ([event_id] INTEGER, [uri] VARCHAR, [json] VARCHAR)");
             db.execSQL("CREATE TABLE [ecomments] ([event_id] INTEGER, [json] VARCHAR)");
             db.execSQL("CREATE TABLE [tcomments] ([talk_id] INTEGER, [json] VARCHAR)");
@@ -344,6 +387,7 @@ public final class DataHelper {
             db.execSQL("DROP TABLE IF EXISTS events");
             db.execSQL("DROP TABLE IF EXISTS event_types");
             db.execSQL("DROP TABLE IF EXISTS talks");
+            db.execSQL("DROP TABLE IF EXISTS tracks");
             db.execSQL("DROP TABLE IF EXISTS ecomments");
             db.execSQL("DROP TABLE IF EXISTS tcomments");
 
