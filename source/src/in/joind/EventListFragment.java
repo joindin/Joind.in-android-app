@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -26,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.markupartist.android.widget.PullToRefreshListView;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -450,8 +452,8 @@ class JIEventAdapter extends ArrayAdapter<JSONObject> {
     private ArrayList<JSONObject> filtered_items;
     private Context context;
     LayoutInflater inflater;
-    public ImageLoader image_loader;
     private PTypeFilter filter;
+    private Picasso picasso;
 
     public int getCount() {
         return filtered_items.size();
@@ -467,7 +469,14 @@ class JIEventAdapter extends ArrayAdapter<JSONObject> {
         this.all_items = items;
         this.filtered_items = items;
         this.inflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        this.image_loader = new ImageLoader(context.getApplicationContext(), "events");
+        this.picasso = new Picasso.Builder(context)
+            .listener(new Picasso.Listener() {
+                @Override
+                public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
+                    android.util.Log.d("JOINDIN", "Failed to load image: " + uri.toString());
+                }
+            })
+            .build();
     }
 
     // This function will create a custom row with our event data.
@@ -481,22 +490,20 @@ class JIEventAdapter extends ArrayAdapter<JSONObject> {
         if (o == null) return convertView;
 
         // Display (or load in the background if needed) the event logo
-        // We temporarily set the view to GONE to ensure that the row
-        // gets recycled (and the image gets updated if required)
         ImageView el = (ImageView) convertView.findViewById(R.id.EventDetailLogo);
         el.setTag("");
-        el.setVisibility(View.GONE);
-        el.setImageDrawable(null);
+        el.setVisibility(View.VISIBLE);
 
         // Display (or load in the background if needed) the event logo
-        if (!o.isNull("icon")) {
-            String filename = o.optString("icon");
-            el.setTag(filename);
-            image_loader.displayImage("http://joind.in/inc/img/event_icons/", filename, (Activity) context, el);
+        JSONObject images = o.optJSONObject("images");
+        if (images != null && images.length() > 0) {
+            JSONObject smallImage = images.optJSONObject("small");
+            String url = smallImage.optString("url");
+            el.setTag(url);
+            this.picasso.load(url).resize(70,70).into(el);
         } else {
             el.setImageResource(R.drawable.event_icon_none);
         }
-        el.setVisibility(View.VISIBLE);
 
         // Set a darker color when the event is currently running.
         long event_start = 0;

@@ -234,25 +234,18 @@ public class JIRest {
             final URL url = new URL(hostURL);
             int timeoutLength = 30000;
             if (url.getProtocol().equals("https")) {
-                HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
-                    @Override
-                    public boolean verify(String hostname, SSLSession session) {
-                        return hostname.equals(url.getHost());
-                    }
-                });
-
                 HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
                 connection.setRequestProperty("Connection", "close");
                 connection.setConnectTimeout(timeoutLength);
 
                 return connection;
-            } else {
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestProperty("Connection", "close");
-                connection.setConnectTimeout(timeoutLength);
-
-                return connection;
             }
+
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestProperty("Connection", "close");
+            connection.setConnectTimeout(timeoutLength);
+
+            return connection;
         } catch (MalformedURLException e) {
             return null;
         } catch (IOException e) {
