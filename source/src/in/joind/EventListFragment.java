@@ -452,8 +452,8 @@ class JIEventAdapter extends ArrayAdapter<JSONObject> {
     private ArrayList<JSONObject> filtered_items;
     private Context context;
     LayoutInflater inflater;
-    public ImageLoader image_loader;
     private PTypeFilter filter;
+    private Picasso picasso;
 
     public int getCount() {
         return filtered_items.size();
@@ -469,7 +469,14 @@ class JIEventAdapter extends ArrayAdapter<JSONObject> {
         this.all_items = items;
         this.filtered_items = items;
         this.inflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        this.image_loader = new ImageLoader(context.getApplicationContext(), "events");
+        this.picasso = new Picasso.Builder(context)
+            .listener(new Picasso.Listener() {
+                @Override
+                public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
+                    android.util.Log.d("JOINDIN", "Failed to load image: " + uri.toString());
+                }
+            })
+            .build();
     }
 
     // This function will create a custom row with our event data.
@@ -487,22 +494,13 @@ class JIEventAdapter extends ArrayAdapter<JSONObject> {
         el.setTag("");
         el.setVisibility(View.VISIBLE);
 
-        Picasso picasso = new Picasso.Builder(context)
-                .listener(new Picasso.Listener() {
-                    @Override
-                    public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-                        android.util.Log.d("JOINDIN", "Failed to load image: " + uri.toString());
-                    }
-                })
-                .build();
-
         // Display (or load in the background if needed) the event logo
         JSONObject images = o.optJSONObject("images");
         if (images != null && images.length() > 0) {
             JSONObject smallImage = images.optJSONObject("small");
             String url = smallImage.optString("url");
             el.setTag(url);
-            picasso.load(url).resize(70,70).into(el);
+            this.picasso.load(url).resize(70,70).into(el);
         } else {
             el.setImageResource(R.drawable.event_icon_none);
         }

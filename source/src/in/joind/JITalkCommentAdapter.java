@@ -1,7 +1,6 @@
 package in.joind;
 
 
-import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.text.util.Linkify;
@@ -21,11 +20,21 @@ import java.util.ArrayList;
 class JITalkCommentAdapter extends ArrayAdapter<JSONObject> {
     private ArrayList<JSONObject> items;
     private Context context;
+    private Picasso picasso;
 
     public JITalkCommentAdapter(Context context, int textViewResourceId, ArrayList<JSONObject> items) {
         super(context, textViewResourceId, items);
         this.context = context;
         this.items = items;
+
+        this.picasso = new Picasso.Builder(context)
+            .listener(new Picasso.Listener() {
+                @Override
+                public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
+                    android.util.Log.d("JOINDIN", "Failed to load image: " + uri.toString());
+                }
+            })
+            .build();
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -55,16 +64,8 @@ class JITalkCommentAdapter extends ArrayAdapter<JSONObject> {
         String gravatarHash = o.optString("gravatar_hash");
         if (gravatarHash != null && gravatarHash.length() > 0) {
             holder.gravatarImage.setTag(gravatarHash);
-            Picasso picasso = new Picasso.Builder(context)
-                    .listener(new Picasso.Listener() {
-                        @Override
-                        public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-                        android.util.Log.d("JOINDIN", "Failed to load image: " + uri.toString());
-                        }
-                    })
-                    .build();
             String url = "https://www.gravatar.com/avatar/" + gravatarHash;
-            picasso.load(url).resize(30,30).into(holder.gravatarImage);
+            this.picasso.load(url).resize(30,30).into(holder.gravatarImage);
             holder.gravatarImage.setVisibility(View.VISIBLE);
         }
 
