@@ -282,6 +282,30 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable, Sect
     }
 
     /**
+     *
+     * @param talkURI
+     * @param isStarred
+     */
+    protected void updateTalkObjectStarredStatus(String talkURI, boolean isStarred) {
+        int idx = 0;
+        synchronized (items) {
+            for (JSONObject talk : items) {
+                if (talk.optString("uri").equals(talkURI)) {
+                    try {
+                        talk.put("starred", isStarred);
+                    } catch (JSONException e) {
+                    }
+                    items.set(idx, talk);
+                    getFilter().filter(filter.currentFilter);
+
+                    return;
+                }
+                idx++;
+            }
+        }
+    }
+
+    /**
      * Mark the talk as starred - update the icon and submit the request
      *
      * @param isStarred Is it starred?
@@ -297,6 +321,7 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable, Sect
                 boolean result = doStarTalk(isStarred, starredURI);
                 if (result) {
                     DataHelper.getInstance().markTalkStarred(talkURI, isStarred);
+                    updateTalkObjectStarredStatus(talkURI, isStarred);
                 } else {
                     starredImageButton.post(new Runnable() {
                         @Override
@@ -356,7 +381,7 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable, Sect
     }
 
     public int getCount() {
-        return filtered_items.size();
+        return filtered_items != null ? filtered_items.size() : 0;
     }
 
     public JSONObject getItem(int position) {
@@ -367,6 +392,8 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable, Sect
      * Starred filter
      */
     public class StarredFilter extends Filter {
+        public CharSequence currentFilter;
+
         private boolean checkStarredStatus = false;
 
         public void setCheckStarredStatus(boolean checkStarredStatus) {
@@ -381,6 +408,7 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable, Sect
         }
 
         protected FilterResults performFiltering(CharSequence match) {
+            this.currentFilter = match;
             FilterResults results = new FilterResults();
             ArrayList<JSONObject> trackFiltered = new ArrayList<>();
             ArrayList<JSONObject> finalFiltered = new ArrayList<>();
@@ -435,8 +463,7 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable, Sect
             if (checkStarredStatus) {
                 for (int index = 0; index < trackFiltered.size(); index++) {
                     JSONObject json = trackFiltered.get(index);
-                    if (json.optBoolean("starred")) {
-                        android.util.Log.d("JOINDIN", "Checking starred status, matches");
+                    if (json != null && json.optBoolean("starred")) {
                         finalFiltered.add(json);
                     }
                 }
