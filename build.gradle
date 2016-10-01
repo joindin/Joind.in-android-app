@@ -50,6 +50,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:22.2.0'
     compile 'com.crashlytics.android:crashlytics:1.1.13'
     compile 'com.android.support:design:22.2.0'
+    compile 'com.squareup.picasso:picasso:2.5.2'
 }
 
 // Custom task to create our oauth.properties file for release
