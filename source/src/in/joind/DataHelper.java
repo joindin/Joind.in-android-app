@@ -373,7 +373,7 @@ public final class DataHelper {
 
         // Create new database (if needed)
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL("CREATE TABLE [events]    ([event_uri] VARCHAR COLLATE NOCASE, [event_title] VARCHAR COLLATE NOCASE, [event_start] INTEGER, [json] VARCHAR)");
+            db.execSQL("CREATE TABLE [events]    ([event_uri] VARCHAR COLLATE NOCASE, [event_title] VARCHAR COLLATE NOCASE, [event_start] VARCHAR COLLATE NOCASE, [json] VARCHAR)");
             db.execSQL("CREATE TABLE [event_types] ([event_id] INTEGER, [event_type] VARCHAR COLLATE NOCASE)");
             db.execSQL("CREATE TABLE [talks]     ([event_id] INTEGER, [uri] VARCHAR, [track_id] INTEGER, [starred] INTEGER DEFAULT 0, [json] VARCHAR)");
             db.execSQL("CREATE TABLE [tracks]     ([event_id] INTEGER, [uri] VARCHAR, [json] VARCHAR)");
