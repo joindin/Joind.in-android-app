@@ -3,6 +3,7 @@ package in.joind;
 
 import android.app.Activity;
 import android.content.Context;
+import android.net.Uri;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -18,13 +21,11 @@ import java.util.ArrayList;
 class JITalkCommentAdapter extends ArrayAdapter<JSONObject> {
     private ArrayList<JSONObject> items;
     private Context context;
-    private ImageLoader image_loader; // gravatar image loader
 
     public JITalkCommentAdapter(Context context, int textViewResourceId, ArrayList<JSONObject> items) {
         super(context, textViewResourceId, items);
         this.context = context;
         this.items = items;
-        this.image_loader = new ImageLoader(context.getApplicationContext(), "gravatars");
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -51,10 +52,20 @@ class JITalkCommentAdapter extends ArrayAdapter<JSONObject> {
         }
 
         holder.gravatarImage.setVisibility(View.GONE);
-        if (o.optInt("user_id") > 0) {
-            String filename = "user" + o.optString("user_id") + ".jpg";
-            holder.gravatarImage.setTag(filename);
-            image_loader.displayImage("https://joind.in/inc/img/user_gravatar/", filename, (Activity) context, holder.gravatarImage);
+        String gravatarHash = o.optString("gravatar_hash");
+        if (gravatarHash != null && gravatarHash.length() > 0) {
+            holder.gravatarImage.setTag(gravatarHash);
+            Picasso picasso = new Picasso.Builder(context)
+                    .listener(new Picasso.Listener() {
+                        @Override
+                        public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
+                        android.util.Log.d("JOINDIN", "Failed to load image: " + uri.toString());
+                        }
+                    })
+                    .build();
+            String url = "https://www.gravatar.com/avatar/" + gravatarHash;
+            picasso.load(url).resize(30,30).into(holder.gravatarImage);
+            holder.gravatarImage.setVisibility(View.VISIBLE);
         }
 
         String commentDate = DateHelper.parseAndFormat(o.optString("created_date"), "d LLL yyyy");

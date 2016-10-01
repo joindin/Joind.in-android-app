@@ -74,7 +74,7 @@ public class TalkComments extends JIActivity implements OnClickListener {
             @Override
             public void onRefresh() {
                 try {
-                    loadTalkComments(talk_id, talkJSON.getString("comments_uri"));
+                    loadTalkComments(talk_id, talkJSON.getString("verbose_comments_uri"));
                 } catch (JSONException e) {
                     Log.e(JIActivity.LOG_JOINDIN_APP, "No comments URI available (talk comments)");
                     talkcommentlist.onRefreshComplete();
@@ -84,7 +84,7 @@ public class TalkComments extends JIActivity implements OnClickListener {
 
         // Load new comments for this talk and display them
         try {
-            loadTalkComments(talk_id, this.talkJSON.getString("comments_uri"));
+            loadTalkComments(talk_id, this.talkJSON.getString("verbose_comments_uri"));
         } catch (JSONException e) {
             Log.e(JIActivity.LOG_JOINDIN_APP, "No comments URI available (talk comments)");
         }
@@ -204,7 +204,7 @@ public class TalkComments extends JIActivity implements OnClickListener {
                 if (resultCode == RESULT_OK) {
                     // reload the comments
                     try {
-                        loadTalkComments(this.talkJSON.getInt("rowID"), this.talkJSON.getString("comments_uri"));
+                        loadTalkComments(this.talkJSON.getInt("rowID"), this.talkJSON.getString("verbose_comments_uri"));
                     } catch (JSONException e) {
                         // nothing
                     }
