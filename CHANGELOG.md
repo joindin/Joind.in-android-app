@@ -1,3 +1,9 @@
+# 2.0.11
+
+* Fix event images not being display in events listing
+* Fix "day header" being repeated
+* Fix starring events not being saved locally (JOINDIN-669)
+
 # 2.0.10
 
 * Add "My Events" feature (JOINDIN-336)
