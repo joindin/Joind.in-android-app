@@ -2,8 +2,8 @@
 <manifest
     package="in.joind"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:versionCode="11"
-    android:versionName="2.0.10">
+    android:versionCode="12"
+    android:versionName="2.0.11">
 
     <!-- Target SDK version is handled in the build.gradle configuration -->
     <uses-sdk android:minSdkVersion="9"/>
