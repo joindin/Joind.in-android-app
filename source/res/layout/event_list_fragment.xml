@@ -1,57 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:gravity="center_vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent">
 
-    <com.markupartist.android.widget.PullToRefreshListView
-        android:id="@id/android:list"
+    <android.support.v4.widget.SwipeRefreshLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/refreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:drawSelectorOnTop="false" />
+        android:layout_height="match_parent">
 
-    <!-- Empty layout -->
-    <LinearLayout
+        <ListView
+            android:id="@id/android:list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <FrameLayout
         android:id="@id/android:empty"
-        android:orientation="vertical"
-        android:gravity="center_vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
-        <TextView
+        <!-- Empty layout -->
+        <LinearLayout
+            android:id="@+id/emptyViewList"
+            android:orientation="vertical"
+            android:gravity="center_vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:text="@string/activityMainNoEventsToList"
-            android:layout_marginBottom="20dp"
-            />
+            android:layout_height="match_parent">
 
-    </LinearLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/activityMainNoEventsToList"
+                android:layout_marginBottom="20dp"
+                />
 
-    <!-- Not signed in view -->
-    <LinearLayout
-        android:id="@+id/notSignedInList"
-        android:orientation="vertical"
-        android:gravity="center_vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        </LinearLayout>
 
-        <TextView
+        <!-- Not signed in view -->
+        <LinearLayout
+            android:id="@+id/notSignedInList"
+            android:orientation="vertical"
+            android:gravity="center_vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:text="@string/authNotSignedIn"
-            android:layout_marginBottom="20dp"
-            />
+            android:layout_height="match_parent">
 
-        <Button
-            android:id="@+id/myEventsSignInButton"
-            android:layout_gravity="center"
-            android:text="@string/authSignInToJoindIn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/authNotSignedIn"
+                android:layout_marginBottom="20dp"
+                />
 
-    </LinearLayout>
-</LinearLayout>
+            <Button
+                android:id="@+id/myEventsSignInButton"
+                android:layout_gravity="center"
+                android:text="@string/authSignInToJoindIn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+    </FrameLayout>
+
+</FrameLayout>

@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ListFragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,8 +18,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
-
-import com.markupartist.android.widget.PullToRefreshListView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -53,8 +52,9 @@ public class EventListFragment extends ListFragment implements EventListFragment
     Main parentActivity;
     JIRest rest;
     LogInReceiver logInReceiver;
+    SwipeRefreshLayout refreshLayout;
     ListView listView;
-    View emptyView;
+    LinearLayout noEventsView;
     LinearLayout notSignedInView;
     Button signInButton;
     String eventType;
@@ -71,26 +71,21 @@ public class EventListFragment extends ListFragment implements EventListFragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-        ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.event_list_fragment, container, false);
-        if (viewGroup != null) {
-            // Populate our list adapter
-            ArrayList<JSONObject> m_events = new ArrayList<>();
-            m_eventAdapter = new EventAdapter(getActivity(), R.layout.eventrow, m_events);
-            setListAdapter(m_eventAdapter);
-
-            signInButton = (Button) viewGroup.findViewById(R.id.myEventsSignInButton);
-        }
-
-        return viewGroup;
+        return inflater.inflate(R.layout.event_list_fragment, container, false);
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         listView = getListView();
-        emptyView = listView.getEmptyView();
+        noEventsView = (LinearLayout) view.findViewById(R.id.emptyViewList);
         notSignedInView = (LinearLayout) view.findViewById(R.id.notSignedInList);
+        signInButton = (Button) view.findViewById(R.id.myEventsSignInButton);
+        refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.refreshLayout);
+        refreshLayout.setColorSchemeResources(R.color.joindin_turquoise);
+
+        m_eventAdapter = new EventAdapter(getActivity(), R.layout.eventrow, new ArrayList<JSONObject>());
+        setListAdapter(m_eventAdapter);
 
         setViewVisibility(false, false);
         setupEvents();
@@ -155,13 +150,10 @@ public class EventListFragment extends ListFragment implements EventListFragment
     }
 
     private void setViewVisibility(boolean showList, boolean showNotSignedIn) {
-        // List and empty view are opposites
-        listView.setVisibility(showList ? View.VISIBLE : View.GONE);
-        emptyView.setVisibility(showList ? View.GONE : View.VISIBLE);
-
+        noEventsView.setVisibility(showList ? View.GONE : View.VISIBLE);
         notSignedInView.setVisibility(showNotSignedIn ? View.VISIBLE : View.GONE);
         if (showNotSignedIn) {
-            emptyView.setVisibility(View.GONE);
+            noEventsView.setVisibility(View.GONE);
         }
     }
 
@@ -214,7 +206,7 @@ public class EventListFragment extends ListFragment implements EventListFragment
                 startActivity(myIntent);
             }
         });
-        ((PullToRefreshListView) listView).setOnRefreshListener(new PullToRefreshListView.OnRefreshListener() {
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 loadEvents(eventType);
@@ -246,9 +238,7 @@ public class EventListFragment extends ListFragment implements EventListFragment
 
         // Tell the adapter that our data set has changed so it can update it
         m_eventAdapter.notifyDataSetChanged();
-        if (listView != null) {
-            ((PullToRefreshListView) getListView()).onRefreshComplete();
-        }
+        refreshLayout.setRefreshing(false);
 
         return count;
     }
