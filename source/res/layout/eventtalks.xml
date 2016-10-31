@@ -18,10 +18,18 @@
         android:layout_height="wrap_content"
         android:visibility="gone" />
 
-    <com.markupartist.android.widget.PullToRefreshListView
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/talkRefreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbarAlwaysDrawVerticalTrack="true"
-        android:scrollbars="vertical"
-        android:id="@+id/ListViewEventTalks"/>
+        android:layout_height="match_parent">
+
+        <ListView
+            android:scrollbarAlwaysDrawVerticalTrack="true"
+            android:scrollbars="vertical"
+            android:id="@+id/ListViewEventTalks"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
 </LinearLayout>

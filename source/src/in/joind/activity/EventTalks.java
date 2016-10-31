@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.Menu;
@@ -21,8 +22,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Filter;
-
-import com.markupartist.android.widget.PullToRefreshListView;
+import android.widget.ListView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -53,7 +53,8 @@ public class EventTalks extends JIActivity implements OnClickListener {
 
     final private String FILTER_ALL = "";
     final private String FILTER_STARRED = "starred";
-    PullToRefreshListView talklist;
+    ListView talkList;
+    SwipeRefreshLayout refreshLayout;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,14 +115,16 @@ public class EventTalks extends JIActivity implements OnClickListener {
             tz = TimeZone.getDefault();
         }
         m_talkAdapter = new TalkAdapter(this, R.layout.talkrow, m_talks, tz, isAuthenticated());
-        talklist = (PullToRefreshListView) findViewById(R.id.ListViewEventTalks);
-        talklist.setAdapter(m_talkAdapter);
+        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.talkRefreshLayout);
+        refreshLayout.setColorSchemeResources(R.color.joindin_turquoise);
+        talkList = (ListView) findViewById(R.id.ListViewEventTalks);
+        talkList.setAdapter(m_talkAdapter);
 
         // Display cached talks, optionally filtered by a track (by URI)
         trackURI = (this.trackJSON != null) ? this.trackJSON.optString("uri") : "";
 
         // Add listview listener so when we click on an talk, we can display details
-        talklist.setOnItemClickListener(new OnItemClickListener() {
+        talkList.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
                 // open talk detail activity with event and talk data
                 Intent myIntent = new Intent();
@@ -131,18 +134,18 @@ public class EventTalks extends JIActivity implements OnClickListener {
                 startActivityForResult(myIntent, EVENT_TALKS_SHOW_TALK_DETAILS);
             }
         });
-        talklist.setOnRefreshListener(new PullToRefreshListView.OnRefreshListener() {
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 try {
                     loadTalks(eventRowID, trackURI, eventJSON.getString("talks_uri"));
                 } catch (JSONException e) {
                     Log.e(JIActivity.LOG_JOINDIN_APP, "No talks URI available");
-                    talklist.onRefreshComplete();
+                    refreshLayout.setRefreshing(false);
                 }
             }
         });
-        talklist.setOnScrollListener(new AbsListView.OnScrollListener() {
+        talkList.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView absListView, int i) {
             }
@@ -154,7 +157,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
         });
 
         displayTalks(eventRowID, trackURI);
-        talklist.setSelection(firstVisibleItem);
+        talkList.setSelection(firstVisibleItem);
 
         // Load new talks (in background)
         try {
@@ -202,7 +205,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) actionBar.setSubtitle(talksFound);
 
-        ((PullToRefreshListView) findViewById(R.id.ListViewEventTalks)).onRefreshComplete();
+        refreshLayout.setRefreshing(false);
     }
 
     // Load talks in new thread...
