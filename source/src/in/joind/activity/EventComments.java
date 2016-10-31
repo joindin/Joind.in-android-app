@@ -7,13 +7,15 @@ package in.joind.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-
-import com.markupartist.android.widget.PullToRefreshListView;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,6 +32,8 @@ public class EventComments extends JIActivity implements OnClickListener {
     private EventCommentAdapter m_eventCommentAdapter;    // adapter for listview
     private JSONObject eventJSON;
     private int event_id;
+
+    SwipeRefreshLayout refreshLayout;
 
     final public static int CODE_COMMENT = 1;
 
@@ -56,8 +60,10 @@ public class EventComments extends JIActivity implements OnClickListener {
         // Initialize comment list
         ArrayList<JSONObject> m_eventcomments = new ArrayList<>();
         m_eventCommentAdapter = new EventCommentAdapter(this, R.layout.talkrow, m_eventcomments);
-        final PullToRefreshListView eventcommentlist = (PullToRefreshListView) findViewById(R.id.EventDetailComments);
-        eventcommentlist.setAdapter(m_eventCommentAdapter);
+        final ListView eventCommentList = (ListView) findViewById(R.id.EventDetailComments);
+        eventCommentList.setAdapter(m_eventCommentAdapter);
+        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.commentRefreshLayout);
+        refreshLayout.setColorSchemeResources(R.color.joindin_turquoise);
 
         // Display the cached event comments
         event_id = EventComments.this.eventJSON.optInt("rowID");
@@ -67,14 +73,14 @@ public class EventComments extends JIActivity implements OnClickListener {
         Button button = (Button) findViewById(R.id.ButtonNewComment);
         button.setOnClickListener(this);
 
-        eventcommentlist.setOnRefreshListener(new PullToRefreshListView.OnRefreshListener() {
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 try {
                     loadEventComments(event_id, eventJSON.getString("comments_uri"));
                 } catch (JSONException e) {
                     Log.e(JIActivity.LOG_JOINDIN_APP, "No comments URI available");
-                    eventcommentlist.onRefreshComplete();
+                    refreshLayout.setRefreshing(false);
                 }
             }
         });
@@ -147,7 +153,7 @@ public class EventComments extends JIActivity implements OnClickListener {
             }
         }
 
-        ((PullToRefreshListView) findViewById(R.id.EventDetailComments)).onRefreshComplete();
+        refreshLayout.setRefreshing(false);
 
         // Return number of event comments.
         return count;

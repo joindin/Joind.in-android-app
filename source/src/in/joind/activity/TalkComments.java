@@ -6,15 +6,16 @@ package in.joind.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
-import com.markupartist.android.widget.PullToRefreshListView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,6 +31,8 @@ import in.joind.adapter.TalkCommentAdapter;
 public class TalkComments extends JIActivity implements OnClickListener {
     private TalkCommentAdapter m_talkCommentAdapter;  // adapter for listView
     private JSONObject talkJSON;
+
+    SwipeRefreshLayout refreshLayout;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,21 +71,23 @@ public class TalkComments extends JIActivity implements OnClickListener {
         // Initialize comment list
         ArrayList<JSONObject> m_talkcomments = new ArrayList<>();
         m_talkCommentAdapter = new TalkCommentAdapter(this, R.layout.talkrow, m_talkcomments);
-        final PullToRefreshListView talkcommentlist = (PullToRefreshListView) findViewById(R.id.EventDetailComments);
-        talkcommentlist.setAdapter(m_talkCommentAdapter);
+        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.commentRefreshLayout);
+        refreshLayout.setColorSchemeResources(R.color.joindin_turquoise);
+        final ListView talkCommentList = (ListView) findViewById(R.id.EventDetailComments);
+        talkCommentList.setAdapter(m_talkCommentAdapter);
 
         // Display the cached comments
         final int talk_id = talkJSON.optInt("rowID");
         displayTalkComments(talk_id);
 
-        talkcommentlist.setOnRefreshListener(new PullToRefreshListView.OnRefreshListener() {
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 try {
                     loadTalkComments(talk_id, talkJSON.getString("verbose_comments_uri"));
                 } catch (JSONException e) {
                     Log.e(JIActivity.LOG_JOINDIN_APP, "No comments URI available (talk comments)");
-                    talkcommentlist.onRefreshComplete();
+                    refreshLayout.setRefreshing(false);
                 }
             }
         });
@@ -135,7 +140,7 @@ public class TalkComments extends JIActivity implements OnClickListener {
             setTitle(String.format(getString(R.string.generalCommentPlural), count));
         }
 
-        ((PullToRefreshListView) findViewById(R.id.EventDetailComments)).onRefreshComplete();
+        refreshLayout.setRefreshing(false);
 
         // Return the number of comments found
         return count;

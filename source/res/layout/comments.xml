@@ -5,14 +5,14 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/LinearLayout01"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/commentRefreshLayout"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:orientation="vertical"
         android:layout_weight="1">
 
-        <com.markupartist.android.widget.PullToRefreshListView
+        <ListView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scrollbarAlwaysDrawVerticalTrack="true"
@@ -20,7 +20,7 @@
             android:id="@+id/EventDetailComments"
             android:clickable="false" />
 
-    </LinearLayout>
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <Button
         android:layout_width="wrap_content"
