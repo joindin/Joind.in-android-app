@@ -23,6 +23,12 @@ import android.widget.ArrayAdapter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import in.joind.adapter.EventAdapter;
+import in.joind.adapter.EventCommentAdapter;
+import in.joind.adapter.TalkCommentAdapter;
+import in.joind.adapter.TalkAdapter;
+import in.joind.adapter.TrackAdapter;
+
 
 public final class DataHelper {
     private static DataHelper DHInstance = null;
@@ -230,7 +236,7 @@ public final class DataHelper {
     }
 
     // Populates an event adapter and return the number of items populated
-    public int populateEvents(String event_type, JIEventAdapter m_eventAdapter, int order) {
+    public int populateEvents(String event_type, EventAdapter m_eventAdapter, int order) {
         // Different handling for favorite list
         if (event_type.equals("favorites")) {
             Cursor c = this.db.rawQuery("SELECT json,events._rowid_ FROM events INNER JOIN favlist ON favlist.event_id = events._rowid_", null);
@@ -265,7 +271,7 @@ public final class DataHelper {
     }
 
     // Populates a talk adapter and returns the number of items populated
-    public int populateTalks(int event_id, JITalkAdapter m_talkAdapter) {
+    public int populateTalks(int event_id, TalkAdapter m_talkAdapter) {
         Cursor c;
 
         c = this.db.rawQuery("SELECT json,_rowid_,starred FROM talks WHERE event_id = " + event_id, null);
@@ -284,7 +290,7 @@ public final class DataHelper {
     }
 
     // Populates a talk comment adapter and returns the number of items populated
-    public int populateTalkComments(int talk_id, JITalkCommentAdapter m_talkCommentAdapter) {
+    public int populateTalkComments(int talk_id, TalkCommentAdapter m_talkCommentAdapter) {
         Cursor c = this.db.rawQuery("SELECT json,_rowid_ FROM tcomments WHERE talk_id = " + talk_id, null);
         int count = c.getCount();
         populate(c, m_talkCommentAdapter);
@@ -292,7 +298,7 @@ public final class DataHelper {
     }
 
     // Populates an event comment adapter and returns the number of items populated
-    public int populateEventComments(int event_id, JIEventCommentAdapter m_eventCommentAdapter) {
+    public int populateEventComments(int event_id, EventCommentAdapter m_eventCommentAdapter) {
         Cursor c = this.db.rawQuery("SELECT json,_rowid_ FROM ecomments WHERE event_id = " + event_id, null);
         int count = c.getCount();
         populate(c, m_eventCommentAdapter);
@@ -307,7 +313,7 @@ public final class DataHelper {
         return count;
     }
 
-    public int populateTracks(int event_id, JITrackAdapter m_trackAdapter) {
+    public int populateTracks(int event_id, TrackAdapter m_trackAdapter) {
         Cursor c = this.db.rawQuery("SELECT json,_rowid_ FROM tracks WHERE event_id = " + event_id, null);
         int count = c.getCount();
         populate(c, m_trackAdapter);

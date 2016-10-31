@@ -31,6 +31,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.TimeZone;
 
+import in.joind.adapter.TalkAdapter;
+
 public class EventTalks extends JIActivity implements OnClickListener {
 
     private final static int EVENT_TALKS_SHOW_TALK_DETAILS = 1;
@@ -39,7 +41,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
      */
     private final static String PREFS_TALK_LIST_INDEX = "TalkListIndex_%d";
 
-    private JITalkAdapter m_talkAdapter;
+    private TalkAdapter m_talkAdapter;
     private JSONObject eventJSON;
     private JSONObject trackJSON = null;
     private int eventRowID = 0;
@@ -108,7 +110,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
         } catch (JSONException e) {
             tz = TimeZone.getDefault();
         }
-        m_talkAdapter = new JITalkAdapter(this, R.layout.talkrow, m_talks, tz, isAuthenticated());
+        m_talkAdapter = new TalkAdapter(this, R.layout.talkrow, m_talks, tz, isAuthenticated());
         talklist = (PullToRefreshListView) findViewById(R.id.ListViewEventTalks);
         talklist.setAdapter(m_talkAdapter);
 
@@ -327,7 +329,7 @@ public class EventTalks extends JIActivity implements OnClickListener {
     protected void applyStarredFilter(String filterType) {
         boolean showFilterHeader = false;
 
-        JITalkAdapter.StarredFilter starredFilter = (JITalkAdapter.StarredFilter) m_talkAdapter.getFilter();
+        TalkAdapter.StarredFilter starredFilter = (TalkAdapter.StarredFilter) m_talkAdapter.getFilter();
         if (filterType.equals("")) {
             starredFilter.setCheckStarredStatus(false);
         }
