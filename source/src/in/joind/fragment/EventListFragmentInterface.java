@@ -1,4 +1,4 @@
-package in.joind;
+package in.joind.fragment;
 
 public interface EventListFragmentInterface {
     void setEventSortOrder(int sortOrder);

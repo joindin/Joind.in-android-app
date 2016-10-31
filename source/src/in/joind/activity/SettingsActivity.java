@@ -13,8 +13,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import in.joind.ImageLoader;
-import in.joind.JIActivity;
+import in.joind.helper.ImageLoader;
 import in.joind.R;
 import in.joind.fragment.LogInDialogFragment;
 import in.joind.fragment.PreferenceListFragment;

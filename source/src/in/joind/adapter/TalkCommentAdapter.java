@@ -18,7 +18,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import in.joind.DateHelper;
+import in.joind.helper.DateHelper;
 import in.joind.R;
 
 public class TalkCommentAdapter extends ArrayAdapter<JSONObject> {

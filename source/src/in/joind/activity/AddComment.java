@@ -1,4 +1,4 @@
-package in.joind;
+package in.joind.activity;
 
 /*
  * Comment activity. This activity will handle both Events comments and talk comments.
@@ -25,6 +25,9 @@ import com.crashlytics.android.Crashlytics;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import in.joind.api.JIRest;
+import in.joind.R;
 
 public class AddComment extends JIActivity implements OnClickListener {
     ProgressDialog saveDialog;

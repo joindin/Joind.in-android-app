@@ -1,23 +1,17 @@
-package in.joind;
+package in.joind.activity;
 
 /*
  * Displays events comments
  */
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.markupartist.android.widget.PullToRefreshListView;
 
@@ -27,6 +21,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import in.joind.api.DataHelper;
+import in.joind.api.JIRest;
+import in.joind.R;
 import in.joind.adapter.EventCommentAdapter;
 
 public class EventComments extends JIActivity implements OnClickListener {

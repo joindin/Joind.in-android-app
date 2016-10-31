@@ -1,4 +1,4 @@
-package in.joind;
+package in.joind.activity;
 
 /*
  * Displays all talks from specified event.
@@ -31,6 +31,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.TimeZone;
 
+import in.joind.api.DataHelper;
+import in.joind.api.JIRest;
+import in.joind.R;
 import in.joind.adapter.TalkAdapter;
 
 public class EventTalks extends JIActivity implements OnClickListener {

@@ -22,7 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import in.joind.DateHelper;
+import in.joind.helper.DateHelper;
 import in.joind.R;
 
 public class EventAdapter extends ArrayAdapter<JSONObject> {

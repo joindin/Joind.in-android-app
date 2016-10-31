@@ -1,4 +1,4 @@
-package in.joind;
+package in.joind.activity;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,13 +22,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import in.joind.api.DataHelper;
+import in.joind.fragment.EventListFragment;
+import in.joind.R;
 import in.joind.adapter.EventTypePagerAdapter;
 import in.joind.fragment.FragmentLifecycle;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 
 /**
  * Main activity - contains the tab host, which we'll load our list fragments into

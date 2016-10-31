@@ -32,9 +32,9 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import in.joind.DataHelper;
-import in.joind.JIActivity;
-import in.joind.JIRest;
+import in.joind.api.DataHelper;
+import in.joind.activity.JIActivity;
+import in.joind.api.JIRest;
 import in.joind.R;
 
 public class TalkAdapter extends ArrayAdapter<JSONObject> implements Filterable, SectionIndexer {

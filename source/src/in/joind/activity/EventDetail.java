@@ -1,4 +1,4 @@
-package in.joind;
+package in.joind.activity;
 
 /*
  * Displays event details (info, talk list)
@@ -25,6 +25,10 @@ import org.json.JSONObject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+
+import in.joind.api.DataHelper;
+import in.joind.api.JIRest;
+import in.joind.R;
 
 public class EventDetail extends JIActivity implements OnClickListener {
     private JSONObject eventJSON;

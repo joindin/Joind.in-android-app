@@ -1,4 +1,4 @@
-package in.joind;
+package in.joind.activity;
 
 /*
  * This is the main activity class. All activities in our application will extend
@@ -25,7 +25,8 @@ import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 
-import in.joind.activity.SettingsActivity;
+import in.joind.api.DataHelper;
+import in.joind.R;
 
 public class JIActivity extends ActionBarActivity {
 

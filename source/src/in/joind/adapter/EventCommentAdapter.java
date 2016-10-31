@@ -14,8 +14,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import in.joind.DateHelper;
-import in.joind.ImageLoader;
+import in.joind.helper.DateHelper;
+import in.joind.helper.ImageLoader;
 import in.joind.R;
 
 public class EventCommentAdapter extends ArrayAdapter<JSONObject> {

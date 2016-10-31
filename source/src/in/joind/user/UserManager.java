@@ -7,7 +7,7 @@ import android.content.Context;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import in.joind.JIRest;
+import in.joind.api.JIRest;
 import in.joind.R;
 
 public class UserManager {

@@ -1,4 +1,4 @@
-package in.joind;
+package in.joind.fragment;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -6,9 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ListFragment;
@@ -16,32 +13,26 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.Filter;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.markupartist.android.widget.PullToRefreshListView;
-import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Locale;
 
+import in.joind.api.DataHelper;
+import in.joind.api.JIRest;
+import in.joind.R;
+import in.joind.activity.EventDetail;
+import in.joind.activity.Main;
 import in.joind.activity.SettingsActivity;
 import in.joind.adapter.EventAdapter;
-import in.joind.fragment.FragmentLifecycle;
-import in.joind.fragment.LogInDialogFragment;
 import in.joind.user.UserManager;
 
 /**

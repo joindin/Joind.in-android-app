@@ -1,4 +1,4 @@
-package in.joind;
+package in.joind.api;
 
 /*
  * Data helper for the SQLite database.
@@ -23,6 +23,7 @@ import android.widget.ArrayAdapter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import in.joind.activity.JIActivity;
 import in.joind.adapter.EventAdapter;
 import in.joind.adapter.EventCommentAdapter;
 import in.joind.adapter.TalkCommentAdapter;
