@@ -1,4 +1,4 @@
-package in.joind;
+package in.joind.activity;
 
 /*
  * Displays detailed information about a talk (info, comments etc)
@@ -22,8 +22,13 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import in.joind.api.DataHelper;
+import in.joind.api.JIRest;
+import in.joind.R;
+import in.joind.adapter.TalkCommentAdapter;
+
 public class TalkComments extends JIActivity implements OnClickListener {
-    private JITalkCommentAdapter m_talkCommentAdapter;  // adapter for listView
+    private TalkCommentAdapter m_talkCommentAdapter;  // adapter for listView
     private JSONObject talkJSON;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -62,7 +67,7 @@ public class TalkComments extends JIActivity implements OnClickListener {
 
         // Initialize comment list
         ArrayList<JSONObject> m_talkcomments = new ArrayList<>();
-        m_talkCommentAdapter = new JITalkCommentAdapter(this, R.layout.talkrow, m_talkcomments);
+        m_talkCommentAdapter = new TalkCommentAdapter(this, R.layout.talkrow, m_talkcomments);
         final PullToRefreshListView talkcommentlist = (PullToRefreshListView) findViewById(R.id.EventDetailComments);
         talkcommentlist.setAdapter(m_talkCommentAdapter);
 

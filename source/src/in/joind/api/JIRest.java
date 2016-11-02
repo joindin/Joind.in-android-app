@@ -1,4 +1,4 @@
-package in.joind;
+package in.joind.api;
 
 /*
  * Communication with joind.in API
@@ -24,11 +24,11 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.nio.charset.Charset;
 
-import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLSession;
 
-import in.joind.user.UserManager;
+import in.joind.R;
+import in.joind.activity.JIActivity;
+import in.joind.activity.Main;
 
 public class JIRest {
     // Number of times to attempt a connection

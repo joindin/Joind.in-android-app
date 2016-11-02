@@ -1,9 +1,10 @@
-package in.joind;
+package in.joind.adapter;
 
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,7 +32,12 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable, SectionIndexer {
+import in.joind.api.DataHelper;
+import in.joind.activity.JIActivity;
+import in.joind.api.JIRest;
+import in.joind.R;
+
+public class TalkAdapter extends ArrayAdapter<JSONObject> implements Filterable, SectionIndexer {
     private final ArrayList<JSONObject> items;
     private ArrayList<JSONObject> filtered_items;
     private Context context;
@@ -40,7 +46,7 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable, Sect
     private boolean isAuthenticated;
     private String[] sections;
 
-    public JITalkAdapter(Context context, int textViewResourceId, ArrayList<JSONObject> mTalks, TimeZone tz, boolean isAuthenticated) {
+    public TalkAdapter(Context context, int textViewResourceId, ArrayList<JSONObject> mTalks, TimeZone tz, boolean isAuthenticated) {
         super(context, textViewResourceId, mTalks);
         this.context = context;
         this.items = mTalks;
@@ -49,7 +55,8 @@ class JITalkAdapter extends ArrayAdapter<JSONObject> implements Filterable, Sect
         this.isAuthenticated = isAuthenticated;
     }
 
-    public View getView(int position, View convertView, ViewGroup parent) {
+    @NonNull
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         ViewHolder holder;
         if (convertView == null) {
             LayoutInflater layoutInflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);

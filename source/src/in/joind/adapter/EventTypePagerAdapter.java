@@ -6,7 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import in.joind.EventListFragment;
+import in.joind.fragment.EventListFragment;
 import in.joind.R;
 
 public class EventTypePagerAdapter extends FragmentStatePagerAdapter {

@@ -1,18 +1,13 @@
-package in.joind;
+package in.joind.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
@@ -23,12 +18,17 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import in.joind.api.DataHelper;
+import in.joind.api.JIRest;
+import in.joind.R;
+import in.joind.adapter.TrackAdapter;
+
 /*
  * Displays all tracks from specified event.
  */
 
 public class EventTracks extends JIActivity {
-    private JITrackAdapter m_trackAdapter;    // adapter for listview
+    private TrackAdapter m_trackAdapter;    // adapter for listview
     private JSONObject eventJSON;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -61,7 +61,7 @@ public class EventTracks extends JIActivity {
 
         // Initialize track list
         ArrayList<JSONObject> m_tracks = new ArrayList<>();
-        m_trackAdapter = new JITrackAdapter(this, R.layout.trackrow, m_tracks);
+        m_trackAdapter = new TrackAdapter(this, R.layout.trackrow, m_tracks);
         ListView tracklist = (ListView) findViewById(R.id.ListViewEventTracks);
         tracklist.setAdapter(m_trackAdapter);
 
@@ -169,47 +169,5 @@ public class EventTracks extends JIActivity {
                 }
             }
         }.start();
-    }
-}
-
-/**
- * Adapter that holds our track rows. See  JIEventAdapter class in main.java for more info
- */
-class JITrackAdapter extends ArrayAdapter<JSONObject> {
-    private ArrayList<JSONObject> items;
-    private Context context;
-
-    public JITrackAdapter(Context context, int textViewResourceId, ArrayList<JSONObject> mTracks) {
-        super(context, textViewResourceId, mTracks);
-        this.context = context;
-        this.items = mTracks;
-    }
-
-    public View getView(int position, View convertview, ViewGroup parent) {
-        View v = convertview;
-        if (v == null) {
-            LayoutInflater vi = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = vi.inflate(R.layout.trackrow, parent, false);
-        }
-
-        JSONObject o = items.get(position);
-        if (o == null) return v;
-
-        String t2Text;
-        int talkCount = o.optInt("talks_count");
-        if (talkCount == 1) {
-            t2Text = String.format(this.context.getString(R.string.generalEventTalksSingular), talkCount);
-        } else {
-            t2Text = String.format(this.context.getString(R.string.generalEventTalksPlural), talkCount);
-        }
-
-        TextView t1 = (TextView) v.findViewById(R.id.TrackRowCaption);
-        TextView t2 = (TextView) v.findViewById(R.id.TrackRowTalkCount);
-        TextView t3 = (TextView) v.findViewById(R.id.TrackRowDescription);
-        if (t1 != null) t1.setText(o.optString("track_name"));
-        if (t2 != null) t2.setText(t2Text);
-        if (t3 != null) t3.setText(o.optString("track_desc"));
-
-        return v;
     }
 }

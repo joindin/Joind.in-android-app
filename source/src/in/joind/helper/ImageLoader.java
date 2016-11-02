@@ -1,4 +1,4 @@
-package in.joind;
+package in.joind.helper;
 
 /**
  * Taken from fedorvlasov.lazylist

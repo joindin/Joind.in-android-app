@@ -1,4 +1,4 @@
-package in.joind;
+package in.joind.activity;
 
 /*
  * Displays detailed information about a talk (info, comments etc)
@@ -26,6 +26,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+
+import in.joind.api.DataHelper;
+import in.joind.api.JIRest;
+import in.joind.R;
 
 public class TalkDetail extends JIActivity implements OnClickListener {
 

@@ -21,9 +21,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import in.joind.JIActivity;
-import in.joind.JIRest;
-import in.joind.OAuthHelper;
+import in.joind.activity.JIActivity;
+import in.joind.api.JIRest;
+import in.joind.helper.OAuthHelper;
 import in.joind.R;
 import in.joind.activity.SettingsActivity;
 import in.joind.user.UserManager;

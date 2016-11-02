@@ -1,10 +1,12 @@
-package in.joind;
+package in.joind.helper;
 
 import android.content.Context;
 import android.content.res.Resources;
 
 import java.io.InputStream;
 import java.util.Properties;
+
+import in.joind.R;
 
 public class OAuthHelper {
 

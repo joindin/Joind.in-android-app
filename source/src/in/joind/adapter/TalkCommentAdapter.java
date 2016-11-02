@@ -1,8 +1,9 @@
-package in.joind;
+package in.joind.adapter;
 
 
 import android.content.Context;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,12 +18,15 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-class JITalkCommentAdapter extends ArrayAdapter<JSONObject> {
+import in.joind.helper.DateHelper;
+import in.joind.R;
+
+public class TalkCommentAdapter extends ArrayAdapter<JSONObject> {
     private ArrayList<JSONObject> items;
     private Context context;
     private Picasso picasso;
 
-    public JITalkCommentAdapter(Context context, int textViewResourceId, ArrayList<JSONObject> items) {
+    public TalkCommentAdapter(Context context, int textViewResourceId, ArrayList<JSONObject> items) {
         super(context, textViewResourceId, items);
         this.context = context;
         this.items = items;
@@ -37,7 +41,8 @@ class JITalkCommentAdapter extends ArrayAdapter<JSONObject> {
             .build();
     }
 
-    public View getView(int position, View convertView, ViewGroup parent) {
+    @NonNull
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         ViewHolder holder;
         if (convertView == null) {
             LayoutInflater layoutInflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
